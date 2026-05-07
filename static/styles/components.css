@@ -1,0 +1,144 @@
+/* ===========================================
+   Components - Buttons
+   =========================================== */
+
+.primary-btn {
+    background: linear-gradient(180deg, var(--accent-light) 0%, var(--accent) 50%, #CCAA00 100%);
+    color: var(--dark-brown);
+    border: 2px solid #AA8800;
+    padding: 14px;
+    border-radius: var(--radius-small);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4), 0 0 15px rgba(255, 215, 0, 0.3);
+}
+.primary-btn:active { transform: translateY(0); }
+
+.btn-pink {
+    background: linear-gradient(180deg, #f48fb1 0%, #e91e8c 50%, #c2185b 100%);
+    color: white;
+    border: 2px solid #ad1457;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+.btn-pink:hover {
+    background: linear-gradient(180deg, #f06292 0%, #ec407a 50%, #d81b60 100%);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4), 0 0 15px rgba(233,30,140,0.4);
+}
+
+.btn-blue {
+    background: linear-gradient(180deg, #64b5f6 0%, #1976d2 50%, #1565c0 100%);
+    color: white;
+    border: 2px solid #0d47a1;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+.btn-blue:hover {
+    background: linear-gradient(180deg, #42a5f5 0%, #2196f3 50%, #1976d2 100%);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4), 0 0 15px rgba(25,118,210,0.4);
+}
+
+.secondary-btn {
+    background: linear-gradient(180deg, var(--light) 0%, var(--light-brown) 100%);
+    color: var(--dark-brown);
+    border: 2px solid var(--secondary);
+    padding: 12px;
+    border-radius: var(--radius-small);
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.back-btn {
+    background: linear-gradient(180deg, var(--secondary-light) 0%, var(--secondary) 100%);
+    border: 2px solid var(--dark-brown);
+    padding: 10px 16px;
+    border-radius: var(--radius-small);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.back-btn:hover { background: var(--secondary); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+
+.settings-btn {
+    background: linear-gradient(180deg, var(--secondary-light) 0%, var(--secondary) 100%);
+    border: 2px solid var(--dark-brown);
+    padding: 8px 12px;
+    border-radius: var(--radius-small);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.logout-btn {
+    background: linear-gradient(180deg, var(--danger-light) 0%, var(--danger) 100%);
+    border: 2px solid var(--dark-brown);
+    padding: 8px 12px;
+    border-radius: var(--radius-small);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.run-btn {
+    flex: 2;
+    background: linear-gradient(180deg, var(--success-light) 0%, var(--success) 100%);
+    color: var(--white);
+    border: 2px solid #2D6B27;
+    padding: 14px;
+    border-radius: var(--radius-small);
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.run-btn:hover { background: linear-gradient(180deg, #6BC85C 0%, var(--success-light) 100%); transform: translateY(-2px); }
+
+.reset-btn {
+    flex: 1;
+    background: linear-gradient(180deg, var(--danger-light) 0%, var(--danger) 100%);
+    color: var(--white);
+    border: 2px solid #5A1A00;
+    padding: 14px;
+    border-radius: var(--radius-small);
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.reset-btn:hover { background: linear-gradient(180deg, #D94038 0%, var(--danger-light) 100%); transform: translateY(-2px); }
+
+.hint-btn {
+    background: linear-gradient(180deg, var(--secondary-light) 0%, var(--secondary) 100%);
+    border: 2px solid var(--dark-brown);
+    padding: 8px 12px;
+    border-radius: var(--radius-small);
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--light-gold);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .primary-btn { padding: 12px; font-size: 14px; }
+    .btn-pink, .btn-blue { padding: 12px; font-size: 14px; }
+    .back-btn { padding: 8px 12px; font-size: 14px; }
+    .run-btn, .reset-btn { padding: 12px; font-size: 14px; }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+    .primary-btn { padding: 14px; font-size: 15px; }
+    .back-btn { padding: 10px 14px; font-size: 15px; }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+    .primary-btn { padding: 16px 20px; font-size: 18px; }
+}

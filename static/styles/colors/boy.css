@@ -1,0 +1,29 @@
+:root {
+    --primary: #1E4D6B;
+    --primary-dark: #153A4F;
+    --primary-light: #2A6B8C;
+    
+    --secondary: #6B4423;
+    --secondary-light: #8B5A2B;
+    
+    --accent: #C9A227;
+    --accent-light: #DBB94A;
+    
+    --success: #3D8B37;
+    --success-light: #5CB850;
+    
+    --danger: #8B2500;
+    --danger-light: #C9302C;
+    
+    --magic: #7B3F9D;
+    --magic-light: #9B5FBF;
+    
+    --dark: #1A1A1A;
+    --dark-brown: #2D1F14;
+    --brown: #4A3520;
+    --light-brown: #6B4D2E;
+    
+    --light: #E8DCC8;
+    --light-gold: #F5E6C8;
+    --white: #FFF8E7;
+}

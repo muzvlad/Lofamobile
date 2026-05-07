@@ -1,0 +1,108 @@
+/* ===========================================
+   Modal & Popups
+   =========================================== */
+
+/* --- Modal --- */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal.active { display: flex; }
+.modal-content {
+    background: linear-gradient(180deg, var(--light-gold) 0%, var(--light) 100%);
+    padding: 25px;
+    border: 3px solid var(--accent);
+    border-radius: var(--radius);
+    text-align: center;
+    max-width: 320px;
+    width: 90%;
+    animation: popIn 0.3s ease;
+    box-shadow: var(--shadow-gold), 0 0 30px rgba(255, 215, 0, 0.3);
+}
+@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.modal-content h2 { color: var(--accent); margin-bottom: 12px; text-shadow: 1px 1px 0 var(--dark); font-family: 'Georgia', serif; }
+.stars { font-size: 36px; margin: 12px 0; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+.result-score { font-size: 20px; font-weight: bold; margin: 12px 0; color: var(--success); }
+.modal-content .primary-btn, .modal-content .secondary-btn { width: 100%; margin-top: 8px; }
+
+/* --- Level Info Modal --- */
+.level-info-content { max-width: 360px; }
+#level-info-title {
+    font-size: clamp(18px, 5vw, 28px);
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+#level-info-title .level-card-number { font-size: clamp(10px, 3vw, 14px); color: var(--secondary); font-weight: normal; }
+#level-info-title .level-card-name { font-size: clamp(16px, 4vw, 22px); font-weight: bold; color: var(--primary-dark); margin: 5px 0; line-height: 1.2; overflow-wrap: break-word; }
+#level-info-title .level-card-stars { font-size: clamp(14px, 4vw, 18px); letter-spacing: 5px; }
+.level-info-content #level-info-description { font-size: 16px; text-align: center; line-height: 1.5; }
+.level-info-emoji { font-size: 64px; margin: 10px 0; }
+
+.level-info-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    margin: 10px 0;
+    border: 3px solid var(--secondary);
+    box-sizing: border-box;
+    overflow: hidden;
+    background: var(--secondary);
+}
+.level-info-image img { width: 100%; height: 100%; object-fit: cover; }
+
+.level-info-emoji { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 15px 0; }
+.level-task-box {
+    background: linear-gradient(135deg, var(--light-gold) 0%, var(--light) 50%, var(--light-gold) 100%);
+    border: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 15px;
+    margin: 15px 0;
+    box-shadow: var(--shadow-gold);
+}
+.level-task-box h3 { color: var(--secondary); font-size: 14px; text-transform: uppercase; margin-bottom: 10px; text-align: center; letter-spacing: 1px; }
+.level-task-box p { color: var(--dark-brown); font-size: 16px; font-weight: bold; text-align: center; line-height: 1.4; }
+.level-info-commands .command-block { padding: 6px 12px; border-radius: 20px; font-size: 14px; background: var(--light); border: 2px solid var(--secondary); }
+.level-info-difficulty { margin: 10px 0; font-size: 14px; color: var(--secondary); }
+.level-info-difficulty span { padding: 4px 12px; border-radius: 12px; background: var(--light-gold); color: var(--accent); font-weight: bold; }
+
+/* --- Menu Tabs --- */
+.menu-tabs { display: flex; gap: 8px; margin-top: auto; }
+
+/* Mobile */
+@media (max-width: 480px) {
+    .modal-content { padding: 20px; max-width: 90%; }
+    .modal-content h2 { font-size: 20px; }
+    .stars { font-size: 28px; }
+    .result-score { font-size: 16px; }
+    .level-info-content { max-width: 95%; }
+    #level-info-title { font-size: 16px; }
+    #level-info-title .level-card-name { font-size: 14px; }
+    .level-info-image { font-size: 48px; margin: 8px 0; }
+    .level-task-box { padding: 12px; margin: 10px 0; }
+    .level-task-box p { font-size: 14px; }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+    .modal-content { padding: 25px; max-width: 360px; }
+    .level-info-content { max-width: 420px; }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+    .modal-content { padding: 30px; max-width: 400px; }
+    .level-info-content { max-width: 500px; }
+}

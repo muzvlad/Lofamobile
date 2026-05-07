@@ -1,0 +1,44 @@
+{
+  "chapters": [
+    {
+      "chapter": 1,
+      "gender": "girl",
+      "theme": "cocina",
+      "hero": "Mix (robot ayudante de cocina)",
+      "chapterTitle": "Aventura culinaria",
+      "chapterDescription": "¡Ayuda a la abuela a hornear un pastel!",
+      "levels": [
+        {"id": 1, "name": "Primer paso", "intro": "La abuela se fue de visita, dejando en la mesa la receta del pastel de manzana y una nota: «Querido Mix, hornea un pastel para cuando regrese. Empieza por la nevera: allí están la mantequilla y los huevos». Estás en la entrada de la cocina, frente a una larga mesa.", "task": "Debes avanzar para llegar a la nevera y abrirla."},
+        {"id": 2, "name": "Recolectar ingredientes", "intro": "Las manzanas están listas, pero para la masa necesitas harina, y la bolsa de harina quedó en el rincón más alejado, junto a la ventana. La abuela siempre dice: «Primero prepara todos los ingredientes sobre la mesa». Tendrás que tomar la harina y traerla a la tabla de cortar.", "task": "Llega hasta la bolsa de harina, pulsa TOMAR y muévete a la casilla donde está el bol con la masa."},
+        {"id": 3, "name": "Evitar obstáculos", "intro": "La nevera está abierta, pero el camino hacia la tabla de cortar está bloqueado por un gato dormido. No se puede despertar, de lo contrario molestará o se comerá la masa. Tendrás que rodearlo por arriba, donde están las manzanas.", "task": "Usa los botones ARRIBA, DERECHA y ABAJO para esquivar con cuidado al gato y llegar al cajón de las manzanas."},
+        {"id": 4, "name": "Saltar sobre un charco", "intro": "Mientras ibas por la harina, el gato Vaska derribó un vaso de leche. Un charco blanco se extendió por el suelo. Podrías resbalar y tirar la preciada harina.", "task": "Usa SALTO para brincar sobre el charco y llegar al bol seco y limpio."},
+        {"id": 5, "name": "Doble salto", "intro": "¡Qué desastre! Vaska corrió dos veces: un charco de leche y un charco de zumo de naranja. Dos manchas húmedas seguidas. Si pisas, todo se volverá pegajoso y la abuela se enojará.", "task": "Haz dos SALTOS uno tras otro para volar sobre ambos charcos y no mojar tus sensores."},
+        {"id": 6, "name": "Montículos de harina", "intro": "Alguien derramó harina cerca de la cocina y el viento la amontonó en pequeñas colinas. La abuela enseñaba: «No se debe pisar la harina, o el suelo quedará lleno de huellas blancas». Tendrás que saltar sobre cada montículo.", "task": "Salta sobre cada montículo de harina mientras avanzas hacia la cocina, donde el horno ya se está calentando."},
+        {"id": 7, "name": "Lavar y regresar", "intro": "Hemos llegado al grifo para lavar las manzanas, y ahora debemos regresar a la cocina, que está al otro lado — detrás y un poco más arriba, por un pasillo estrecho entre los armarios. Lava las manzanas y vuelve.", "task": "Llega al grifo para lavar las manzanas. Usa GIRAR para dar la vuelta y salir hacia la cocina por el desvío superior."},
+        {"id": 8, "name": "Tapa rota", "intro": "Se cayó una tapa de olla, parece que se rompió. Debes saltar sobre ella, luego regresar a la tapa rota, pararte en la casilla de al lado para recoger los restos y no cortarte.", "task": "Usa SALTO sobre la tapa caída para llegar a la escoba, regresa a la casilla junto a la tapa rota para barrer los fragmentos, luego vuelve para desecharlos."},
+        {"id": 9, "name": "Casa de manzana", "intro": "Debes acercarte, tomar con cuidado los gajos de nuestras manzanas, luego girar y ponerlos directamente en el relleno del pastel que ya espera en el bol.", "task": "Llega hasta las manzanas, salta sobre el rodillo que está en el camino, pulsa TOMAR, luego GIRAR, y entrega las manzanas al bol con la masa."},
+        {"id": 10, "name": "¡Al horno!", "intro": "¡El pastel está armado y listo para hornear! La abuela regresa en cualquier momento. Hay que llevar urgentemente el molde al horno, pero el camino está bloqueado por charcos, harina derramada y un pasillo estrecho con especias. El éxito determinará si la abuela te felicita.", "task": "Usa todos los comandos aprendidos: saltos sobre charcos y montículos de harina, y giros en callejones sin salida para llegar al horno y pulsar el botón «Inicio»."}
+      ]
+    },
+    {
+      "chapter": 1,
+      "gender": "boy",
+      "theme": "construcción de refugio",
+      "hero": "Borya (robot constructor)",
+      "chapterTitle": "Construcción del cuartel",
+      "chapterDescription": "¡Construye un cuartel secreto para la brigada!",
+      "levels": [
+        {"id": 1, "name": "Primer paso", "intro": "El comandante de la brigada ha dado la orden: construir un cuartel secreto en el borde del bosque antes de la noche. Borya está activado junto al camión, lleno hasta el tope de tablones y herramientas. Lo primero es llevar los tablones al área marcada para los cimientos.", "task": "Muévete solo a la DERECHA en línea recta para acercarte a la zona de descarga de materiales y comenzar a trabajar."},
+        {"id": 2, "name": "Evitar obstáculos", "intro": "Justo delante hay un montón de grava (piedras pequeñas) que olvidaron nivelar ayer. No se puede pasar por encima, dañaríamos las piernas. Pero hay un desvío a la izquierda y arriba, por vigas ya colocadas, así es incluso más rápido.", "task": "Usa los botones ARRIBA, DERECHA y ABAJO para sortear el montón de grava hasta llegar a los cimientos marcados."},
+        {"id": 3, "name": "Recolectar materiales", "intro": "Los cimientos están marcados, ¡pero no hay clavos! La caja de clavos quedó junto al camión, al principio. Tienes que volver, tomarla y traerla a la obra, o no podrás fijar las paredes.", "task": "Llega hasta la caja de clavos, pulsa TOMAR (enganchar) y regresa a la posición junto a los cimientos."},
+        {"id": 4, "name": "Saltar sobre una zanja", "intro": "Mientras ibas por los clavos, los obreros cavaron una zanja estrecha para las tuberías de agua. Justo en medio. No se puede pasar a pie, te caerías. Un salto nos salvará.", "task": "Activa SALTO para brincar sobre la zanja y no dañar las instalaciones."},
+        {"id": 5, "name": "Doble salto", "intro": "Resulta que hay dos zanjas: la segunda es para los cables eléctricos. Van una tras otra. Si te detienes entre ellas, Borya podría quedarse atascado en el barro. Necesitas saltar dos veces sin parar.", "task": "Realiza dos SALTOS uno tras otro para superar el doble obstáculo y salir a tierra firme."},
+        {"id": 6, "name": "Esquivar ladrillos", "intro": "Más adelante está la zona donde descargaron ladrillos. Algunos cayeron y están esparcidos por el suelo. Si pisas un ladrillo, podrías romperlo. Hay que saltar sobre cada uno.", "task": "Avanza presionando SALTO sobre cada ladrillo para llegar al cobertizo de herramientas."},
+        {"id": 7, "name": "Giro y camino", "intro": "Debes acercarte al muro levantado del futuro cuartel. Después de llevar los tablones hasta allí, da la vuelta para pasar por el pasaje hacia el cobertizo de herramientas.", "task": "Usa GIRAR después de entregar los tablones, luego gira para volver a nuestros cimientos en construcción."},
+        {"id": 8, "name": "Saltar sobre una viga", "intro": "El cobertizo de herramientas está lleno de tablones y vigas. Además, una viga caída atraviesa el camino: no se puede rodear, solo saltar.", "task": "Usa GIRAR para traer más tablones y SALTO sobre la viga caída."},
+        {"id": 9, "name": "Entregar la bandera", "intro": "En la caja yace una bandera, el símbolo del nuevo cuartel. Pero la caja está sobre una pequeña plataforma de tablones. Debes acercarte, tomar la bandera, girar y llevarla al cuartel situado sobre los cimientos.", "task": "Llega a la caja, salta sobre el hueco entre tablones, pulsa TOMAR, luego mediante GIRAR lleva la bandera al cuartel."},
+        {"id": 10, "name": "El sprint final", "intro": "Tienes la bandera, los cimientos están listos, pero el camino hacia el centro del cuartel está bloqueado por zanjas, ladrillos y pasajes estrechos. Todos esperan que termine la construcción. ¡Un último esfuerzo!", "task": "Usa saltos sobre zanjas y ladrillos, así como giros en callejones sin salida, para llegar al punto de colocación de la bandera y alzarla sobre nuestro nuevo cuartel."}
+      ]
+    }
+  ]
+}

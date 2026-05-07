@@ -1,0 +1,22 @@
+{
+  "chapters": [
+    {
+      "chapter": 2,
+      "gender": "girl",
+      "theme": "cooking",
+      "hero": "Mix",
+      "chapterTitle": "Cocina Avanzada",
+      "chapterDescription": "Domina tecnicas avanzadas de cocina!",
+      "levels": []
+    },
+    {
+      "chapter": 2,
+      "gender": "boy",
+      "theme": "robot_battle",
+      "hero": "Borya",
+      "chapterTitle": "Batalla de Robots",
+      "chapterDescription": "Aprende a controlar robots de batalla!",
+      "levels": []
+    }
+  ]
+}

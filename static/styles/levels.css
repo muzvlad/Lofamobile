@@ -1,0 +1,280 @@
+/* ===========================================
+   Levels, Chapters & Cards
+   =========================================== */
+
+/* --- Levels Grid --- */
+.levels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(28vw, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    max-width: 100%;
+}
+@media (min-width: 480px) { .levels-grid { grid-template-columns: repeat(5, 1fr); gap: 1rem; } }
+@media (min-width: 768px) { .levels-grid { grid-template-columns: repeat(5, 1fr); gap: 1.25rem; } }
+@media (min-width: 1024px) { .levels-grid { grid-template-columns: repeat(5, 1fr); gap: 1.5rem; } }
+@media (min-width: 1440px) { .levels-grid { max-width: 70vw; margin: 0 auto 1.5rem; } }
+
+/* --- Level Card --- */
+.level-card {
+    background: linear-gradient(180deg, var(--light) 0%, var(--light-brown) 100%);
+    border: 2px solid var(--secondary);
+    border-radius: var(--radius);
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    min-height: 100px;
+    image-rendering: -webkit-optimize-quality;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: bicubic;
+}
+.level-card-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3;
+    image-rendering: -webkit-optimize-quality;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+.level-card-content { position: relative; z-index: 1; }
+.level-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+.level-card.locked { opacity: 0.5; cursor: not-allowed; }
+.level-card.locked:hover { transform: none; }
+
+@media (max-width: 480px) { .level-card { min-height: 80px; padding: 8px; } }
+@media (min-width: 481px) and (max-width: 768px) { .level-card { min-height: 90px; padding: 10px; } }
+
+/* --- Level Image --- */
+.level-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: var(--radius-small);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+}
+.level-image.locked-img { background: linear-gradient(135deg, var(--dark), #333); font-size: 24px; }
+.level-number { font-size: 32px; font-weight: bold; color: var(--dark); }
+.level-num { font-size: 18px; font-weight: bold; color: var(--dark-brown); }
+
+/* --- Level Buttons --- */
+.level-btn {
+    aspect-ratio: 4/3;
+    background: #fff;
+    border: 2px solid #8B4513;
+    border-radius: 8px;
+    cursor: pointer;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+    padding: 0;
+    image-rendering: -webkit-optimize-quality;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: bicubic;
+}
+.level-btn:hover { transform: scale(1.02); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+.level-btn-bg { 
+    position: absolute; 
+    top: 0; left: 0; right: 0; bottom: 0; 
+    background-size: cover; 
+    background-position: center; 
+    opacity: 0.4;
+    image-rendering: -webkit-optimize-quality;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+.level-btn-bg::before { content: '🏠'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 50px; opacity: 0.3; }
+.level-btn-content { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; padding: 0; }
+.level-stars { display: block !important; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); font-size: 16px; line-height: 1; z-index: 100; color: #FFD700; text-shadow: 2px 2px 4px rgba(0,0,0,0.9); }
+.level-num { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 52px; font-weight: 900; color: #000; line-height: 1; font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff; }
+.level-name { width: 100%; font-size: 11px; font-weight: 700; color: #fff; text-align: center; padding: 10px 4px; line-height: 1.2; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+.level-btn.locked .level-name { background: rgba(158, 158, 158, 0.5); }
+.level-btn.current { opacity: 0.85; }
+.level-btn.completed { opacity: 1; }
+.level-btn.completed .level-btn-bg { opacity: 1; }
+.level-btn.locked::before { content: '🔒'; position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%); font-size: 28px; z-index: 2; }
+
+/* Background colors for names */
+.level-name.bg-pink { background: rgba(219, 48, 147, 0.35) !important; }
+.level-name.bg-blue { background: rgba(25, 118, 210, 0.35) !important; }
+.level-btn .bg-pink, .level-btn .level-name.bg-pink { background: linear-gradient(180deg, rgba(233,30,140,0.5) 0%, rgba(195,21,91,0.5) 100%); }
+.level-btn .bg-blue, .level-btn .level-name.bg-blue { background: linear-gradient(180deg, rgba(21,101,192,0.5) 0%, rgba(13,71,161,0.5) 100%); }
+
+/* --- Chapter Switcher --- */
+.chapter-switcher {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 8px;
+    background: rgba(0,0,0,0.1);
+    border-radius: var(--radius-small);
+}
+.chapter-btn {
+    padding: 8px 16px;
+    background: var(--secondary);
+    border: 2px solid var(--dark-brown);
+    border-radius: var(--radius-small);
+    color: var(--white);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.chapter-btn:hover { background: var(--secondary-light); }
+.chapter-btn.active { background: var(--primary); border-color: var(--primary-dark); }
+
+/* --- Chapters Container --- */
+.chapters-container { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
+.chapter-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 25px;
+    background: linear-gradient(180deg, var(--light) 0%, var(--light-brown) 100%);
+    border: 3px solid var(--secondary);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 140px;
+}
+.chapter-box:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+.chapter-box.active { background: linear-gradient(180deg, var(--primary-light) 0%, var(--primary) 100%); border-color: var(--primary-dark); }
+.chapter-box .chapter-number { font-size: 28px; font-weight: bold; color: var(--dark-brown); margin-bottom: 5px; }
+.chapter-box.active .chapter-number { color: var(--white); }
+.chapter-box .chapter-name { font-size: 16px; font-weight: 600; color: var(--dark-brown); margin-bottom: 3px; }
+.chapter-box.active .chapter-name { color: var(--white); }
+.chapter-box .chapter-desc { font-size: 12px; color: var(--text-gray); text-align: center; }
+.chapter-box.active .chapter-desc { color: var(--light); }
+
+/* --- Chapter Divider --- */
+.chapter-divider {
+    grid-column: 1 / -1;
+    background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+    border-radius: var(--radius);
+    padding: 15px;
+    margin: 10px 0;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.chapter-divider:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+.chapter-divider:active { transform: scale(0.98); }
+.chapter-title { font-size: 18px; font-weight: bold; color: white; font-family: 'Georgia', serif; }
+.chapter-description { font-size: 12px; color: var(--light); margin-top: 5px; }
+
+/* --- Chapter Nav --- */
+.chapter-nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+.chapter-nav-btn {
+    padding: 10px 25px;
+    background: linear-gradient(180deg, var(--secondary-light) 0%, var(--secondary) 100%);
+    border: 2px solid var(--dark-brown);
+    border-radius: var(--radius);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.chapter-nav-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.chapter-nav-btn.active { background: linear-gradient(180deg, var(--primary-light) 0%, var(--primary) 100%); border-color: var(--primary-dark); }
+
+.next-chapter-btn {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 20px;
+    background: linear-gradient(180deg, var(--dark) 0%, var(--dark-brown) 100%);
+    border: 2px solid var(--secondary);
+    border-radius: var(--radius);
+    color: var(--accent);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.next-chapter-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); background: linear-gradient(180deg, var(--dark-brown) 0%, var(--dark) 100%); }
+.next-chapter-icon { font-size: 24px; }
+.next-chapter-arrow { font-size: 20px; }
+
+.chapter-nav-buttons { grid-column: 1 / -1; display: flex; gap: 10px; margin-top: 15px; }
+.chapter-nav-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 15px; border-radius: var(--radius); font-size: 14px; font-weight: bold; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.chapter-nav-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+.chapter-nav-btn.prev-chapter { background: linear-gradient(180deg, var(--secondary-light) 0%, var(--secondary) 100%); border: 2px solid var(--dark-brown); color: white; }
+.chapter-nav-btn.next-chapter { background: linear-gradient(180deg, var(--dark) 0%, var(--dark-brown) 100%); border: 2px solid var(--secondary); color: var(--accent); }
+.nav-arrow { font-size: 16px; }
+.nav-chapter-label { font-size: 11px; opacity: 0.8; margin-bottom: 2px; }
+.nav-chapter-title { font-size: 16px; font-weight: bold; }
+.nav-chapter-desc { font-size: 10px; opacity: 0.7; margin-top: 2px; }
+
+/* --- Chapter Tabs --- */
+.chapter-tabs { display: flex; gap: 10px; justify-content: center; margin: 10px 0; }
+.chapter-tabs .chapter-btn {
+    flex: 1;
+    padding: 12px 20px;
+    background: linear-gradient(180deg, var(--light) 0%, var(--light-brown) 100%);
+    border: 2px solid var(--secondary);
+    border-radius: var(--radius-small);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: var(--dark-brown);
+}
+.chapter-tabs .chapter-btn.active { background: linear-gradient(180deg, var(--primary-light) 0%, var(--primary) 100%); color: white; border-color: var(--primary-dark); }
+
+/* --- Tabs --- */
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    background: var(--light);
+    border: 2px solid var(--secondary);
+    border-radius: var(--radius-small);
+    color: var(--dark-brown);
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.tab-btn.active { background: var(--primary); border-color: var(--primary-dark); color: white; }
+.tab-content { display: none; margin-top: 15px; }
+.tab-content.active { display: block; }
+
+/* Mobile adaptations */
+@media (max-width: 480px) {
+    .levels-grid { grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+    .level-card { min-height: 70px; }
+    .level-image { font-size: 24px; }
+    .chapter-box { min-width: 100px; padding: 10px 15px; }
+    .chapter-box .chapter-number { font-size: 22px; }
+    .chapter-box .chapter-name { font-size: 14px; }
+    .chapter-btn { padding: 6px 12px; font-size: 12px; }
+    .chapter-tabs .chapter-btn { padding: 10px 12px; font-size: 14px; }
+}
+
+/* Tablet adaptations */
+@media (min-width: 481px) and (max-width: 768px) {
+    .levels-grid { gap: 0.75rem; }
+    .level-card { min-height: 85px; }
+    .chapter-box { min-width: 120px; }
+}
+
+/* Desktop adaptations */
+@media (min-width: 769px) {
+    .levels-grid { gap: 1rem; }
+    .level-card { min-height: 120px; }
+    .chapter-box { min-width: 160px; padding: 20px 30px; }
+}

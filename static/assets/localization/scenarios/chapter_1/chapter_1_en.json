@@ -1,0 +1,44 @@
+{
+  "chapters": [
+    {
+      "chapter": 1,
+      "gender": "girl",
+      "theme": "cooking",
+      "hero": "Mix (kitchen robot helper)",
+      "chapterTitle": "Cooking Adventure",
+      "chapterDescription": "Help grandma bake a pie!",
+      "levels": [
+        {"id": 1, "name": "First Step", "intro": "Grandma has gone to visit friends, leaving the apple pie recipe on the table and a note: 'Dear Mix, bake a pie by the time I return. Start with the fridge — there's butter and eggs.' You stand at the kitchen entrance, a long table in front of you.", "task": "Move forward to reach the fridge and open it."},
+        {"id": 2, "name": "Gathering Ingredients", "intro": "The apples are there, but for the dough you need flour. The flour bag is in the far corner by the window. Grandma always says: 'First prepare all the ingredients on the table.' You need to take the flour and bring it to the cutting board.", "task": "Reach the flour bag, press TAKE and move to the cell where the mixing bowl is."},
+        {"id": 3, "name": "Avoiding Obstacles", "intro": "The fridge is open, but a sleeping cat blocks the way to the cutting board. You can't wake him up - otherwise he will disturb you or eat the dough. You'll have to go around from above, where the apples are.", "task": "Use the buttons: UP, RIGHT and DOWN to carefully sneak past the cat to the apple drawer."},
+        {"id": 4, "name": "Jumping Over a Puddle", "intro": "While you were getting the flour, the cat Vaska knocked over a glass of milk. A white puddle has spread on the floor. You could slip and drop the precious flour.", "task": "Use JUMP to leap over the puddle and reach the bowl dry and clean."},
+        {"id": 5, "name": "Double Jump", "intro": "Oh no! Vaska ran twice: a milk puddle and an orange juice puddle. Two wet spots in a row. If you step on them, everything will become sticky and grandma will be upset.", "task": "Perform two JUMPS one after another to fly over both puddles and avoid wetting your sensors."},
+        {"id": 6, "name": "Flour Hills", "intro": "Someone spilled flour near the stove, and the wind blew it into small hills. Grandma taught: 'You must not step on flour - otherwise the whole floor will be covered in white tracks.' You'll have to jump over each hill.", "task": "Jump over each flour hill as you advance toward the stove where the oven is already preheating."},
+        {"id": 7, "name": "Wash and Return", "intro": "We've reached the sink to wash the apples, and now we need to return to the stove, which is on the other side - behind and slightly above, through a narrow passage between the cabinets. Wash the apples and come back.", "task": "Reach the sink to wash the apples. Use TURN AROUND to go back and exit to the stove via the upper detour."},
+        {"id": 8, "name": "Broken Lid", "intro": "A pot lid has fallen and appears to be broken. You must jump over it, then go back to the broken lid, step onto the adjacent cell to clean up the debris and avoid cutting yourself.", "task": "Use JUMP over the fallen lid to reach the broom, return to the cell next to the broken lid to sweep up the shards, then go back to dispose of them."},
+        {"id": 9, "name": "Apple House", "intro": "You need to approach, carefully take our apple slices, then turn around and put them right into the pie filling that is already waiting in the bowl.", "task": "Reach the apples, jump over the rolling pin lying on the way, press TAKE, then TURN AROUND, and deliver the apples to the bowl with the dough."},
+        {"id": 10, "name": "Into the Oven!", "intro": "The pie is assembled and ready to bake! Grandma will be back any minute. You must urgently take the pan to the oven, but the path is blocked by puddles, spilled flour, and a narrow spice aisle. Your success determines whether grandma will praise you.", "task": "Use all the commands you've learned: jump over puddles and flour hills, and turn around in dead ends to reach the oven, then press the 'Start' button."}
+      ]
+    },
+    {
+      "chapter": 1,
+      "gender": "boy",
+      "theme": "shelter_building",
+      "hero": "Borya (robot builder)",
+      "chapterTitle": "Building the Headquarters",
+      "chapterDescription": "Build a secret squad headquarters!",
+      "levels": [
+        {"id": 1, "name": "First Step", "intro": "The squad commander has given the task: build a secret headquarters at the edge of the forest by evening. Borya is activated next to the truck, packed to the brim with planks and tools. The first thing to do is deliver the planks to the marked foundation area.", "task": "Move only RIGHT in a straight line to approach the material unloading zone and start working."},
+        {"id": 2, "name": "Avoiding Obstacles", "intro": "Directly ahead is a pile of gravel (small stones) that was left unleveled yesterday. Going through it is impossible — it will damage our legs. But there is a detour to the left and up, along already laid beams — even faster that way.", "task": "Use the buttons: UP, RIGHT and DOWN to get past the gravel pile to the marked foundation."},
+        {"id": 3, "name": "Gathering Materials", "intro": "The foundation is marked, but there are no nails! The nail box remains by the truck, at the very beginning. You have to go back, take it, and bring it to the construction site, otherwise the walls cannot be fastened.", "task": "Reach the nail box, press TAKE (hook it) and return to the position at the foundation."},
+        {"id": 4, "name": "Jumping Over a Trench", "intro": "While you were getting the nails, the workers dug a narrow trench for water pipes. It's right in the way. Stepping over won't work — you'll fall through. A jump should save us.", "task": "Activate JUMP to leap over the trench and avoid damaging the utilities."},
+        {"id": 5, "name": "Double Jump", "intro": "Turns out there are two trenches: the second one is for electrical cables. They come one after another. If you stop between them, Borya might get stuck in the mud. You need to jump twice without stopping.", "task": "Perform two JUMPS one after another to overcome the double obstacle and roll out onto solid ground."},
+        {"id": 6, "name": "Bypassing Bricks", "intro": "Ahead is the area where bricks were unloaded. A few fell out and are scattered on the ground. If you step on a brick, you might break it. You need to jump over each one.", "task": "Move forward, pressing JUMP over each brick, to reach the tool shed."},
+        {"id": 7, "name": "Turn and Path", "intro": "You need to approach the erected wall of the future headquarters. After carrying the planks there, turn around to go through the passage to the tool shed.", "task": "Use TURN AROUND after delivering the planks, then turn around to go back to our under-construction foundation."},
+        {"id": 8, "name": "Jump Over a Beam", "intro": "The tool shed is full of planks and beams. Also, a fallen beam lies across the path — you can't go around it, only jump over.", "task": "Use TURN AROUND to bring more planks and JUMP over the fallen beam."},
+        {"id": 9, "name": "Delivering the Flag", "intro": "In the box lies a flag — the symbol of the new headquarters. But the box stands on a small platform made of planks. You need to approach, take the flag, turn around, and deliver it to the headquarters set up at the foundation.", "task": "Reach the box, jump over the gap in the planks, press TAKE, then via TURN AROUND bring the flag to the headquarters."},
+        {"id": 10, "name": "Final Sprint", "intro": "You have the flag, the foundation is ready, but the path to the center of the headquarters is blocked by trenches, bricks, and narrow passages. Everyone is waiting for the construction to finish. One last effort!", "task": "Use jumps over trenches and bricks, as well as turnarounds in dead ends, to reach the flag installation point and raise it above our new headquarters."}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "chapters": [
+    {
+      "chapter": 1,
+      "gender": "girl",
+      "theme": "pazandalik",
+      "hero": "Miks (oshxona yordamchi robot)",
+      "chapterTitle": "Pazandalik sarguzashti",
+      "chapterDescription": "Buvijoniga pirog pishirishga yordam ber!",
+      "levels": [
+        {"id": 1, "name": "Birinchi qadam", "intro": "Buvijon mehmonga ketib, stolga olmali pirog retsepti va yozuv qoldirdi: «Azizim Miks, qaytib kelgunimcha pirog pishir. Muzlatgichdan boshlang — u yerda sariyog‘ va tuxum bor». Siz oshxona eshigida turibsiz, oldingizda uzun stol.", "task": "Muzlatgichga yetib borish va uni ochish uchun oldinga yurishingiz kerak."},
+        {"id": 2, "name": "Masalliqlarni yig‘ish", "intro": "Olma joyida, lekin xamir uchun un kerak, un qopchasi esa deraza yonidagi uzoq burchakda qolgan. Buvijon doim aytadi: «Avval barcha masalliqlarni stol ustida tayyorla». Unni olib, kesish taxtasiga olib kelishingiz kerak.", "task": "Un qopchasiga boring, OLISH tugmasini bosing va xamir kosasi turgan katakka harakatlaning."},
+        {"id": 3, "name": "To‘siqni aylanib o‘tish", "intro": "Muzlatgich ochiq, lekin kesish taxtasiga yo‘lni uxlab yotgan mushuk to‘smoqda. Uni uyg‘otmaslik kerak – aks holda xalaqit beradi yoki xamirni yeydi. Yuqoridan, olma turgan joydan aylanib o‘tishga to‘g‘ri keladi.", "task": "TUGMALARDAN foydalaning: YUQORI, O‘NGGA va PASTGA mushukni ehtiyotlik bilan aylanib o‘tib, olma qutisiga boring."},
+        {"id": 4, "name": "Ko‘lmakdan sakrash", "intro": "Siz un ortib ketganingizda, Vaska mushuk bir stakan sutni ag‘darib yubordi. Yerda oppoq ko‘lmak paydo bo‘ldi. Sirpanib, qimmatbaho unni to‘kib yuborishingiz mumkin.", "task": "SAKRASH dan foydalanib, ko‘lmakdan oshib, kosaga quruq va toza holda boring."},
+        {"id": 5, "name": "Ikki karra sakrash", "intro": "Omadsizlik! Vaska ikki marta yugurdi: sut ko‘lmagi va apelsin sharbati ko‘lmagi. Ketma-ket ikkita ho‘l dog‘. Agar qadam qo‘ysangiz, hamma narsa yopishqoq bo‘lib qoladi va buvijon xafa bo‘ladi.", "task": "Ikkala ko‘lmakdan ham oshib o‘tish va sensorlarni ho‘llamaslik uchun birin-ketin ikkita SAKRASH qiling."},
+        {"id": 6, "name": "Un tepaliklari", "intro": "Plitaga yaqin joyda kimdir un to‘kib, shamol uni mayda tepaliklarga aylantirgan. Buvijon o‘rgatgan: «Unga qadam bosish mumkin emas – aks holda pol oq izlar bilan to‘ladi». Har bir tepalikdan sakrash kerak.", "task": "Pech allaqachon qiziydigan plita tomon harakatlanib, har bir un tepaligidan sakrab o‘ting."},
+        {"id": 7, "name": "Yuvish va qaytish", "intro": "Biz olmalarni yuvish uchun jo‘mrak turgan joyga yetib keldik va endi boshqa tomonda – orqada va biroz yuqorida, shkaflar orasidagi tor yo‘lakda joylashgan plitaga qaytishimiz kerak. Olmalarni yuving va qaytib keling.", "task": "Olmalarni yuvish uchun jo‘mrakka boring. Orqaga qaytish va yuqori aylanma yo‘l orqali plitaga chiqish uchun BURILISH dan foydalaning."},
+        {"id": 8, "name": "Singan qopqoq", "intro": "Tovoq qopqog‘i tushib, singanga o‘xshaydi – undan sakrab o‘tish kerak. va singan qopqoq yoniga qaytib, axlatni yig‘ishtirish va kesilmaslik uchun qo‘shni katakka turing.", "task": "Yiqilgan qopqoqdan SAKRASHni qo‘llab, supurgiga boring, singan qopqoq yonidagi katakka qaytib, parchalarni yig‘ishtiring va ularni tashlash uchun qaytib keling."},
+        {"id": 9, "name": "Olma uyi", "intro": "Yaqinlashib, olma bo‘laklarini ehtiyotkorlik bilan olish, keyin burilib, to‘g‘ridan-to‘g‘ri kosada kutib turgan pirog to‘ldirgichiga qo‘yish kerak.", "task": "Olmalarga boring, yo‘lda yotgan yog‘och o‘qni sakrab o‘ting, OLISH tugmasini bosing, so‘ngra BURILISH va olmalarni xamir kosasiga yetkazing."},
+        {"id": 10, "name": "Pechga!", "intro": "Pirog yig‘ilib, pishirishga tayyor! Buvijon hozir qaytib keladi. Zudlik bilan formani pechga olib borish kerak, ammo yo‘lni ko‘lmaklar, to‘kilgan un va ziravorlar bilan tor yo‘lak to‘sib qo‘ygan. Muvaffaqiyat buvijonning sizni maqtashini belgilaydi.", "task": "O‘rgangan barcha buyruqlaringizdan foydalaning: ko‘lmaklar va un tepaliklaridan sakrash, shuningdek boshi berk ko‘chalarda burilish, pechga yetib borish va «Start» tugmasini bosing."}
+      ]
+    },
+    {
+      "chapter": 1,
+      "gender": "boy",
+      "theme": "boshpana_qurish",
+      "hero": "Borya (robot quruvchi)",
+      "chapterTitle": "Shtab qurilishi",
+      "chapterDescription": "Otryadning maxfiy shtabini qur!",
+      "levels": [
+        {"id": 1, "name": "Birinchi qadam", "intro": "Otryad komandiri vazifa qo‘ydi: kechgacha o‘rmon chetida maxfiy shtab qurish. Borya yuk mashinasi yonida faollashtirilgan, mashina taxta va asboblarga to‘la. Birinchi navbatda taxtalarni poydevor belgisi qo‘yilgan joyga yetkazish kerak.", "task": "Faqat O‘NGGA to‘g‘ri chiziq bo‘ylab harakatlanib, material tushirish zonasiga yaqinlashing va ishni boshlang."},
+        {"id": 2, "name": "To‘siqni aylanib o‘tish", "intro": "To‘g‘ridan-to‘g‘ri yo‘lda shag‘al (mayda toshlar) uyumi turibdi, uni kecha tekislashni unutib qo‘yishgan. Undan o‘tish mumkin emas – oyoqlarimizni buzamiz. Lekin chap va yuqorida, allaqachon yotqizilgan to‘sinlar bo‘ylab aylanma yo‘l bor – bu tezroq.", "task": "TUGMALARDAN foydalaning: YUQORI, O‘NGGA va PASTGA shag‘al uyumidan aylanib o‘tib, belgilangan poydevorga boring."},
+        {"id": 3, "name": "Materiallarni yig‘ish", "intro": "Poydevor belgilandi, ammo mix yo‘q! Mix qutisi yuk mashinasi yonida, eng boshida qolibdi. Orqaga qaytib, uni olib, qurilish maydonchasiga olib kelish kerak, aks holda devorlarni mahkamlab bo‘lmaydi.", "task": "Mix qutisiga boring, OLISH tugmasini bosing (ilgak bilan) va poydevor yonidagi joyga qayting."},
+        {"id": 4, "name": "Xandaqdan sakrash", "intro": "Siz mix ortib ketganingizda, ishchilar suv quvurlari uchun tor xandaq qazishdi. To‘g‘ri yo‘lda. Bosib o‘tish mumkin emas – yiqilib tushasiz. Sakrash bizni qutqaradi.", "task": "Xandaqdan sakrab o‘tish va kommunikatsiyalarni buzmaslik uchun SAKRASHni faollashtiring."},
+        {"id": 5, "name": "Ikki karra sakrash", "intro": "Ma’lum bo‘lishicha, ikkita xandaq bor: ikkinchisi elektr kabeli uchun. Ular ketma-ket keladi. Agar ular orasida to‘xtasangiz, Borya loyga botib qolishi mumkin. To‘xtamasdan ikki marta sakrash kerak.", "task": "Ikki to‘siqni yengib, qattiq yerga chiqish uchun birin-ketin ikkita SAKRASHni bajaring."},
+        {"id": 6, "name": "G‘ishtlarni aylanib o‘tish", "intro": "Oldinda g‘isht tushirilgan maydon. Bir nechtasi to‘kilib, yerga sochilib ketgan. Agar g‘ishtga qadam qo‘ysangiz, uni sindirib qo‘yishingiz mumkin. Har birining ustidan sakrash kerak.", "task": "Har bir g‘isht ustida SAKRASHni bosib, asboblar omboriga qarab oldinga harakatlaning."},
+        {"id": 7, "name": "Burilish va yo‘l", "intro": "Bo‘lajak shtabning qurilgan devoriga yaqinlashish kerak. Taxtalarni u yerga yetkazganingizdan so‘ng, asboblar omboriga o‘tish uchun buriling.", "task": "Taxtalarni yetkazgandan keyin BURILISH dan foydalaning, so‘ngra qurilayotgan poydevorimiz tomon borish uchun buriling."},
+        {"id": 8, "name": "To‘sindan sakrash", "intro": "Asboblar ombori juda ko‘p taxta va to‘sinlardan iborat. Bundan tashqari, yo‘lak bo‘ylab yiqilgan to‘sin yotibdi – uni aylanib o‘tish mumkin emas, faqat sakrash mumkin.", "task": "Ko‘proq taxta olib kelish uchun BURILISH va yiqilgan to‘sindan sakrash uchun SAKRASH dan foydalaning."},
+        {"id": 9, "name": "Bayroqni yetkazish", "intro": "Qutida bayroq – yangi shtabning ramzi yotibdi. Ammo quti taxtalardan yasalgan kichik pog‘onada turibdi. Yaqinlashib, bayroqni olish, burilish va uni poydevorga o‘rnatilgan shtabga yetkazish kerak.", "task": "Qutiga boring, taxtalar orasidagi bo‘shliqdan sakrab o‘ting, OLISH tugmasini bosing, so‘ngra BURILISH orqali bayroqni shtabga olib keling."},
+        {"id": 10, "name": "Yakuniy zarba", "intro": "Bayroq sizda, poydevor tayyor, ammo shtab markaziga yo‘lni xandaqlar, g‘ishtlar va tor o‘tish joylari to‘sib qo‘ygan. Hamma qurilish tugashini kutmoqda. So‘nggi harakat qoldi!", "task": "Xandaqlar va g‘ishtlardan sakrash, shuningdek boshi berk ko‘chalarda burilishlardan foydalanib, bayroq o‘rnatish joyiga boring va uni yangi shtabimiz ustida ko‘taring."}
+      ]
+    }
+  ]
+}
