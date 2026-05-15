@@ -3,7 +3,7 @@ const path = require("path");
 
 const LOCALIZATION_DIR = path.join(__dirname, "..", "static", "assets", "localization");
 const SCENARIOS_DIR = path.join(LOCALIZATION_DIR, "scenarios", "chapter_1");
-const LANGUAGES = ["en", "ru", "uz", "tg", "es"];
+const LANGUAGES = ["en", "ru", "uz", "tg", "es", "bxr"];
 
 let passed = 0;
 let failed = 0;

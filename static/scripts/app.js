@@ -342,14 +342,16 @@ initUIComponents: function() {
             en: 'English',
             es: 'Español',
             tg: 'Тоҷикӣ',
-            uz: "O'zbekcha"
+            uz: "O'zbekcha",
+            bxr: 'Буряад'
         };
         var langFlags = {
             ru: '/flags/ru.png',
             en: '/flags/us.png',
             es: '/flags/es.png',
             tg: '/flags/tg.png',
-            uz: '/flags/uz.png'
+            uz: '/flags/uz.png',
+            bxr: '/flags/ru.png'
         };
         
         var dropdownBtns = document.querySelectorAll('.lang-dropdown-btn');

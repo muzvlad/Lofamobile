@@ -7,7 +7,8 @@ var localizationManager = {
         { code: 'en', name: 'English', flag: '/flags/us.png' },
         { code: 'es', name: 'Español', flag: '/flags/es.png' },
         { code: 'tg', name: 'Тоҷикӣ', flag: '/flags/tg.png' },
-        { code: 'uz', name: "O'zbekcha", flag: '/flags/uz.png' }
+        { code: 'uz', name: "O'zbekcha", flag: '/flags/uz.png' },
+        { code: 'bxr', name: 'Буряад', flag: '/flags/ru.png' }
     ],
 
     init: function() {

@@ -65,7 +65,11 @@ lofa/
 │       └── flags/              # Флаги стран (PNG)
 ├── frontend/
 │   └── src/
-│       └── levels/              # Изображения уровней
+│       ├── levels/              # Изображения уровней (chapter_1, chapter_2)
+│       │   └── chapter_1/       # 20 уровней (boy/girl версии)
+│       ├── components/         # Компоненты персонажей и UI
+│       │   └── Character/       # Персонажи (builder, cook, pilot, robot, etc.)
+│       └── assets/components/  # Игровые предметы (flour, apple, flag, и т.д.)
 ├── tests/
 │   ├── run_tests.bat           # Запуск тестов
 │   ├── api_coverage.out        # Покрытие API
@@ -314,9 +318,11 @@ turn  - разворот на 180°
 - `static/assets/localization/es.json` - Español
 - `static/assets/localization/tg.json` - Тоҷикӣ
 - `static/assets/localization/uz.json` - O'zbekcha
+- `static/assets/localization/bxr.json` - Буряад (Buryat)
 
 ### Сценарии (scenarios)
 - `static/assets/localization/scenarios/chapter_1/chapter_1_*.json`
+- `static/assets/localization/scenarios/chapter_2/chapter_2_*.json`
 - Gender-specific сценарии для мальчиков и девочек
 
 ### Ключи локализации

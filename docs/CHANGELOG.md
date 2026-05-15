@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v0.5.0] - 15.05.2026
+
+### Added
+- Бурятский язык (bxr) в системе локализации:
+  - `static/assets/localization/bxr.json` - перевод интерфейса
+  - `static/assets/localization/scenarios/chapter_1/chapter_1_bxr.json` - сценарии главы 1
+  - Добавлен в выбор языка на всех формах (логин, регистрация, профиль)
+  - Поддержка в localization.js (availableLanguages)
+  - Поддержка в app.js (updateLanguageDropdowns)
+- Новые предметы в levels.go: flour, bowl_of_dough, apple, broom, trash_bag, wood_boards, flag, box_tools, nails
+
+### Changed
+- Обновлена структура проекта (frontend/src/assets/components/)
+- Добавлены изображения персонажей и предметов
+
+---
+
 ## [v0.4.0] - 23.04.2026
 
 ### Added
