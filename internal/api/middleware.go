@@ -48,20 +48,15 @@ func RecoverMiddleware(next http.Handler) http.Handler {
 
 func CorsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/ws" || r.Header.Get("Upgrade") != "" {
-			next.ServeHTTP(w, r)
-			return
-		}
-
 		origin := r.Header.Get("Origin")
 		if origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
 		} else {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 		}
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)

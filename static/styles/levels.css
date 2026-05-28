@@ -84,6 +84,7 @@
     -ms-interpolation-mode: bicubic;
 }
 .level-btn:hover { transform: scale(1.02); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+.level-btn.locked:hover { transform: none; box-shadow: none; }
 .level-btn-bg { 
     position: absolute; 
     top: 0; left: 0; right: 0; bottom: 0; 
@@ -100,10 +101,33 @@
 .level-num { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 52px; font-weight: 900; color: #000; line-height: 1; font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff; }
 .level-name { width: 100%; font-size: 11px; font-weight: 700; color: #fff; text-align: center; padding: 10px 4px; line-height: 1.2; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
 .level-btn.locked .level-name { background: rgba(158, 158, 158, 0.5); }
+.level-btn.locked .level-btn-bg { opacity: 0.1; }
+.level-btn.locked .level-stars { opacity: 0.3; }
+.level-btn.locked .level-num { opacity: 0.3; }
 .level-btn.current { opacity: 0.85; }
 .level-btn.completed { opacity: 1; }
 .level-btn.completed .level-btn-bg { opacity: 1; }
-.level-btn.locked::before { content: '🔒'; position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%); font-size: 28px; z-index: 2; }
+.level-btn.locked::before {
+    content: '🔒';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 22px;
+    z-index: 15;
+    pointer-events: none;
+}
+.level-btn.locked::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.08);
+    border-radius: 6px;
+    z-index: 1;
+    pointer-events: none;
+}
 
 /* Background colors for names */
 .level-name.bg-pink { background: rgba(219, 48, 147, 0.35) !important; }

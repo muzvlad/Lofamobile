@@ -10,11 +10,14 @@
     --secondary: #8B6914;
     --secondary-light: #AB8924;
     --accent: #D4A017;
-    --accentLight: #E4B027;
+    --accent-light: #E4B027;
     --success: #4A7B3A;
+    --success-light: #6A9B4A;
     --successLight: #6A9B4A;
     --danger: #8B3A3A;
+    --danger-light: #AB5A5A;
     --dangerLight: #AB5A5A;
+    --text-gray: #7A7A7A;
     --magic: #5A3A8B;
     --magicLight: #7A5AAB;
     --dark: #2A2A2A;

@@ -1,11 +1,11 @@
-var app = {
+let app = {
     API_URL: window.location.origin,
     currentUser: null,
     currentLevel: null,
     ws: null,
 
     init: function() {
-        var self = this;
+        let self = this;
         
         if (typeof theme !== 'undefined') {
             themeManager.activeTheme = theme;
@@ -40,13 +40,13 @@ var app = {
     },
 
 initUIComponents: function() {
-        var self = this;
+        let self = this;
         
-        var backBtns = document.querySelectorAll('.back-btn');
-        for (var i = 0; i < backBtns.length; i++) {
+        let backBtns = document.querySelectorAll('.back-btn');
+        for (let i = 0; i < backBtns.length; i++) {
             (function(btn) {
                 btn.addEventListener('click', function() {
-                    var currentScreen = document.querySelector('.screen.active');
+                    let currentScreen = document.querySelector('.screen.active');
                     if (currentScreen && currentScreen.id === 'game-screen') {
                         levelsManager.load();
                         self.showMenu();
@@ -57,10 +57,10 @@ initUIComponents: function() {
             })(backBtns[i]);
         }
         
-        var startLevelBtn = document.getElementById('start-level-btn');
+        let startLevelBtn = document.getElementById('start-level-btn');
         if (startLevelBtn) {
             startLevelBtn.addEventListener('click', function() {
-                var levelData = window.currentLevelData;
+                let levelData = window.currentLevelData;
                 if (levelData) {
                     self.startLevel(levelData);
                 }
@@ -68,42 +68,64 @@ initUIComponents: function() {
             });
         }
         
-        var cancelLevelBtn = document.getElementById('cancel-level-btn');
+        let cancelLevelBtn = document.getElementById('cancel-level-btn');
         if (cancelLevelBtn) {
             cancelLevelBtn.addEventListener('click', function() {
                 document.getElementById('level-info-modal').classList.remove('active');
             });
         }
         
-        var settingsBtn = document.querySelector('.settings-btn');
+        let settingsBtn = document.querySelector('.settings-btn');
         if (settingsBtn) {
             settingsBtn.addEventListener('click', function() { self.showProfile(); });
         }
         
-        var logoutBtn = document.getElementById('logout-btn');
+        let logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function() { self.logout(); });
         }
         
-        var langBtns = document.querySelectorAll('.language-bar .lang-btn');
-        for (var i = 0; i < langBtns.length; i++) {
+        let langBtns = document.querySelectorAll('.language-bar .lang-btn');
+        for (let i = 0; i < langBtns.length; i++) {
             (function(btn) {
                 btn.addEventListener('click', function() {
-                    var lang = btn.dataset.lang;
+                    let lang = btn.dataset.lang;
                     if (typeof localizationManager !== 'undefined') {
                         localizationManager.setLanguage(lang);
                     }
                 });
             })(langBtns[i]);
         }
-        
-        var performerBtns = document.querySelectorAll('#register-screen .char-btn, #profile-screen .char-btn');
-        for (var i = 0; i < performerBtns.length; i++) {
+
+        let menuTabs = document.querySelectorAll('.menu-tabs .tab-btn');
+        for (let i = 0; i < menuTabs.length; i++) {
             (function(btn) {
                 btn.addEventListener('click', function() {
-                    var container = btn.closest('.character-select') || btn.closest('.form-group');
-                    var btns = container.querySelectorAll('.char-btn');
-                    for (var j = 0; j < btns.length; j++) {
+                    let tab = btn.dataset.tab;
+                    let allTabs = document.querySelectorAll('.menu-tabs .tab-btn');
+                    for (let j = 0; j < allTabs.length; j++) {
+                        allTabs[j].classList.remove('active');
+                    }
+                    btn.classList.add('active');
+
+                    if (tab === 'levels') {
+                        self.showMenu();
+                    } else if (tab === 'leaderboard') {
+                        self.showLeaderboard();
+                    } else if (tab === 'achievements') {
+                        self.showAchievements();
+                    }
+                });
+            })(menuTabs[i]);
+        }
+        
+        let performerBtns = document.querySelectorAll('#register-screen .char-btn, #profile-screen .char-btn');
+        for (let i = 0; i < performerBtns.length; i++) {
+            (function(btn) {
+                btn.addEventListener('click', function() {
+                    let container = btn.closest('.character-select') || btn.closest('.form-group');
+                    let btns = container.querySelectorAll('.char-btn');
+                    for (let j = 0; j < btns.length; j++) {
                         btns[j].classList.remove('selected');
                     }
                     btn.classList.add('selected');
@@ -111,12 +133,12 @@ initUIComponents: function() {
             })(performerBtns[i]);
         }
         
-        var genderBtns = document.querySelectorAll('#register-screen .gender-btn');
-        for (var i = 0; i < genderBtns.length; i++) {
+        let genderBtns = document.querySelectorAll('#register-screen .gender-btn');
+        for (let i = 0; i < genderBtns.length; i++) {
             (function(btn) {
                 btn.addEventListener('click', function() {
-                    var btns = document.querySelectorAll('#register-screen .gender-btn');
-                    for (var j = 0; j < btns.length; j++) {
+                    let btns = document.querySelectorAll('#register-screen .gender-btn');
+                    for (let j = 0; j < btns.length; j++) {
                         btns[j].classList.remove('selected');
                     }
                     btn.classList.add('selected');
@@ -124,13 +146,13 @@ initUIComponents: function() {
             })(genderBtns[i]);
         }
         
-        var chapterBtns = document.querySelectorAll('.chapter-btn');
-        for (var i = 0; i < chapterBtns.length; i++) {
+        let chapterBtns = document.querySelectorAll('.chapter-btn');
+        for (let i = 0; i < chapterBtns.length; i++) {
             (function(btn) {
                 btn.addEventListener('click', function() {
-                    var chapter = parseInt(btn.dataset.chapter);
-                    var btns = document.querySelectorAll('.chapter-btn');
-                    for (var j = 0; j < btns.length; j++) {
+                    let chapter = parseInt(btn.dataset.chapter);
+                    let btns = document.querySelectorAll('.chapter-btn');
+                    for (let j = 0; j < btns.length; j++) {
                         btns[j].classList.remove('active');
                     }
                     btn.classList.add('active');
@@ -141,14 +163,14 @@ initUIComponents: function() {
             })(chapterBtns[i]);
         }
         
-        var dropdownBtns = document.querySelectorAll('.lang-dropdown-btn');
-        for (var i = 0; i < dropdownBtns.length; i++) {
+        let dropdownBtns = document.querySelectorAll('.lang-dropdown-btn');
+        for (let i = 0; i < dropdownBtns.length; i++) {
             (function(btn) {
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    var dropdown = btn.closest('.language-dropdown');
-                    var allDropdowns = document.querySelectorAll('.language-dropdown');
-                    for (var j = 0; j < allDropdowns.length; j++) {
+                    let dropdown = btn.closest('.language-dropdown');
+                    let allDropdowns = document.querySelectorAll('.language-dropdown');
+                    for (let j = 0; j < allDropdowns.length; j++) {
                         if (allDropdowns[j] !== dropdown) allDropdowns[j].classList.remove('open');
                     }
                     dropdown.classList.toggle('open');
@@ -156,12 +178,12 @@ initUIComponents: function() {
             })(dropdownBtns[i]);
         }
         
-        var langOptions = document.querySelectorAll('.lang-option');
-        for (var i = 0; i < langOptions.length; i++) {
+        let langOptions = document.querySelectorAll('.lang-option');
+        for (let i = 0; i < langOptions.length; i++) {
             (function(btn) {
                 btn.addEventListener('click', function() {
-                    var lang = btn.dataset.lang;
-                    var dropdown = btn.closest('.language-dropdown');
+                    let lang = btn.dataset.lang;
+                    let dropdown = btn.closest('.language-dropdown');
                     dropdown.classList.remove('open');
                     
                     if (typeof localizationManager !== 'undefined') {
@@ -174,31 +196,31 @@ initUIComponents: function() {
         }
         
         document.addEventListener('click', function() {
-            var allDropdowns = document.querySelectorAll('.language-dropdown');
-            for (var i = 0; i < allDropdowns.length; i++) {
+            let allDropdowns = document.querySelectorAll('.language-dropdown');
+            for (let i = 0; i < allDropdowns.length; i++) {
                 allDropdowns[i].classList.remove('open');
             }
         });
         
-        var saveProfileBtn = document.getElementById('save-profile-btn');
+        let saveProfileBtn = document.getElementById('save-profile-btn');
         if (saveProfileBtn) {
             saveProfileBtn.addEventListener('click', function() { self.saveProfile(); });
         }
     },
 
     showScreen: function(screenId) {
-        var screens = document.querySelectorAll('.screen');
-        for (var i = 0; i < screens.length; i++) {
+        let screens = document.querySelectorAll('.screen');
+        for (let i = 0; i < screens.length; i++) {
             screens[i].classList.remove('active');
         }
-        var screen = document.getElementById(screenId);
+        let screen = document.getElementById(screenId);
         if (screen) {
             screen.classList.add('active');
         }
     },
 
     showWelcomeMessage: function() {
-        var welcomeEl = document.querySelector('.welcome-msg');
+        let welcomeEl = document.querySelector('.welcome-msg');
         if (welcomeEl) {
             if (typeof localizationManager !== 'undefined') {
                 welcomeEl.textContent = localizationManager.t('welcome');
@@ -207,11 +229,11 @@ initUIComponents: function() {
     },
 
     showMenu: function() {
-        var username = (typeof localizationManager !== 'undefined' && localizationManager.t) ? localizationManager.t('hero') : 'Герой';
+        let username = (typeof localizationManager !== 'undefined' && localizationManager.t) ? localizationManager.t('hero') : 'Герой';
         if (this.currentUser) {
             username = this.currentUser.nickname || this.currentUser.name || username;
         }
-        var usernameEl = document.getElementById('menu-username');
+        let usernameEl = document.getElementById('menu-username');
         if (usernameEl) {
             usernameEl.textContent = username;
         }
@@ -225,7 +247,7 @@ initUIComponents: function() {
     },
 
     showProfile: function() {
-        var user = auth.getUser();
+        let user = auth.getUser();
         if (!user) return;
         
         document.getElementById('profile-phone').value = user.phone || '';
@@ -233,20 +255,20 @@ initUIComponents: function() {
         document.getElementById('profile-name').value = user.name || '';
         document.getElementById('profile-age').value = user.age || '';
         
-        var radios = document.querySelectorAll('input[name="profile-gender"]');
-        for (var i = 0; i < radios.length; i++) {
+        let radios = document.querySelectorAll('input[name="profile-gender"]');
+        for (let i = 0; i < radios.length; i++) {
             radios[i].checked = radios[i].value === user.gender;
         }
         
-        var gender = user.gender || 'boy';
-        var saveBtn = document.getElementById('save-profile-btn');
+        let gender = user.gender || 'boy';
+        let saveBtn = document.getElementById('save-profile-btn');
         if (saveBtn) {
             saveBtn.classList.remove('btn-pink', 'btn-blue');
             saveBtn.classList.add(gender === 'girl' ? 'btn-pink' : 'btn-blue');
         }
         
-        var charBtns = document.querySelectorAll('#profile-screen .char-btn');
-        for (var i = 0; i < charBtns.length; i++) {
+        let charBtns = document.querySelectorAll('#profile-screen .char-btn');
+        for (let i = 0; i < charBtns.length; i++) {
             charBtns[i].classList.remove('selected');
             if (charBtns[i].dataset.performer === user.performer) {
                 charBtns[i].classList.add('selected');
@@ -263,17 +285,45 @@ initUIComponents: function() {
         this.showScreen('profile-screen');
     },
 
+    showLeaderboard: function() {
+        if (typeof localizationManager !== 'undefined') {
+            localizationManager.updateAllUI();
+        }
+
+        this.showScreen('leaderboard-screen');
+        if (typeof leaderboardManager !== 'undefined') {
+            leaderboardManager.load('all');
+        }
+    },
+
+    showAchievements: function() {
+        if (typeof localizationManager !== 'undefined') {
+            localizationManager.updateAllUI();
+        }
+
+        let titleEl = document.querySelector('#achievements-screen .header h2');
+        if (titleEl) {
+            let l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+            titleEl.textContent = l10n ? l10n.t('achievements') : 'Награды';
+        }
+
+        this.showScreen('achievements-screen');
+        if (typeof achievementsManager !== 'undefined') {
+            achievementsManager.load();
+        }
+    },
+
     saveProfile: function() {
-        var nickname = document.getElementById('profile-nickname').value.trim();
-        var name = document.getElementById('profile-name').value.trim();
-        var age = document.getElementById('profile-age').value;
-        var genderRadio = document.querySelector('input[name="profile-gender"]:checked');
-        var gender = genderRadio ? genderRadio.value : 'boy';
+        let nickname = document.getElementById('profile-nickname').value.trim();
+        let name = document.getElementById('profile-name').value.trim();
+        let age = document.getElementById('profile-age').value;
+        let genderRadio = document.querySelector('input[name="profile-gender"]:checked');
+        let gender = genderRadio ? genderRadio.value : 'boy';
         
-        var performerBtns = document.querySelectorAll('#profile-screen .char-btn.selected');
-        var performer = performerBtns.length > 0 ? performerBtns[0].dataset.performer : 'builder';
+        let performerBtns = document.querySelectorAll('#profile-screen .char-btn.selected');
+        let performer = performerBtns.length > 0 ? performerBtns[0].dataset.performer : 'builder';
         
-        var messageEl = document.getElementById('profile-message');
+        let messageEl = document.getElementById('profile-message');
         
         if (!nickname) {
             messageEl.textContent = localizationManager ? localizationManager.t('enterNickname') : 'Введите псевдоним!';
@@ -282,7 +332,7 @@ initUIComponents: function() {
             return;
         }
         
-        var self = this;
+        let self = this;
         fetch(this.API_URL + '/api/auth/profile', {
             method: 'POST',
             headers: {
@@ -309,7 +359,7 @@ initUIComponents: function() {
                 
                 themeManager.apply(gender);
                 
-                var saveBtn = document.getElementById('save-profile-btn');
+                let saveBtn = document.getElementById('save-profile-btn');
                 if (saveBtn) {
                     saveBtn.classList.remove('btn-pink', 'btn-blue');
                     saveBtn.classList.add(gender === 'girl' ? 'btn-pink' : 'btn-blue');
@@ -323,7 +373,7 @@ initUIComponents: function() {
                 messageEl.className = 'form-message success';
                 messageEl.style.display = 'block';
             } else {
-                var errMsg = localizationManager ? localizationManager.t('saveError') : 'Ошибка сохранения';
+                let errMsg = localizationManager ? localizationManager.t('saveError') : 'Ошибка сохранения';
                 messageEl.textContent = data.error || errMsg;
                 messageEl.className = 'form-message error';
                 messageEl.style.display = 'block';
@@ -337,7 +387,7 @@ initUIComponents: function() {
     },
 
     updateLanguageDropdowns: function(lang) {
-        var langNames = {
+        let langNames = {
             ru: 'Русский',
             en: 'English',
             es: 'Español',
@@ -345,7 +395,7 @@ initUIComponents: function() {
             uz: "O'zbekcha",
             bxr: 'Буряад'
         };
-        var langFlags = {
+        let langFlags = {
             ru: '/flags/ru.png',
             en: '/flags/us.png',
             es: '/flags/es.png',
@@ -354,17 +404,17 @@ initUIComponents: function() {
             bxr: '/flags/ru.png'
         };
         
-        var dropdownBtns = document.querySelectorAll('.lang-dropdown-btn');
-        for (var i = 0; i < dropdownBtns.length; i++) {
-            var btn = dropdownBtns[i];
-            var flagImg = btn.querySelector('.flag-icon');
-            var nameSpan = btn.querySelector('span:not(.dropdown-arrow)');
+        let dropdownBtns = document.querySelectorAll('.lang-dropdown-btn');
+        for (let i = 0; i < dropdownBtns.length; i++) {
+            let btn = dropdownBtns[i];
+            let flagImg = btn.querySelector('.flag-icon');
+            let nameSpan = btn.querySelector('span:not(.dropdown-arrow)');
             if (flagImg) flagImg.src = langFlags[lang] || langFlags.ru;
             if (nameSpan) nameSpan.textContent = langNames[lang] || langNames.ru;
         }
         
-        var langBtns = document.querySelectorAll('.language-bar .lang-btn');
-        for (var i = 0; i < langBtns.length; i++) {
+        let langBtns = document.querySelectorAll('.language-bar .lang-btn');
+        for (let i = 0; i < langBtns.length; i++) {
             langBtns[i].classList.remove('selected');
             if (langBtns[i].dataset.lang === lang) langBtns[i].classList.add('selected');
         }
@@ -383,22 +433,46 @@ initUIComponents: function() {
     },
 
     onLoginSuccess: function() {
+        let self = this;
         this.currentUser = auth.user;
         themeManager.apply(this.currentUser.gender);
-        
-        var gender = this.currentUser.gender || 'boy';
-        var saveBtn = document.getElementById('save-profile-btn');
+
+        let gender = this.currentUser.gender || 'boy';
+        let saveBtn = document.getElementById('save-profile-btn');
         if (saveBtn) {
             saveBtn.classList.remove('btn-pink', 'btn-blue');
             saveBtn.classList.add(gender === 'girl' ? 'btn-pink' : 'btn-blue');
         }
-        
+
         if (typeof localizationManager !== 'undefined') {
             localizationManager.setGender(gender);
         }
-        
+
+        this.loadUserScore();
         this.connectWebSocket(auth.token);
         this.showMenu();
+    },
+
+    loadUserScore: function() {
+        let self = this;
+        let token = auth.getToken();
+        if (!token) return;
+
+        fetch(this.API_URL + '/api/score', {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            let scoreEl = document.getElementById('total-score');
+            if (scoreEl && data.score !== undefined) {
+                scoreEl.textContent = data.score;
+            }
+        })
+        .catch(function(err) {
+            console.error('Error loading score:', err);
+        });
     },
 
     logout: function() {
@@ -411,7 +485,7 @@ initUIComponents: function() {
     },
 
     connectWebSocket: function(token) {
-        var actualToken = auth.getToken();
+        let actualToken = auth.getToken();
         
         if (!actualToken) {
             console.error('[WS] NO TOKEN!');
@@ -422,20 +496,20 @@ initUIComponents: function() {
             return;
         }
         
-        var self = this;
-        var wsUrl = window.location.origin.replace(/^http:/i, 'ws:') + '/ws?token=' + encodeURIComponent(actualToken);
+        let self = this;
+        let wsUrl = window.location.origin.replace(/^http:/i, 'ws:') + '/ws?token=' + encodeURIComponent(actualToken);
         this.ws = new WebSocket(wsUrl);
         
         this.ws.onmessage = function(event) {
-            var data = JSON.parse(event.data);
+            let data = JSON.parse(event.data);
             
             if (data.type === 'score_update') {
                 leaderboardManager.load();
-                var user = auth.getUser();
+                let user = auth.getUser();
                 if (user && data.userId === user.id) {
-                    var scoreEl = document.getElementById('total-score');
+                    let scoreEl = document.getElementById('total-score');
                     if (scoreEl) {
-                        scoreEl.textContent = parseInt(scoreEl.textContent) + data.score;
+                        scoreEl.textContent = data.score;
                     }
                 }
             }
@@ -458,8 +532,8 @@ initUIComponents: function() {
 document.addEventListener('DOMContentLoaded', function() {
     app.init();
     
-    var modals = document.querySelectorAll('.modal');
-    for (var i = 0; i < modals.length; i++) {
+    let modals = document.querySelectorAll('.modal');
+    for (let i = 0; i < modals.length; i++) {
         modals[i].addEventListener('click', function(e) {
             if (e.target === this) {
                 this.classList.remove('active');

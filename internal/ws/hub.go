@@ -32,6 +32,7 @@ type Hub struct {
 	unregister chan *Client
 	broadcast  chan []byte
 	database   *sql.DB
+	quit       chan struct{}
 }
 
 type ScoreUpdateMessage struct {
@@ -41,12 +42,6 @@ type ScoreUpdateMessage struct {
 	Score    int    `json:"score"`
 }
 
-type AchievementMessage struct {
-	Type    string `json:"type"`
-	UserID  int    `json:"userId"`
-	Details string `json:"details"`
-}
-
 func NewHub(database *sql.DB) *Hub {
 	return &Hub{
 		clients:    make(map[int]*Client),
@@ -54,12 +49,16 @@ func NewHub(database *sql.DB) *Hub {
 		unregister: make(chan *Client),
 		broadcast:  make(chan []byte),
 		database:   database,
+		quit:       make(chan struct{}),
 	}
 }
 
 func (h *Hub) Run() {
 	for {
 		select {
+		case <-h.quit:
+			return
+
 		case client := <-h.register:
 			h.clients[client.userID] = client
 
@@ -70,12 +69,12 @@ func (h *Hub) Run() {
 			}
 
 		case message := <-h.broadcast:
-			for _, client := range h.clients {
+			for userID, client := range h.clients {
 				select {
 				case client.send <- message:
 				default:
+					delete(h.clients, userID)
 					close(client.send)
-					delete(h.clients, client.userID)
 				}
 			}
 		}
@@ -84,6 +83,11 @@ func (h *Hub) Run() {
 
 func (h *Hub) Shutdown() {
 	log.Printf("[WS] Shutting down hub...")
+	select {
+	case <-h.quit:
+	default:
+		close(h.quit)
+	}
 	for _, client := range h.clients {
 		close(client.send)
 	}
@@ -92,6 +96,9 @@ func (h *Hub) Shutdown() {
 }
 
 func (h *Hub) BroadcastScoreUpdate(userID int, newScore int) {
+	if h.database == nil {
+		return
+	}
 	var username string
 	err := h.database.QueryRow("SELECT nickname FROM users WHERE id = ?", userID).Scan(&username)
 	if err != nil {
@@ -103,16 +110,6 @@ func (h *Hub) BroadcastScoreUpdate(userID int, newScore int) {
 		UserID:   userID,
 		Username: username,
 		Score:    newScore,
-	}
-	data, _ := json.Marshal(msg)
-	h.broadcast <- data
-}
-
-func (h *Hub) BroadcastAchievement(userID int, achievementType string) {
-	msg := AchievementMessage{
-		Type:    "new_achievement",
-		UserID:  userID,
-		Details: achievementType,
 	}
 	data, _ := json.Marshal(msg)
 	h.broadcast <- data
@@ -160,11 +157,15 @@ func (c *Client) readPump() {
 			}
 			break
 		}
+		c.conn.SetReadDeadline(time.Now().Add(60 * time.Second))
 
 		var msg map[string]string
 		if err := json.Unmarshal(message, &msg); err == nil {
 			if msg["type"] == "ping" {
-				c.send <- []byte(`{"type":"pong"}`)
+				select {
+				case c.send <- []byte(`{"type":"pong"}`):
+				default:
+				}
 			}
 		}
 	}

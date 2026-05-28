@@ -37,7 +37,7 @@ func Register(database *sql.DB) http.HandlerFunc {
 
 		log.Printf("[REGISTER] Generated hash: %s", string(hash)[:20])
 
-		_, err = database.Exec(
+		result, err := database.Exec(
 			"INSERT INTO users (phone, nickname, name, password_hash, gender, performer, age, language) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 			req.Phone, req.Nickname, req.Name, string(hash), req.Gender, req.Performer, req.Age, req.Language,
 		)
@@ -47,17 +47,16 @@ func Register(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		var userID int
-		err = database.QueryRow("SELECT last_insert_rowid()").Scan(&userID)
+		userID, err := result.LastInsertId()
 		if err != nil {
-			log.Printf("[REGISTER] Get userID error: %v", err)
+			log.Printf("[REGISTER] Get lastID error: %v", err)
 			RespondError(w, "Ошибка сервера", http.StatusInternalServerError)
 			return
 		}
 
 		log.Printf("[REGISTER] Created user %d", userID)
 
-		tokenString, err := auth.GenerateToken(userID, req.Phone, req.Nickname, req.Gender, req.Performer)
+		tokenString, err := auth.GenerateToken(int(userID), req.Phone, req.Nickname, req.Gender, req.Performer)
 		if err != nil {
 			log.Printf("[REGISTER] Token error: %v", err)
 			RespondError(w, "Ошибка сервера", http.StatusInternalServerError)
@@ -75,7 +74,7 @@ func Register(database *sql.DB) http.HandlerFunc {
 		}
 
 		RespondJSON(w, http.StatusCreated, types.AuthResponse{
-			ID:        userID,
+			ID:        int(userID),
 			Phone:     req.Phone,
 			Nickname:  req.Nickname,
 			Name:      req.Name,
@@ -204,12 +203,34 @@ func UpdateProfile(database *sql.DB) http.HandlerFunc {
 			age = nil
 		}
 
-		_, err = database.Exec(
+		tx, err := database.Begin()
+		if err != nil {
+			log.Printf("[UPDATE_PROFILE] TX error: %v", err)
+			RespondError(w, "Ошибка сохранения", http.StatusInternalServerError)
+			return
+		}
+		defer tx.Rollback()
+
+		_, err = tx.Exec(
 			"UPDATE users SET nickname = ?, name = ?, age = ?, gender = ?, performer = ? WHERE id = ?",
 			req.Nickname, req.Name, age, req.Gender, req.Performer, userID,
 		)
 		if err != nil {
 			log.Printf("[UPDATE_PROFILE] Error: %v", err)
+			RespondError(w, "Ошибка сохранения", http.StatusInternalServerError)
+			return
+		}
+
+		_, err = tx.Exec(
+			"UPDATE leaderboard SET username = ? WHERE user_id = ?",
+			req.Nickname, userID,
+		)
+		if err != nil {
+			log.Printf("[UPDATE_PROFILE] Leaderboard sync error: %v", err)
+		}
+
+		if err := tx.Commit(); err != nil {
+			log.Printf("[UPDATE_PROFILE] TX commit error: %v", err)
 			RespondError(w, "Ошибка сохранения", http.StatusInternalServerError)
 			return
 		}

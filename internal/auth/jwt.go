@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -10,14 +11,14 @@ import (
 
 var jwtSecret []byte
 
-func Init() {
+func Init() error {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
-		log.Printf("[WARNING] JWT_SECRET not set, using DEFAULT secret!")
-		secret = "codequest_secret_key_2026_default"
+		return fmt.Errorf("[AUTH] JWT_SECRET environment variable is required")
 	}
 	jwtSecret = []byte(secret)
 	log.Printf("[AUTH] JWT secret initialized, len=%d", len(jwtSecret))
+	return nil
 }
 
 func GetSecret() []byte {
@@ -41,16 +42,23 @@ func GenerateToken(userID int, phone, nickname, gender, performer string) (strin
 
 func ValidateToken(tokenString string) (*jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 		return jwtSecret, nil
 	})
 
-	if err != nil || !token.Valid {
+	if err != nil {
 		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("invalid token")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, jwt.ErrSignatureInvalid
+		return nil, fmt.Errorf("invalid token claims")
 	}
 
 	return &claims, nil

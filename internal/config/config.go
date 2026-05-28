@@ -32,7 +32,8 @@ func Load() *Config {
 	}
 
 	if cfg.Env == "production" && cfg.JWTSecret == "" {
-		log.Fatalf("[CONFIG] JWT_SECRET required in production mode")
+		log.Printf("[CONFIG] JWT_SECRET required in production mode")
+		return nil
 	}
 
 	log.Printf("[CONFIG] Loaded: env=%s, port=%s, db=%s", cfg.Env, cfg.Port, cfg.DBPath)

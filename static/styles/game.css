@@ -257,7 +257,11 @@
 }
 .code-editor .command:hover { background: rgba(255, 215, 0, 0.2); }
 .code-editor .command.repeat { background: rgba(123, 63, 157, 0.3); border-left: 3px solid var(--magic); }
-.code-editor:empty::before { content: 'Drag commands here...'; color: var(--secondary-light); font-style: italic; }
+.code-editor[data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: var(--secondary-light);
+    font-style: italic;
+}
 
 @media (max-width: 480px) {
     .code-editor { max-height: 5em; min-height: 2.5em; padding: 6px; font-size: 11px; }

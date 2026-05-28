@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"codequest/internal/auth"
@@ -16,6 +17,7 @@ import (
 )
 
 func init() {
+	os.Setenv("JWT_SECRET", "test_secret_for_tests")
 	auth.Init()
 }
 
@@ -190,8 +192,8 @@ func TestLogin_InvalidPassword(t *testing.T) {
 	loginW := httptest.NewRecorder()
 	loginHandler(loginW, loginReq)
 
-	if loginW.Code != http.StatusOK {
-		t.Logf("Status: %d, Body: %s", loginW.Code, loginW.Body.String())
+	if loginW.Code != http.StatusUnauthorized {
+		t.Errorf("Expected status 401, got %d, Body: %s", loginW.Code, loginW.Body.String())
 	}
 
 	var resp map[string]string

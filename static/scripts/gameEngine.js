@@ -1,8 +1,13 @@
 const gameEngine = {
+    isRunning: false,
+
     run() {
+        if (this.isRunning) return;
         if (!gameManager.currentLevel || gameManager.editorCommands.length === 0) {
             return;
         }
+
+        this.isRunning = true;
 
         const player = { 
             ...gameManager.player,
@@ -15,7 +20,7 @@ const gameEngine = {
             items: levelItems
         };
         const moves = gameManager.editorCommands.length;
-        const requiredItems = (gameManager.currentLevel.id === 8) ? 2 : (gameManager.originalItems ? gameManager.originalItems.length : 0);
+        const requiredItems = gameManager.originalItems ? gameManager.originalItems.length : 0;
 
         const executeStep = async (index) => {
             if (index >= gameManager.editorCommands.length) {
@@ -37,7 +42,8 @@ const gameEngine = {
                     itemsOnTarget = itemsOnWarehouse;
                 }
                 
-                await this.executeFinish(itemsOnTarget, moves, requiredItems);
+                    this.isRunning = false;
+                    await this.executeFinish(itemsOnTarget, moves, requiredItems);
                 return;
             }
 
@@ -99,7 +105,6 @@ const gameEngine = {
             });
 
             if (!res.ok) {
-                console.error('Server error:', res.status, await res.text());
                 this.showResult(0, 0, false);
                 return;
             }
@@ -124,9 +129,16 @@ const gameEngine = {
                 this.showResult(0, 0, false);
             }
         } catch (err) {
-            console.error('Error completing level:', err);
             this.showResult(0, 0, false);
         }
+    },
+
+    t(key) {
+        if (localizationManager && localizationManager.t) {
+            let result = localizationManager.t(key);
+            return result !== '' ? result : key;
+        }
+        return key;
     },
 
     showResult(stars, score, hasNext) {
@@ -140,35 +152,25 @@ const gameEngine = {
         modal.classList.remove('active');
         
         setTimeout(() => {
-            if (titleEl) titleEl.textContent = '';
-            if (starsEl) starsEl.textContent = '';
-            if (scoreEl) scoreEl.textContent = '';
-            
-            const msgEl = document.getElementById('result-message');
-            if (msgEl) msgEl.textContent = '';
-
-            const l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
-
             if (stars > 0) {
-                if (titleEl) titleEl.textContent = l10n ? l10n.t('resultTitle') : 'resultTitle';
+                if (titleEl) titleEl.textContent = this.t('resultTitle');
                 if (starsEl) starsEl.textContent = '⭐'.repeat(stars);
-                if (scoreEl) {
-                    if (scoreEl.previousElementSibling) {
-                        scoreEl.textContent = '+' + score;
-                    }
+                if (scoreEl && scoreEl.previousElementSibling) {
+                    scoreEl.textContent = '+' + score;
                 }
-                if (msgEl) msgEl.textContent = l10n ? l10n.t('resultMessage') : 'Отличное решение!';
+                const msgEl = document.getElementById('result-message');
+                if (msgEl) msgEl.textContent = this.t('resultMessage');
             } else {
-                if (titleEl) titleEl.textContent = l10n ? l10n.t('resultTitleFail') : 'resultTitleFail';
-                if (starsEl) starsEl.textContent = l10n ? l10n.t('tryAgain') : 'Попробуй ещё раз!';
+                if (titleEl) titleEl.textContent = this.t('resultTitleFail');
+                if (starsEl) starsEl.textContent = this.t('tryAgain');
                 if (scoreEl) scoreEl.textContent = '';
-                if (msgEl) msgEl.textContent = l10n ? l10n.t('resultMessageFail') || '' : '';
             }
 
             const retryBtnEl = document.getElementById('retry-level-btn');
             const toMapBtnEl = document.getElementById('to-map-btn');
 
             if (retryBtnEl) {
+                retryBtnEl.textContent = this.t('retry');
                 retryBtnEl.onclick = () => {
                     modal.classList.remove('active');
                     gameManager.editorCommands = [];
@@ -184,6 +186,7 @@ const gameEngine = {
             }
 
             if (toMapBtnEl) {
+                toMapBtnEl.textContent = this.t('toLevels');
                 toMapBtnEl.onclick = () => {
                     modal.classList.remove('active');
                     levelsManager.load();
@@ -196,6 +199,7 @@ const gameEngine = {
     },
 
     reset() {
+        this.isRunning = false;
         gameManager.editorCommands = [];
         gameManager.droppedItems = [];
         gameRenderer.renderEditor();

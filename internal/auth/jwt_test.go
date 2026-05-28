@@ -1,9 +1,17 @@
 package auth
 
 import (
+	"os"
 	"testing"
 	"time"
 )
+
+func TestMain(m *testing.M) {
+	os.Setenv("JWT_SECRET", "test_secret_for_tests")
+	code := m.Run()
+	os.Unsetenv("JWT_SECRET")
+	os.Exit(code)
+}
 
 func TestInit(t *testing.T) {
 	Init()

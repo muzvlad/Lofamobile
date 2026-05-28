@@ -7,12 +7,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	_ "modernc.org/sqlite"
 )
-
-var maxConnections = 25
 
 func Connect() (*sql.DB, error) {
 	dbPath := getEnv("DB_PATH", "./codequest.db")
@@ -25,19 +22,25 @@ func Connect() (*sql.DB, error) {
 		return nil, err
 	}
 
-	database.SetMaxOpenConns(maxConnections)
-	database.SetMaxIdleConns(maxConnections / 2)
+	database.SetMaxOpenConns(1)
+	database.SetMaxIdleConns(1)
 
-	database.Exec("PRAGMA journal_mode=WAL")
-	database.Exec("PRAGMA synchronous=FULL")
-	database.Exec("PRAGMA busy_timeout=5000")
+	if _, err := database.Exec("PRAGMA journal_mode=WAL"); err != nil {
+		log.Printf("[DB] WARNING: failed to set WAL mode: %v", err)
+	}
+	if _, err := database.Exec("PRAGMA synchronous=FULL"); err != nil {
+		log.Printf("[DB] WARNING: failed to set synchronous=FULL: %v", err)
+	}
+	if _, err := database.Exec("PRAGMA busy_timeout=5000"); err != nil {
+		log.Printf("[DB] WARNING: failed to set busy_timeout: %v", err)
+	}
 
 	if err := database.Ping(); err != nil {
 		log.Printf("[DB] Ping error: %v", err)
 		return nil, err
 	}
 
-	log.Printf("[DB] Connected successfully, max_connections=%d", maxConnections)
+	log.Printf("[DB] Connected successfully")
 	return database, nil
 }
 
@@ -51,8 +54,9 @@ func getEnv(key, defaultValue string) string {
 func Migrate(database *sql.DB) error {
 	log.Printf("[DB] Running migrations...")
 
-	// Enable foreign keys
-	database.Exec("PRAGMA foreign_keys = ON")
+	if _, err := database.Exec("PRAGMA foreign_keys = ON"); err != nil {
+		log.Printf("[DB] WARNING: failed to enable foreign keys: %v", err)
+	}
 
 	schema := `
 	CREATE TABLE IF NOT EXISTS users (
@@ -226,118 +230,104 @@ if len(tpl.Items) > 0 {
 }
 
 type LevelResult struct {
-	Success bool
-	Par     int
-	Stars   int
+	Success   bool
+	Par       int
+	Stars     int
+	Improved  bool
 }
 
 func CompleteLevel(database *sql.DB, userID, levelID, moves int, code string, hasItem, requiredItems int, gender string) LevelResult {
-	level, _ := GetLevelByIDWithGender(levelID, gender)
+	level, err := GetLevelByIDWithGender(levelID, gender)
+	if err != nil {
+		log.Printf("[COMPLETE] Level %d not found: %v", levelID, err)
+		return LevelResult{Success: false, Par: 0, Stars: 0, Improved: false}
+	}
 	par := level.Par
 	optimal := level.Optimal
 	hasCollectedItem := hasItem
 
 	levelHasItems := len(level.Items) > 0
-	var existingStars int
-	var existingMoves int
-	var existingAttempts int
-	var recordExists bool
-	var err error
-	err = database.QueryRow(
-		"SELECT stars, moves, attempts FROM progress WHERE user_id = ? AND level_id = ?",
-		userID, levelID,
-	).Scan(&existingStars, &existingMoves, &existingAttempts)
-
-	if err == nil {
-		recordExists = true
-	} else {
-		existingStars = 0
-		existingMoves = 0
-		existingAttempts = 0
-		recordExists = false
-	}
-
-	log.Printf("[COMPLETE] Level %d: moves=%d, par=%d, optimal=%d, hasItem=%v, levelHasItems=%v, existingStars=%d, existingMoves=%d, recordExists=%v", levelID, moves, par, optimal, hasCollectedItem, levelHasItems, existingStars, existingMoves, recordExists)
 
 	var stars int
 	var success bool
-
-	isFirstAttempt := !recordExists || existingStars == 0
+	var improved bool
 
 	if levelHasItems && requiredItems > 0 && hasCollectedItem < requiredItems {
 		success = false
 		stars = 0
+		improved = false
 		log.Printf("[COMPLETE] Level requires %d items but player collected only %d!", requiredItems, hasCollectedItem)
 	} else {
 		success = true
-		if isFirstAttempt {
+		if moves <= optimal {
 			stars = 3
-			log.Printf("[COMPLETE] stars=3 (first attempt, moves: %d)", moves)
+		} else if moves <= par {
+			stars = 2
 		} else {
-			if moves <= optimal {
-				stars = 2
-				log.Printf("[COMPLETE] stars=2 (optimal: moves=%d <= optimal=%d)", moves, optimal)
-			} else {
-				stars = 1
-				log.Printf("[COMPLETE] stars=1 (completed, moves: %d > optimal: %d)", moves, optimal)
-			}
+			stars = 1
 		}
-	}
 
-	if !recordExists && success {
-		log.Printf("[DB] INSERT progress for level %d, stars=%d", levelID, stars)
-		_, insertErr := database.Exec(
-			"INSERT INTO progress (user_id, level_id, stars, moves, code, attempts) VALUES (?, ?, ?, ?, ?, 1)",
+		improved = false
+
+		_, err := database.Exec(
+			`INSERT INTO progress (user_id, level_id, stars, moves, code, attempts) 
+			 VALUES (?, ?, ?, ?, ?, 1)
+			 ON CONFLICT(user_id, level_id) DO UPDATE SET
+			   stars = MAX(progress.stars, ?),
+			   moves = CASE WHEN ? > progress.stars THEN ? WHEN ? = progress.stars AND ? < progress.moves THEN ? ELSE progress.moves END,
+			   code = ?,
+			   attempts = progress.attempts + 1,
+			   completed_at = CURRENT_TIMESTAMP`,
 			userID, levelID, stars, moves, code,
+			stars, stars, moves, stars, moves, moves, code,
 		)
-		if insertErr != nil {
-			log.Printf("[DB] INSERT ERROR: %v", insertErr)
+		if err != nil {
+			log.Printf("[DB] UPSERT ERROR: %v", err)
+			return LevelResult{Success: false, Par: par, Stars: 0, Improved: false}
 		}
-	} else if recordExists && success && stars > existingStars {
-		log.Printf("[DB] UPDATE progress for level %d, stars=%d (old stars=%d)", levelID, stars, existingStars)
-		_, updateErr := database.Exec(
-			"UPDATE progress SET stars = ?, moves = ?, code = ?, attempts = attempts + 1, completed_at = CURRENT_TIMESTAMP WHERE user_id = ? AND level_id = ?",
-			stars, moves, code, userID, levelID,
-		)
-		if updateErr != nil {
-			log.Printf("[DB] UPDATE ERROR: %v", updateErr)
-		}
-	} else if recordExists && success && existingStars == stars && moves < existingMoves {
-		log.Printf("[DB] UPDATE progress moves only for level %d", levelID)
-		_, updateErr := database.Exec(
-			"UPDATE progress SET moves = ?, code = ?, completed_at = CURRENT_TIMESTAMP WHERE user_id = ? AND level_id = ?",
-			moves, code, userID, levelID,
-		)
-		if updateErr != nil {
-			log.Printf("[DB] UPDATE MOVES ERROR: %v", updateErr)
-		}
-	} else if recordExists && success {
-		log.Printf("[DB] UPDATE progress attempts only for level %d", levelID)
-		_, updateErr := database.Exec(
-			"UPDATE progress SET attempts = attempts + 1, completed_at = CURRENT_TIMESTAMP WHERE user_id = ? AND level_id = ?",
+
+		var dbStars int
+		_ = database.QueryRow(
+			"SELECT stars FROM progress WHERE user_id = ? AND level_id = ?",
 			userID, levelID,
-		)
-		if updateErr != nil {
-			log.Printf("[DB] UPDATE ATTEMPTS ERROR: %v", updateErr)
-		}
+		).Scan(&dbStars)
+		_ = dbStars
+		improved = stars > dbStars
+
+		log.Printf("[COMPLETE] Level %d: stars=%d, moves=%d, par=%d, optimal=%d", levelID, stars, moves, par, optimal)
+
+		log.Printf("[COMPLETE] Level %d: moves=%d, par=%d, optimal=%d, hasItem=%v, levelHasItems=%v", levelID, moves, par, optimal, hasCollectedItem, levelHasItems)
 	}
 
 	return LevelResult{
-		Success: success,
-		Par:     par,
-		Stars:   stars,
+		Success:  success,
+		Par:      par,
+		Stars:    stars,
+		Improved: improved,
 	}
 }
 
-func UpdateScore(database *sql.DB, userID, score int) {
-	_, err := database.Exec(
+func UpdateScore(database *sql.DB, userID, score int) bool {
+	result, err := database.Exec(
 		"UPDATE leaderboard SET total_score = total_score + ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?",
 		score, userID,
 	)
 	if err != nil {
 		log.Printf("Error updating score: %v", err)
-		return
+		return false
 	}
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		_, err = database.Exec(
+			"INSERT INTO leaderboard (user_id, total_score) VALUES (?, ?)",
+			userID, score,
+		)
+		if err != nil {
+			log.Printf("Error inserting score for user %d: %v", userID, err)
+			return false
+		}
+	}
+	return true
 }
 
 func GetLeaderboard(database *sql.DB, gender string) ([]types.LeaderboardEntry, error) {
@@ -376,40 +366,14 @@ func GetLeaderboard(database *sql.DB, gender string) ([]types.LeaderboardEntry, 
 	return entries, nil
 }
 
-type Achievement struct {
-	Type     string    `json:"type"`
-	EarnedAt time.Time `json:"earnedAt"`
-}
-
-func GetAchievements(database *sql.DB, userID int) ([]Achievement, error) {
-	rows, err := database.Query(
-		"SELECT achievement_type, earned_at FROM achievements WHERE user_id = ? ORDER BY earned_at DESC",
+func GetUserScore(database *sql.DB, userID int) int {
+	var score int
+	err := database.QueryRow(
+		"SELECT COALESCE(total_score, 0) FROM leaderboard WHERE user_id = ?",
 		userID,
-	)
+	).Scan(&score)
 	if err != nil {
-		return nil, err
+		return 0
 	}
-	defer rows.Close()
-
-	achievements := make([]Achievement, 0)
-
-	for rows.Next() {
-		var a Achievement
-		if err := rows.Scan(&a.Type, &a.EarnedAt); err != nil {
-			continue
-		}
-		achievements = append(achievements, a)
-	}
-
-	return achievements, nil
-}
-
-func AddAchievement(database *sql.DB, userID int, achievementType string) {
-	_, err := database.Exec(
-		"INSERT INTO achievements (user_id, achievement_type) VALUES (?, ?)",
-		userID, achievementType,
-	)
-	if err != nil {
-		log.Printf("Error adding achievement: %v", err)
-	}
+	return score
 }

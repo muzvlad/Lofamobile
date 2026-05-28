@@ -38,35 +38,25 @@ const leaderboardManager = {
 
             const gender = entry.gender || 'boy';
             const charEmoji = themeData.characters && themeData.characters[gender] ? (themeData.characters[gender].emoji || '') : '';
-            
-            div.innerHTML = `
-                <span class="rank ${rankClass}">${entry.rank}</span>
-                <span class="name">${entry.username} ${charEmoji}</span>
-                <span class="score">${entry.score}</span>
-            `;
+
+            const rankSpan = document.createElement('span');
+            rankSpan.className = 'rank ' + rankClass;
+            rankSpan.textContent = entry.rank;
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'name';
+            nameSpan.textContent = entry.username + ' ' + charEmoji;
+
+            const scoreSpan = document.createElement('span');
+            scoreSpan.className = 'score';
+            scoreSpan.textContent = entry.score;
+
+            div.appendChild(rankSpan);
+            div.appendChild(nameSpan);
+            div.appendChild(scoreSpan);
             
             list.appendChild(div);
         });
-    },
-
-    async getUserRank(userId) {
-        try {
-            const res = await fetch(`${this.API_URL}/api/leaderboard`);
-            const data = await res.json();
-            
-            const user = data.leaderboard?.find(e => e.userId === userId);
-            return user?.rank || null;
-        } catch (err) {
-            console.error('Error getting user rank:', err);
-            return null;
-        }
-    },
-
-    formatScore(score) {
-        if (score >= 1000) {
-            return (score / 1000).toFixed(1) + 'k';
-        }
-        return score.toString();
     }
 };
 

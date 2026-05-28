@@ -1,25 +1,17 @@
 const gameRenderer = {
     renderGrid() {
         const grid = document.getElementById('game-grid');
-        if (!grid) {
-            console.error('[GRID] game-grid element not found!');
-            return;
-        }
-        
-        if (!gameManager.currentLevel) {
-            console.error('[GRID] currentLevel is null!');
-            return;
-        }
-        
-        if (!gameManager.currentLevel.grid) {
-            console.error('[GRID] currentLevel.grid is missing!', gameManager.currentLevel);
-            return;
-        }
-        
+        if (!grid) return;
+
+        if (!gameManager.currentLevel) return;
+
+        if (!gameManager.currentLevel.grid) return;
+
         const level = gameManager.currentLevel;
         const rows = level.grid.length;
         const cols = level.grid[0].length;
-        
+        const levelId = level.id || 1;
+
         grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
         grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
         grid.innerHTML = '';
@@ -28,8 +20,7 @@ const gameRenderer = {
         const performer = auth.getUser()?.performer || 'builder';
         const themeData = themeManager.getTheme(gender);
         const charImage = themeData.characters && themeData.characters[performer] ? themeData.characters[performer] : '/frontend/src/components/character/' + performer + '.webp';
-        const levelId = level.id || 1;
-        
+
         const assetMap = {
             wall_girl: 'puddle_of_juice.webp',
             wall_boy: 'trench.webp',
@@ -65,67 +56,91 @@ const gameRenderer = {
             wall_girl_pot: 'pot.webp'
         };
 
-const getAssetUrl = (type) => {
-            if (levelId === 10 && gender === 'girl') {
-                if (type === 'apple') return '/frontend/src/assets/components/apple.webp';
-                if (type === 'fridge') return '/frontend/src/assets/components/fridge.webp';
-                if (type === 'oven') return '/frontend/src/assets/components/oven.webp';
-                if (type === 'rolling_pin') return '/frontend/src/assets/components/rolling_pin.webp';
-                if (type === 'puddle_of_milk') return '/frontend/src/assets/components/puddle_of_milk.webp';
-                if (type === 'piles_of_flour') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'table') return '/frontend/src/assets/components/table.webp';
-                if (type === 'box_apples') return '/frontend/src/assets/components/box_apples.webp';
-                if (type === 'brick') return '/frontend/src/assets/components/fridge.webp';
-                if (type === 'balk') return '/frontend/src/assets/components/rolling_pin.webp';
-                if (type === 'trench') return '/frontend/src/assets/components/puddle_of_milk.webp';
+        const assetPath = (type) => '/frontend/src/assets/components/' + type;
+
+        const levelAssetOverride = {
+            10: {
+                girl: {
+                    'apple': assetPath('apple.webp'),
+                    'fridge': assetPath('fridge.webp'),
+                    'oven': assetPath('oven.webp'),
+                    'rolling_pin': assetPath('rolling_pin.webp'),
+                    'puddle_of_milk': assetPath('puddle_of_milk.webp'),
+                    'piles_of_flour': assetPath('piles_of_flour.webp'),
+                    'table': assetPath('table.webp'),
+                    'box_apples': assetPath('box_apples.webp'),
+                    'brick': assetPath('fridge.webp'),
+                    'balk': assetPath('rolling_pin.webp'),
+                    'trench': assetPath('puddle_of_milk.webp')
+                }
+            },
+            5: {
+                boy: {
+                    'trench': assetPath('trench.webp')
+                }
+            },
+            9: {
+                girl: {
+                    'flour': assetPath('flour.webp'),
+                    'bowl_of_dough': assetPath('bowl_of_dough.webp'),
+                    'rolling_pin': assetPath('rolling_pin.webp'),
+                    'piles_of_flour': assetPath('piles_of_flour.webp'),
+                    'puddle_of_juice': assetPath('puddle_of_juice.webp'),
+                    'puddle_of_milk': assetPath('puddle_of_milk.webp'),
+                    'table': assetPath('table.webp'),
+                    'balk': assetPath('rolling_pin.webp'),
+                    'brick': assetPath('piles_of_flour.webp')
+                }
+            },
+            8: {
+                girl: {
+                    'broom': assetPath('broom.webp'),
+                    'trash_bag': assetPath('trash_bag.webp'),
+                    'table': assetPath('table.webp'),
+                    'broken_lid': assetPath('broken_lid.webp'),
+                    'piles_of_flour': assetPath('piles_of_flour.webp'),
+                    'puddle_of_milk': assetPath('puddle_of_milk.webp'),
+                    'fridge': assetPath('fridge.webp'),
+                    'balk': assetPath('piles_of_flour.webp'),
+                    'brick': assetPath('table.webp')
+                }
+            },
+            7: {
+                girl: {
+                    'apple': assetPath('apple.webp'),
+                    'puddle_of_milk': assetPath('puddle_of_milk.webp'),
+                    'puddle_of_juice': assetPath('puddle_of_juice.webp'),
+                    'fridge': assetPath('fridge.webp'),
+                    'crane': assetPath('crane.webp'),
+                    'table': assetPath('table.webp'),
+                    'piles_of_flour': assetPath('piles_of_flour.webp'),
+                    'brick': assetPath('piles_of_flour.webp'),
+                    'bricks': assetPath('piles_of_flour.webp'),
+                    'wall_bricks': assetPath('piles_of_flour.webp'),
+                    'wall_girl': assetPath('piles_of_flour.webp')
+                }
+            },
+            6: {
+                girl: {
+                    'flour': assetPath('flour.webp'),
+                    'puddle_of_juice': assetPath('puddle_of_juice.webp'),
+                    'fridge': assetPath('fridge.webp'),
+                    'piles_of_flour': assetPath('piles_of_flour.webp'),
+                    'brick': assetPath('piles_of_flour.webp'),
+                    'bricks': assetPath('piles_of_flour.webp'),
+                    'wall_bricks': assetPath('piles_of_flour.webp'),
+                    'wall_girl': assetPath('piles_of_flour.webp')
+                }
             }
-            if (levelId === 5 && gender === 'boy' && type === 'trench') {
-                return '/frontend/src/assets/components/trench.webp';
-            }
-            if (levelId === 9 && gender === 'girl') {
-                if (type === 'flour') return '/frontend/src/assets/components/flour.webp';
-                if (type === 'bowl_of_dough') return '/frontend/src/assets/components/bowl_of_dough.webp';
-                if (type === 'rolling_pin') return '/frontend/src/assets/components/rolling_pin.webp';
-                if (type === 'piles_of_flour') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'puddle_of_juice') return '/frontend/src/assets/components/puddle_of_juice.webp';
-                if (type === 'puddle_of_milk') return '/frontend/src/assets/components/puddle_of_milk.webp';
-                if (type === 'table') return '/frontend/src/assets/components/table.webp';
-                if (type === 'balk') return '/frontend/src/assets/components/rolling_pin.webp';
-                if (type === 'brick') return '/frontend/src/assets/components/piles_of_flour.webp';
-            }
-            if (levelId === 8 && gender === 'girl') {
-                if (type === 'broom') return '/frontend/src/assets/components/broom.webp';
-                if (type === 'trash_bag') return '/frontend/src/assets/components/trash_bag.webp';
-                if (type === 'table') return '/frontend/src/assets/components/table.webp';
-                if (type === 'broken_lid') return '/frontend/src/assets/components/broken_lid.webp';
-                if (type === 'piles_of_flour') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'puddle_of_milk') return '/frontend/src/assets/components/puddle_of_milk.webp';
-                if (type === 'fridge') return '/frontend/src/assets/components/fridge.webp';
-                if (type === 'balk') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'brick') return '/frontend/src/assets/components/table.webp';
-            }
-            if (levelId === 7 && gender === 'girl') {
-                if (type === 'apple') return '/frontend/src/assets/components/apple.webp';
-                if (type === 'puddle_of_milk') return '/frontend/src/assets/components/puddle_of_milk.webp';
-                if (type === 'puddle_of_juice') return '/frontend/src/assets/components/puddle_of_juice.webp';
-                if (type === 'fridge') return '/frontend/src/assets/components/fridge.webp';
-                if (type === 'crane') return '/frontend/src/assets/components/crane.webp';
-                if (type === 'table') return '/frontend/src/assets/components/table.webp';
-                if (type === 'piles_of_flour') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'brick') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'bricks') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'wall_bricks') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'wall_girl') return '/frontend/src/assets/components/piles_of_flour.webp';
-            }
-            if (levelId === 6 && gender === 'girl') {
-                if (type === 'flour') return '/frontend/src/assets/components/flour.webp';
-                if (type === 'puddle_of_juice') return '/frontend/src/assets/components/puddle_of_juice.webp';
-                if (type === 'fridge') return '/frontend/src/assets/components/fridge.webp';
-                if (type === 'piles_of_flour') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'brick') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'bricks') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'wall_bricks') return '/frontend/src/assets/components/piles_of_flour.webp';
-                if (type === 'wall_girl') return '/frontend/src/assets/components/piles_of_flour.webp';
+        };
+
+        const getAssetUrl = (type) => {
+            const lvlOverrides = levelAssetOverride[levelId];
+            if (lvlOverrides) {
+                const genderOverrides = lvlOverrides[gender];
+                if (genderOverrides && genderOverrides[type]) {
+                    return genderOverrides[type];
+                }
             }
             let fileName = assetMap[type];
             if (!fileName) {
@@ -135,7 +150,201 @@ const getAssetUrl = (type) => {
                 fileName = assetMap[type + (gender === 'girl' ? '_boy' : '_girl')];
             }
             if (!fileName) return null;
-            return '/frontend/src/assets/components/' + fileName;
+            return assetPath(fileName);
+        };
+
+        const wallOverrides = {
+            2: {
+                girl: {
+                    default: 'wall_girl',
+                    specific: { '0,1': 'wall_girl_cat', '2,1': 'wall_girl_oven', '2,2': 'wall_girl_pot' }
+                },
+                boy: { default: 'wall_crushed', specific: {} }
+            },
+            3: {
+                girl: {
+                    default: 'wall_girl',
+                    specific: { '3,0': 'wall_girl_oven', '2,1': 'wall_girl_fridge' }
+                },
+                boy: { default: 'wall_boy', specific: {} }
+            },
+            4: {
+                girl: { default: 'wall_girl_milk', specific: {} },
+                boy: { default: 'wall_boy', specific: {} }
+            },
+            5: {
+                girl: {
+                    default: 'wall_girl_milk',
+                    specific: { '1,0': 'wall_girl', '1,1': 'wall_girl', '2,3': 'wall_girl' }
+                },
+                boy: {
+                    default: 'wall_boy',
+                    specific: { '2,3': 'trench' }
+                }
+            },
+            6: {
+                girl: {
+                    default: 'brick',
+                    specific: { '0,3': 'piles_of_flour', '1,2': 'piles_of_flour', '2,1': 'piles_of_flour' }
+                },
+                boy: { default: 'brick', specific: {} }
+            }
+        };
+
+        const getWallAsset = (x, y) => {
+            const cfg = wallOverrides[levelId];
+            if (!cfg) return 'wall_' + gender;
+            const gcfg = cfg[gender];
+            if (!gcfg) return 'wall_' + gender;
+            const key = x + ',' + y;
+            return gcfg.specific[key] || gcfg.default;
+        };
+
+        const case6Overrides = {
+            10: {
+                girl: {
+                    '3,1': 'rolling_pin.webp',
+                    '1,3': 'puddle_of_milk.webp',
+                    '3,3': 'piles_of_flour.webp'
+                }
+            }
+        };
+
+        const case7Overrides = {
+            10: {
+                girl: {
+                    '4,0': 'box_apples.webp',
+                    '3,0': 'fridge.webp'
+                }
+            },
+            7: {
+                girl: {
+                    '2,2': 'fridge.webp'
+                }
+            }
+        };
+
+        const case8Overrides = {
+            10: {
+                girl: { '4,4': 'table.webp' }
+            },
+            8: {
+                girl: { '3,1': 'fridge.webp' }
+            }
+        };
+
+        const case9Overrides = {
+            8: {
+                girl: {
+                    '0,2': 'piles_of_flour.webp',
+                    '1,2': 'piles_of_flour.webp',
+                    '2,2': 'puddle_of_milk.webp'
+                }
+            },
+            9: {
+                girl: {
+                    '0,1': 'rolling_pin.webp',
+                    '1,1': 'piles_of_flour.webp',
+                    '3,1': 'puddle_of_juice.webp',
+                    '3,2': 'puddle_of_milk.webp'
+                }
+            }
+        };
+
+        const case45Overrides = {
+            6: {
+                girl: {
+                    '1,0': 'puddle_of_juice',
+                    '3,0': 'fridge'
+                }
+            },
+            7: {
+                girl: {
+                    '1,0': 'puddle_of_milk',
+                    '0,2': 'puddle_of_milk',
+                    '3,1': 'puddle_of_juice',
+                    '3,2': 'crane'
+                }
+            },
+            8: {
+                girl: {
+                    '3,2': 'table'
+                }
+            },
+            3: {
+                girl: {
+                    '3,0': 'wall_girl_oven',
+                    '2,1': 'wall_girl_fridge'
+                }
+            },
+            4: {
+                girl: { __default: 'wall_girl_milk' }
+            },
+            5: {
+                girl: {
+                    '1,0': 'wall_girl',
+                    '1,1': 'wall_girl',
+                    '2,3': 'wall_girl'
+                },
+                boy: {
+                    '2,3': 'trench'
+                }
+            },
+            10: {
+                girl: {
+                    '3,0': 'fridge'
+                }
+            }
+        };
+
+        const getCase45Asset = (x, y) => {
+            const cfg = case45Overrides[levelId];
+            if (!cfg) return 'wall_bricks';
+            const gcfg = cfg[gender];
+            if (!gcfg) return 'wall_bricks';
+            const key = x + ',' + y;
+            const overridden = gcfg[key];
+            if (overridden) return overridden;
+            return gcfg['__default'] || 'wall_bricks';
+        };
+
+        const finishAssetOverrides = {
+            9: {
+                girl: 'table.webp',
+                default: 'warehouse.webp'
+            },
+            10: {
+                girl: 'oven.webp',
+                default: 'headquarters.webp'
+            },
+            3: {
+                girl: 'table.webp'
+            },
+            4: {
+                girl: 'bowl_of_dough.webp'
+            },
+            5: {
+                girl: 'fridge.webp'
+            },
+            6: {
+                girl: 'oven.webp'
+            },
+            7: {
+                girl: 'table.webp'
+            },
+            8: {
+                girl: 'broken_lid.webp'
+            }
+        };
+
+        const getDefaultFinish = (gender) => {
+            if (gender === 'girl') {
+                if (levelId === 3) return 'table.webp';
+                if (levelId === 4) return 'bowl_of_dough.webp';
+                return 'fridge.webp';
+            }
+            if (levelId === 10) return 'crane.webp';
+            return 'headquarters.webp';
         };
 
         const itemMap = {};
@@ -154,72 +363,22 @@ const getAssetUrl = (type) => {
                 cell.dataset.y = y;
                 cell.draggable = false;
                 cell.ondragstart = () => false;
-                
+
                 const cellType = level.grid[y][x];
                 const isPlayer = (level.player.x === x && level.player.y === y);
                 const itemKey = x + ',' + y;
                 const itemType = itemMap[itemKey];
-                
+
                 switch (cellType) {
-                    case 1: 
+                    case 1:
                         cell.classList.add('wall');
-                        let wallAssetType;
-                        if (gender === 'girl' && levelId === 6) {
-                            if ((x === 0 && y === 3) || (x === 1 && y === 2) || (x === 2 && y === 1)) {
-                                wallAssetType = 'piles_of_flour';
-                            } else {
-                                wallAssetType = 'brick';
-                            }
-                        } else if (levelId === 6) {
-                            wallAssetType = 'brick';
-                        } else if (gender === 'boy' && levelId === 2) {
-                            wallAssetType = 'wall_crushed';
-                        } else if (gender === 'girl') {
-                            if (levelId === 2) {
-                                if (x === 0 && y === 1) {
-                                    wallAssetType = 'wall_girl_cat';
-                                } else if (x === 2 && y === 1) {
-                                    wallAssetType = 'wall_girl_oven';
-                                } else if (x === 2 && y === 2) {
-                                    wallAssetType = 'wall_girl_pot';
-                                } else {
-                                    wallAssetType = 'wall_girl';
-                                }
-                            } else if (levelId === 3) {
-                                if (x === 3 && y === 0) {
-                                    wallAssetType = 'wall_girl_oven';
-                                } else if (x === 2 && y === 1) {
-                                    wallAssetType = 'wall_girl_fridge';
-                                } else {
-                                    wallAssetType = 'wall_girl';
-                                }
-                            } else if (gender === 'girl' && levelId === 4) {
-                                wallAssetType = 'wall_girl_milk';
-                                
-                            } else if (gender === 'girl' && levelId === 5) {
-                                if (x === 1 && (y === 0 || y === 1)) {
-                                    wallAssetType = 'wall_girl';
-                                } else if (x === 2 && y === 3) {
-                                    wallAssetType = 'wall_girl';
-                                } else {
-                                    wallAssetType = 'wall_girl_milk';
-                                }
-                            } else {
-                                wallAssetType = 'wall_' + gender;
-                            }
-                        } else if (gender === 'boy' && levelId === 5 && x === 2 && y === 3) {
-                            wallAssetType = 'trench';
-                        } else {
-                            wallAssetType = 'wall_' + gender;
-                        }
+                        const wallAssetType = getWallAsset(x, y);
                         const wallImg = document.createElement('img');
-                        wallImg.src = getAssetUrl(wallAssetType);
-                        if (!wallImg.src) wallImg.src = getAssetUrl('wall');
-                        wallImg.alt = '🧱';
-                        wallImg.style.width = '80%';
-                        wallImg.style.height = '80%';
-                        wallImg.style.objectFit = 'contain';
-                        wallImg.style.imageRendering = '-webkit-optimize-contrast';
+                        let wallUrl = getAssetUrl(wallAssetType);
+                        if (!wallUrl) wallUrl = getAssetUrl('wall');
+                        wallImg.src = wallUrl;
+                        wallImg.alt = 'wall';
+                        wallImg.style.cssText = 'width:80%;height:80%;object-fit:contain;image-rendering:-webkit-optimize-contrast;';
                         if (levelId === 5 && y === 2 && gender === 'boy') {
                             wallImg.style.transform = 'translate(-50%, -50%) rotate(90deg)';
                         } else {
@@ -229,26 +388,16 @@ const getAssetUrl = (type) => {
                         break;
                     case 6:
                         cell.classList.add('wall');
+                        const lvl6cfg = case6Overrides[levelId];
                         let case6Asset = 'brick.webp';
-                        if (gender === 'girl' && levelId === 10) {
-                            if (x === 3 && y === 1) {
-                                case6Asset = 'rolling_pin.webp';
-                            } else if (x === 1 && y === 3) {
-                                case6Asset = 'puddle_of_milk.webp';
-                            } else if (x === 3 && y === 3) {
-                                case6Asset = 'piles_of_flour.webp';
-                            } else {
-                                case6Asset = 'fridge.webp';
-                            }
+                        if (lvl6cfg && lvl6cfg[gender]) {
+                            const key6 = x + ',' + y;
+                            case6Asset = lvl6cfg[gender][key6] || 'fridge.webp';
                         }
                         const brickImg6 = document.createElement('img');
-                        brickImg6.src = '/frontend/src/assets/components/' + case6Asset;
-                        brickImg6.alt = '🧱';
-                        brickImg6.style.width = '80%';
-                        brickImg6.style.height = '80%';
-                        brickImg6.style.objectFit = 'contain';
-                        brickImg6.style.imageRendering = '-webkit-optimize-contrast';
-                        brickImg6.style.transform = 'translate(-50%, -50%)';
+                        brickImg6.src = assetPath(case6Asset);
+                        brickImg6.alt = 'brick';
+                        brickImg6.style.cssText = 'width:80%;height:80%;object-fit:contain;image-rendering:-webkit-optimize-contrast;transform:translate(-50%, -50%);';
                         cell.appendChild(brickImg6);
                         break;
                     case 7:
@@ -257,226 +406,106 @@ const getAssetUrl = (type) => {
                         } else {
                             cell.classList.add('wall');
                         }
+                        const lvl7cfg = case7Overrides[levelId];
                         let case7Asset = 'warehouse.webp';
-                        if (gender === 'girl' && levelId === 10) {
-                            if (x === 4 && y === 0) {
-                                case7Asset = 'box_apples.webp';
-                            } else if (x === 3 && y === 0) {
-                                case7Asset = 'fridge.webp';
-                            } else {
-                                case7Asset = 'table.webp';
-                            }
-                        } else if (gender === 'girl' && levelId === 7 && x === 2 && y === 2) {
-                            case7Asset = 'fridge.webp';
+                        if (lvl7cfg && lvl7cfg[gender]) {
+                            const key7 = x + ',' + y;
+                            case7Asset = lvl7cfg[gender][key7] || case7Asset;
                         }
                         const warehouseImg = document.createElement('img');
-                        warehouseImg.src = '/frontend/src/assets/components/' + case7Asset;
+                        warehouseImg.src = assetPath(case7Asset);
                         warehouseImg.alt = 'warehouse';
-                        warehouseImg.style.width = '80%';
-                        warehouseImg.style.height = '80%';
-                        warehouseImg.style.objectFit = 'contain';
-                        warehouseImg.style.imageRendering = '-webkit-optimize-contrast';
-                        warehouseImg.style.transform = 'translate(-50%, -50%)';
+                        warehouseImg.style.cssText = 'width:80%;height:80%;object-fit:contain;image-rendering:-webkit-optimize-contrast;transform:translate(-50%, -50%);';
                         cell.appendChild(warehouseImg);
                         break;
-case 8:
+                    case 8:
                         cell.classList.add('wall');
+                        const lvl8cfg = case8Overrides[levelId];
                         let case8Asset = 'dump_truck.webp';
-                        if (gender === 'girl' && levelId === 10 && x === 4 && y === 4) {
-                            case8Asset = 'table.webp';
-                        } else if (gender === 'girl' && levelId === 8 && x === 3 && y === 1) {
-                            case8Asset = 'fridge.webp';
+                        if (lvl8cfg && lvl8cfg[gender]) {
+                            const key8 = x + ',' + y;
+                            case8Asset = lvl8cfg[gender][key8] || case8Asset;
                         }
                         const truckImg = document.createElement('img');
-                        truckImg.src = '/frontend/src/assets/components/' + case8Asset;
+                        truckImg.src = assetPath(case8Asset);
                         truckImg.alt = 'truck';
-                        truckImg.style.width = '80%';
-                        truckImg.style.height = '80%';
-                        truckImg.style.objectFit = 'contain';
-                        truckImg.style.imageRendering = '-webkit-optimize-contrast';
-                        truckImg.style.transform = 'translate(-50%, -50%)';
+                        truckImg.style.cssText = 'width:80%;height:80%;object-fit:contain;image-rendering:-webkit-optimize-contrast;transform:translate(-50%, -50%);';
                         cell.appendChild(truckImg);
                         break;
                     case 9:
                         cell.classList.add('wall');
+                        const lvl9cfg = case9Overrides[levelId];
                         let case9Asset = 'balk.webp';
-                        if (gender === 'girl' && levelId === 8) {
-                            if ((x === 0 && y === 2) || (x === 1 && y === 2)) {
-                                case9Asset = 'piles_of_flour.webp';
-                            } else if (x === 2 && y === 2) {
-                                case9Asset = 'puddle_of_milk.webp';
-                            } else {
-                                case9Asset = 'piles_of_flour.webp';
-                            }
-                        } else if (gender === 'girl' && levelId === 9) {
-                            if (x === 0 && y === 1) {
-                                case9Asset = 'rolling_pin.webp';
-                            } else if (x === 1 && y === 1) {
-                                case9Asset = 'piles_of_flour.webp';
-                            } else if (x === 3 && y === 1) {
-                                case9Asset = 'puddle_of_juice.webp';
-                            } else if (x === 3 && y === 2) {
-                                case9Asset = 'puddle_of_milk.webp';
-                            } else {
-                                case9Asset = 'piles_of_flour.webp';
-                            }
+                        if (lvl9cfg && lvl9cfg[gender]) {
+                            const key9 = x + ',' + y;
+                            case9Asset = lvl9cfg[gender][key9] || case9Asset;
                         }
                         const BalkImg = document.createElement('img');
-                        BalkImg.src = '/frontend/src/assets/components/' + case9Asset;
+                        BalkImg.src = assetPath(case9Asset);
                         BalkImg.alt = 'balk';
-                        BalkImg.style.width = '80%';
-                        BalkImg.style.height = '80%';
-                        BalkImg.style.objectFit = 'contain';
-                        BalkImg.style.imageRendering = '-webkit-optimize-contrast';
-                        BalkImg.style.transform = 'translate(-50%, -50%)';
+                        BalkImg.style.cssText = 'width:80%;height:80%;object-fit:contain;image-rendering:-webkit-optimize-contrast;transform:translate(-50%, -50%);';
                         cell.appendChild(BalkImg);
                         break;
                     case 2:
                         cell.classList.add('start');
                         break;
-                    case 3: 
+                    case 3:
                         cell.classList.add('finish');
                         const finishImg = document.createElement('img');
-                        
+
                         let finishAsset = null;
-                        
-                        const originalItems = gameManager.originalItems || [];
-                        
-                        if (gender === 'girl' && levelId === 9) {
-                            finishAsset = 'table.webp';
-                        } else if (levelId === 9) {
-                            finishAsset = 'warehouse.webp';
-                        } else if (gender === 'girl' && levelId === 10) {
-                            finishAsset = 'oven.webp';
-                        } else if (levelId === 10) {
-                            finishAsset = 'headquarters.webp';
-                        } else if (gender === 'girl' && levelId === 3) {
-                            finishAsset = 'table.webp';
-                        } else if (gender === 'girl' && levelId === 4) {
-                            finishAsset = 'bowl_of_dough.webp';
-                        } else if (gender === 'girl' && levelId === 5) {
-                            finishAsset = 'fridge.webp';
-                        } else if (gender === 'girl' && levelId === 6) {
-                            finishAsset = 'oven.webp';
-                        } else if (gender === 'girl' && levelId === 7) {
-                            finishAsset = 'table.webp';
-                        } else if (gender === 'girl' && levelId === 8) {
-                            finishAsset = 'broken_lid.webp';
-                        } else if (gender === 'girl' && levelId === 9) {
-                            finishAsset = 'table.webp';
-                        } else if (levelId === 4 || levelId === 5 || levelId === 6 || levelId === 7 || levelId === 8) {
-                            finishAsset = 'foundation.webp';
-                        } else if (originalItems.length > 0) {
-                            const hasFlag = originalItems.some(item => item.type === 'flag');
-                            const firstItem = originalItems[0];
-                            const firstItemType = firstItem.type;
-                            
-                            if (hasFlag) {
-                                finishAsset = 'flag.webp';
-                            } else if (gender === 'girl') {
-                                if (firstItemType === 'broom') finishAsset = 'oven.webp';
-                                else if (firstItemType === 'apples') finishAsset = 'oven.webp';
-                                else if (firstItemType === 'flour') finishAsset = 'bowl_of_dough.webp';
-                                else finishAsset = 'fridge.webp';
+                        const lvlFinish = finishAssetOverrides[levelId];
+                        if (lvlFinish) {
+                            finishAsset = lvlFinish[gender] || lvlFinish.default || null;
+                        }
+
+                        if (!finishAsset) {
+                            const originalItems = gameManager.originalItems || [];
+                            if (levelId >= 4 && levelId <= 8 && gender === 'boy') {
+                                finishAsset = 'foundation.webp';
+                            } else if (originalItems.length > 0) {
+                                const hasFlag = originalItems.some(item => item.type === 'flag');
+                                const firstItem = originalItems[0];
+
+                                if (hasFlag) {
+                                    finishAsset = 'flag.webp';
+                                } else if (gender === 'girl') {
+                                    const t = firstItem.type;
+                                    if (t === 'broom') finishAsset = 'oven.webp';
+                                    else if (t === 'apples') finishAsset = 'oven.webp';
+                                    else if (t === 'flour') finishAsset = 'bowl_of_dough.webp';
+                                    else finishAsset = 'fridge.webp';
+                                } else {
+                                    const t = firstItem.type;
+                                    if (t === 'flag_box') finishAsset = 'dump_truck.webp';
+                                    else if (t === 'nails') finishAsset = 'foundation.webp';
+                                    else finishAsset = 'headquarters.webp';
+                                }
                             } else {
-                                if (firstItemType === 'flag_box') finishAsset = 'dump_truck.webp';
-                                else if (firstItemType === 'nails') finishAsset = 'foundation.webp';
-                                else finishAsset = 'headquarters.webp';
-                            }
-                        } else {
-                            if (gender === 'girl') {
-                                if (levelId === 3) finishAsset = 'table.webp';
-                                else if (levelId === 4) finishAsset = 'bowl_of_dough.webp';
-                                else finishAsset = 'fridge.webp';
-                            } else {
-                                if (levelId === 10) finishAsset = 'crane.webp';
-                                else finishAsset = 'headquarters.webp';
+                                finishAsset = getDefaultFinish(gender);
                             }
                         }
-                        
-                        finishImg.src = '/frontend/src/assets/components/' + finishAsset;
-                        finishImg.alt = '🎯';
-                        finishImg.style.width = '80%';
-                        finishImg.style.height = '80%';
-                        finishImg.style.objectFit = 'contain';
-                        finishImg.style.imageRendering = '-webkit-optimize-contrast';
+
+                        finishImg.src = assetPath(finishAsset);
+                        finishImg.alt = 'finish';
+                        finishImg.style.cssText = 'width:80%;height:80%;object-fit:contain;image-rendering:-webkit-optimize-contrast;';
                         cell.appendChild(finishImg);
                         break;
                     case 4:
                     case 5:
                         cell.classList.add('wall');
-                        let wallAssetType4;
-                        if (gender === 'girl' && levelId === 6) {
-                            if (x === 1 && y === 0) {
-                                wallAssetType4 = 'puddle_of_juice';
-                            } else if (x === 3 && y === 0) {
-                                wallAssetType4 = 'fridge';
-                            } else {
-                                wallAssetType4 = 'wall_bricks';
-                            }
-                        } else if (gender === 'girl' && levelId === 7) {
-                            if (x === 1 && y === 0) {
-                                wallAssetType4 = 'puddle_of_milk';
-                            } else if (x === 0 && y === 2) {
-                                wallAssetType4 = 'puddle_of_milk';
-                            } else if (x === 3 && y === 1) {
-                                wallAssetType4 = 'puddle_of_juice';
-                            } else if (x === 3 && y === 2) {
-                                wallAssetType4 = 'crane';
-                            } else {
-                                wallAssetType4 = 'wall_bricks';
-                            }
-                        } else if (gender === 'girl' && levelId === 8) {
-                            if (x === 3 && y === 2) {
-                                wallAssetType4 = 'table';
-                            } else {
-                                wallAssetType4 = 'wall_bricks';
-                            }
-                        } else if (gender === 'girl' && levelId === 3) {
-                            if (x === 3 && y === 0) {
-                                wallAssetType4 = 'wall_girl_oven';
-                            } else if (x === 2 && y === 1) {
-                                wallAssetType4 = 'wall_girl_fridge';
-                            } else {
-                                wallAssetType4 = 'wall_bricks';
-                            }
-                        } else if (gender === 'girl' && levelId === 4) {
-                            wallAssetType4 = 'wall_girl_milk';
-                            
-} else if (gender === 'girl' && levelId === 5) {
-                            if (x === 1 && (y === 0 || y === 1)) {
-                                wallAssetType4 = 'wall_girl';
-                            } else if (x === 2 && y === 3) {
-                                wallAssetType4 = 'wall_girl';
-                            } else {
-                                wallAssetType4 = 'wall_girl_milk';
-                            }
-                        } else if (gender === 'boy' && levelId === 5 && x === 2 && y === 3) {
-                            wallAssetType4 = 'trench';
-                        } else if (gender === 'girl' && levelId === 10) {
-                            if (x === 3 && y === 0) {
-                                wallAssetType4 = 'fridge';
-                            } else {
-                                wallAssetType4 = 'wall_bricks';
-                            }
-                        } else {
-                            wallAssetType4 = 'wall_bricks';
-                        }
+                        const wallAssetType45 = getCase45Asset(x, y);
                         const bricksImg = document.createElement('img');
-                        bricksImg.src = getAssetUrl(wallAssetType4);
-                        if (!bricksImg.src) bricksImg.src = '/frontend/src/assets/components/bricks.webp';
-                        bricksImg.alt = '🧱';
-                        bricksImg.style.width = '80%';
-                        bricksImg.style.height = '80%';
-                        bricksImg.style.objectFit = 'contain';
-                        bricksImg.style.imageRendering = '-webkit-optimize-contrast';
-                        bricksImg.style.transform = 'translate(-50%, -50%)';
+                        let bricksUrl = getAssetUrl(wallAssetType45);
+                        if (!bricksUrl) bricksUrl = assetPath('bricks.webp');
+                        bricksImg.src = bricksUrl;
+                        bricksImg.alt = 'brick';
+                        bricksImg.style.cssText = 'width:80%;height:80%;object-fit:contain;image-rendering:-webkit-optimize-contrast;transform:translate(-50%, -50%);';
                         cell.appendChild(bricksImg);
                         break;
                 }
-                
+
                 if ((cellType === 0 || cellType === 7) && itemType) {
-                    
                     cell.classList.add('item');
                     if (itemType === 'warehouse') {
                         cell.classList.add('warehouse');
@@ -488,8 +517,7 @@ case 8:
                     const originalItemKeys = (gameManager.originalItems || []).map(i => i.x + ',' + i.y);
                     const isOriginalItem = originalItemKeys.includes(x + ',' + y);
                     const itemsAtCell = level.items.filter(i => i.x === x && i.y === y);
-                    
-                    
+
                     if (isOriginalItem) {
                         const itemImg = document.createElement('img');
                         itemImg.src = getAssetUrl(itemType) || getAssetUrl(gender === 'girl' ? 'flour' : 'nails');
@@ -497,17 +525,15 @@ case 8:
                         itemImg.style.cssText = 'width:80%;height:80%;object-fit:contain;image-rendering:-webkit-optimize-contrast;transform:translate(-50%, -50%);';
                         cell.appendChild(itemImg);
                     } else if (itemsAtCell.length > 0) {
-                        
                         itemsAtCell.forEach((item, idx) => {
                             const row = Math.floor(idx / 3);
                             const col = idx % 3;
                             const bottom = (2 - row) * 30;
                             const right = col * 30;
-                            
-                            
+
                             const container = document.createElement('div');
                             container.style.cssText = 'position:absolute !important;top:0 !important;left:0 !important;width:100% !important;height:100% !important;pointer-events:none;';
-                            
+
                             const itemImg = document.createElement('img');
                             itemImg.src = getAssetUrl(item.type) || getAssetUrl(gender === 'girl' ? 'flour' : 'nails');
                             itemImg.alt = item.type;
@@ -518,14 +544,14 @@ case 8:
                         });
                     }
                 }
-                
+
                 if (isPlayer) {
                     cell.className = 'grid-cell player-cell';
                     cell.dataset.x = x;
                     cell.dataset.y = y;
                     cell.style.cssText = 'background:transparent !important;background-color:transparent !important;border:none !important;box-shadow:none !important;';
-                    
-                    var playerImg = document.createElement('img');
+
+                    let playerImg = document.createElement('img');
                     playerImg.src = charImage;
                     playerImg.alt = 'player';
                     playerImg.className = 'player-sprite';
@@ -544,7 +570,7 @@ case 8:
                         });
                     }
                 }
-                
+
                 grid.appendChild(cell);
             }
         }
@@ -559,14 +585,14 @@ case 8:
         const level = gameManager.currentLevel;
         const availableCommands = level.availableCommands || ['up', 'down', 'left', 'right', 'jump', 'turn'];
         const commands = [
-            { id: 'up', icon: '⬆️' },
-            { id: 'down', icon: '⬇️' },
-            { id: 'left', icon: '⬅️' },
-            { id: 'right', icon: '➡️' },
-            { id: 'jump', icon: '🦘' },
-            { id: 'turn', icon: '↩️' },
-            { id: 'collect', icon: '✋' },
-            { id: 'drop', icon: '📦' }
+            { id: 'up', icon: '\u2B06\uFE0F' },
+            { id: 'down', icon: '\u2B07\uFE0F' },
+            { id: 'left', icon: '\u2B05\uFE0F' },
+            { id: 'right', icon: '\u27A1\uFE0F' },
+            { id: 'jump', icon: '\uD83E\uDD98' },
+            { id: 'turn', icon: '\u21A9\uFE0F' },
+            { id: 'collect', icon: '\u270B' },
+            { id: 'drop', icon: '\uD83D\uDCE6' }
         ];
 
         const l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
@@ -606,18 +632,20 @@ case 8:
 
         editor.innerHTML = '';
 
-        const cmdIcons = {
-            up: '⬆️',
-            down: '⬇️',
-            left: '⬅️',
-            right: '➡️',
-            jump: '🦘',
-            turn: '↩️',
-            collect: '✋',
-            drop: '📦'
-        };
-
         const l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        const placeholder = l10n && l10n.t ? l10n.t('dragHere') : '';
+        editor.setAttribute('data-placeholder', placeholder);
+
+        const cmdIcons = {
+            up: '\u2B06\uFE0F',
+            down: '\u2B07\uFE0F',
+            left: '\u2B05\uFE0F',
+            right: '\u27A1\uFE0F',
+            jump: '\uD83E\uDD98',
+            turn: '\u21A9\uFE0F',
+            collect: '\u270B',
+            drop: '\uD83D\uDCE6'
+        };
 
         gameManager.editorCommands.forEach((cmd, index) => {
             const cmdDiv = document.createElement('div');
@@ -625,7 +653,7 @@ case 8:
             cmdDiv.dataset.index = index;
             cmdDiv.draggable = true;
 
-            const icon = cmdIcons[cmd] || '❓';
+            const icon = cmdIcons[cmd] || '\u2753';
             const localizedLabel = l10n && l10n.t ? l10n.t(cmd) : cmd;
             cmdDiv.innerHTML = '<span class="cmd-icon">' + icon + '</span><span class="cmd-label">' + localizedLabel + '</span>';
 
@@ -633,20 +661,20 @@ case 8:
                 gameManager.editorCommands.splice(index, 1);
                 this.renderEditor();
             });
-            
+
             cmdDiv.addEventListener('dragstart', (e) => {
                 e.dataTransfer.setData('text/plain', 'REORDER:' + index);
                 cmdDiv.classList.add('dragging');
             });
-            
+
             cmdDiv.addEventListener('dragend', () => {
                 cmdDiv.classList.remove('dragging');
             });
-            
+
             cmdDiv.addEventListener('dragover', (e) => {
                 e.preventDefault();
             });
-            
+
             cmdDiv.addEventListener('drop', (e) => {
                 e.preventDefault();
                 const data = e.dataTransfer.getData('text/plain');
@@ -671,7 +699,7 @@ case 8:
     removeItemFromGrid(x, y) {
         const grid = document.getElementById('game-grid');
         if (!grid) return;
-        
+
         const cells = grid.querySelectorAll('.grid-cell');
         cells.forEach(cell => {
             if (parseInt(cell.dataset.x) === x && parseInt(cell.dataset.y) === y) {
@@ -679,72 +707,6 @@ case 8:
                 cell.innerHTML = '';
             }
         });
-    },
-
-    getAssetUrl(type, levelId = null, genderOverride = null) {
-        const gender = genderOverride || auth.getUser()?.gender || 'boy';
-        
-        const assetMap = {
-            wall_girl: 'puddle_of_juice.webp',
-            wall_boy: 'trench.webp',
-            wall_bricks: 'bricks.webp',
-            wall_crushed: 'crushed_stone.webp',
-            brick: 'brick.webp',
-            bricks: 'bricks.webp',
-            start_girl: null,
-            start_boy: null,
-            finish_default_girl: 'oven.webp',
-            finish_default_boy: 'crane.webp',
-            finish_flag: 'flag.webp',
-            flour: 'flour.webp',
-            apples: 'apple.webp',
-            broom: 'broom.webp',
-            pot: 'pot.webp',
-            rolling_pin: 'rolling_pin.webp',
-            box_apples: 'box_apples.webp',
-            nails: 'nails.webp',
-            flag_box: 'dump_truck.webp',
-            box_tools: 'box_tools.webp',
-            wood_boards: 'wood_boards.webp',
-            warehouse: 'warehouse.webp',
-            dump_truck: 'dump_truck.webp',
-            balk: 'balk.webp',
-            player_girl: 'cat.webp',
-            player_boy: 'crane.webp',
-            wall_girl_cat: 'cat.webp',
-            wall_girl_oven: 'oven.webp',
-            wall_girl_pot: 'pot.webp',
-            puddle_of_juice: 'puddle_of_juice.webp',
-            fridge: 'fridge.webp',
-            piles_of_flour: 'piles_of_flour.webp',
-            puddle_of_milk: 'puddle_of_milk.webp',
-            crane: 'crane.webp',
-            table: 'table.webp',
-            apple: 'apple.webp',
-            trash_bag: 'trash_bag.webp',
-            broken_lid: 'broken_lid.webp'
-        };
-
-        if (levelId === 6 && gender === 'girl') {
-            if (type === 'flour') return '/frontend/src/assets/components/flour.webp';
-            if (type === 'puddle_of_juice') return '/frontend/src/assets/components/puddle_of_juice.webp';
-            if (type === 'fridge') return '/frontend/src/assets/components/fridge.webp';
-            if (type === 'piles_of_flour') return '/frontend/src/assets/components/piles_of_flour.webp';
-            if (type === 'brick') return '/frontend/src/assets/components/piles_of_flour.webp';
-            if (type === 'bricks') return '/frontend/src/assets/components/piles_of_flour.webp';
-            if (type === 'wall_bricks') return '/frontend/src/assets/components/piles_of_flour.webp';
-            if (type === 'wall_girl') return '/frontend/src/assets/components/piles_of_flour.webp';
-        }
-
-        let fileName = assetMap[type];
-        if (!fileName) {
-            fileName = assetMap[type + '_' + gender];
-        }
-        if (!fileName) {
-            fileName = assetMap[type + '_' + (gender === 'girl' ? 'boy' : 'girl')];
-        }
-        if (!fileName) return null;
-        return '/frontend/src/assets/components/' + fileName;
     }
 };
 

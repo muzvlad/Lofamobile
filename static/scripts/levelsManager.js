@@ -1,59 +1,17 @@
-var levelsManager = {
+let levelsManager = {
     API_URL: window.location.origin,
     levels: [],
     completedLevels: [],
     currentChapter: 1,
 
     init: function() {
-        var self = this;
-        
-        var chapterBoxes = document.querySelectorAll('.chapter-box, .chapter-btn');
-        for (var i = 0; i < chapterBoxes.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function() {
-                    var chapter = parseInt(btn.dataset.chapter);
-                    var boxes = document.querySelectorAll('.chapter-box, .chapter-btn');
-                    for (var j = 0; j < boxes.length; j++) {
-                        boxes[j].classList.remove('active');
-                    }
-                    btn.classList.add('active');
-                    self.setChapter(chapter);
-                });
-            })(chapterBoxes[i]);
-        }
-        
-        var characterBtns = document.querySelectorAll('.char-btn');
-        for (var i = 0; i < characterBtns.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function() {
-                    var btns = document.querySelectorAll('.char-btn');
-                    for (var j = 0; j < btns.length; j++) {
-                        btns[j].classList.remove('selected');
-                    }
-                    btn.classList.add('selected');
-                });
-            })(characterBtns[i]);
-        }
-
-        var tabBtns = document.querySelectorAll('.tab-btn');
-        for (var i = 0; i < tabBtns.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function() {
-                    var btns = document.querySelectorAll('.tab-btn');
-                    for (var j = 0; j < btns.length; j++) {
-                        btns[j].classList.remove('active');
-                    }
-                    btn.classList.add('active');
-                });
-            })(tabBtns[i]);
-        }
     },
 
 load: function() {
-        var self = this;
+        let self = this;
         
-        var gender = 'boy';
-        var token = null;
+        let gender = 'boy';
+        let token = null;
         
         if (typeof auth !== 'undefined' && auth.getToken) {
             token = auth.getToken();
@@ -63,7 +21,7 @@ load: function() {
             gender = localizationManager.currentGender;
         }
         
-        var fetchOptions = { 
+        let fetchOptions = { 
             method: 'GET',
             headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
         };
@@ -79,14 +37,13 @@ load: function() {
             return Promise.all(responses.map(function(r) { return r.json(); }));
         })
         .then(function(datas) {
-            var levelsData = datas[0];
-            var progressData = datas[1] || {progress: []};
+            let levelsData = datas[0];
+            let progressData = datas[1] || {progress: []};
             
             self.levels = levelsData.levels || [];
             self.completedLevels = progressData.progress || [];
             
             self.render();
-            self.updateChapterBoxes();
             if (typeof leaderboardManager !== 'undefined') {
                 leaderboardManager.load();
             }
@@ -101,18 +58,18 @@ load: function() {
     isLevelUnlocked: function(levelId) {
         if (levelId === 1) return true;
 
-        var chapter = Math.ceil(levelId / 10);
-        var firstLevelInChapter = (chapter - 1) * 10 + 1;
+        let chapter = Math.ceil(levelId / 10);
+        let firstLevelInChapter = (chapter - 1) * 10 + 1;
 
         if (levelId === firstLevelInChapter) {
             if (chapter === 1) return true;
             return this.isLevelUnlocked(firstLevelInChapter - 1);
         }
 
-        var prevLevelId = levelId - 1;
+        let prevLevelId = levelId - 1;
 
-        for (var i = 0; i < this.completedLevels.length; i++) {
-            var completedLevelId = parseInt(this.completedLevels[i].level_id);
+        for (let i = 0; i < this.completedLevels.length; i++) {
+            let completedLevelId = parseInt(this.completedLevels[i].level_id);
             if (completedLevelId === prevLevelId && this.completedLevels[i].stars > 0) {
                 return true;
             }
@@ -122,28 +79,28 @@ load: function() {
 
 getLevelLocalized: function(chapter, levelId) {
         if (typeof localizationManager !== 'undefined' && localizationManager.getLevelText) {
-            var name = localizationManager.getLevelText(chapter, levelId, 'name');
-            var desc = localizationManager.getLevelText(chapter, levelId, 'description');
-            var goal = localizationManager.getLevelText(chapter, levelId, 'goal');
+            let name = localizationManager.getLevelText(chapter, levelId, 'name');
+            let desc = localizationManager.getLevelText(chapter, levelId, 'description');
+            let goal = localizationManager.getLevelText(chapter, levelId, 'goal');
             return { name: name, description: desc, goal: goal };
         }
         return null;
     },
 
 getLevelImage: function(chapter, levelId, gender) {
-        var emojis = {
+        let emojis = {
             girl: ['🍳', '🥧', '🧁', '🍎', '🥛', '🥛', '🍪', '🚰', '🍎', '🎂'],
             boy: ['🏠', '🔨', '📦', '🚧', '🏴', '🧱', '🏗️', '🔧', '🚩', '🏆']
         };
-        var themeEmojis = emojis[gender] || emojis.boy;
-        var emoji = themeEmojis[(levelId - 1) % themeEmojis.length];
+        let themeEmojis = emojis[gender] || emojis.boy;
+        let emoji = themeEmojis[(levelId - 1) % themeEmojis.length];
         return emoji;
     },
 
 showLevelInfo: function(level) {
-        var scenarioLevel = null;
-        var localized = null;
-        var gender = 'boy';
+        let scenarioLevel = null;
+        let localized = null;
+        let gender = 'boy';
         
         if (typeof localizationManager !== 'undefined' && localizationManager.currentGender) {
             gender = localizationManager.currentGender;
@@ -159,9 +116,9 @@ showLevelInfo: function(level) {
             }
         }
         
-        var levelName = level.name;
-        var levelDesc = level.description || '';
-        var levelGoal = '';
+        let levelName = level.name;
+        let levelDesc = level.description || '';
+        let levelGoal = '';
         
         if (scenarioLevel) {
             if (scenarioLevel.name) levelName = scenarioLevel.name;
@@ -173,17 +130,17 @@ showLevelInfo: function(level) {
             if (localized.goal) levelGoal = localized.goal;
         }
         
-        var stars = 0;
-        for (var si = 0; si < this.completedLevels.length; si++) {
+        let stars = 0;
+        for (let si = 0; si < this.completedLevels.length; si++) {
             if (this.completedLevels[si].level_id === level.id) {
                 stars = this.completedLevels[si].stars;
                 break;
             }
         }
         
-        var scenarioLevelName = null;
-        var l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
-        var titleContainer = document.getElementById('level-info-title');
+        let scenarioLevelName = null;
+        let l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        let titleContainer = document.getElementById('level-info-title');
         
         if (l10n && l10n.getScenarioLevelName) {
             scenarioLevelName = l10n.getScenarioLevelName(this.currentChapter, level.id);
@@ -195,47 +152,47 @@ showLevelInfo: function(level) {
         
         document.getElementById('level-info-description').textContent = levelDesc;
         
-        var imageDiv = document.getElementById('level-info-image');
+        let imageDiv = document.getElementById('level-info-image');
         if (imageDiv) {
-            var emoji = this.getLevelImage(this.currentChapter, level.id, gender);
+            let emoji = this.getLevelImage(this.currentChapter, level.id, gender);
             imageDiv.innerHTML = '';
-            var levelNum = level.id < 10 ? '00' + level.id : (level.id < 100 ? '0' + level.id : '' + level.id);
-            var img = document.createElement('img');
-            var targetSrc = '/frontend/src/levels/chapter_' + this.currentChapter + '/chapter_' + this.currentChapter + '_' + gender + '_' + levelNum + '.webp';
+            let levelNum = level.id < 10 ? '00' + level.id : (level.id < 100 ? '0' + level.id : '' + level.id);
+            let img = document.createElement('img');
+            let targetSrc = '/frontend/src/levels/chapter_' + this.currentChapter + '/chapter_' + this.currentChapter + '_' + gender + '_' + levelNum + '.webp';
             img.src = targetSrc;
             img.style.cssText = 'width:100%;height:100%;object-fit:contain;';
             img.onerror = function() {
                 img.style.display = 'none';
-                var fallback = emoji;
+                let fallback = emoji;
                 imageDiv.textContent = fallback;
             };
             imageDiv.appendChild(img);
         }
         
-        var commandsDiv = document.getElementById('level-info-commands');
+        let commandsDiv = document.getElementById('level-info-commands');
         if (commandsDiv) {
             if (levelGoal) {
-                var taskTitle = localizationManager ? localizationManager.t('task') : 'Задание';
+                let taskTitle = localizationManager ? localizationManager.t('task') : 'Задание';
                 commandsDiv.innerHTML = '<div class="level-task-box"><h3>📋 ' + taskTitle + '</h3><p>' + levelGoal + '</p></div>';
             } else {
                 commandsDiv.innerHTML = '';
             }
         }
         
-        var diffDiv = document.getElementById('level-info-difficulty');
+        let diffDiv = document.getElementById('level-info-difficulty');
         if (diffDiv) {
-            var stars = 0;
-            for (var i = 0; i < this.completedLevels.length; i++) {
+            let stars = 0;
+            for (let i = 0; i < this.completedLevels.length; i++) {
                 if (this.completedLevels[i].level_id === level.id) {
                     stars = this.completedLevels[i].stars;
                     break;
                 }
             }
-            var starsStr = '';
-            for (var s = 0; s < 3; s++) {
+            let starsStr = '';
+            for (let s = 0; s < 3; s++) {
                 starsStr += s < stars ? '⭐' : '☆';
             }
-            var progressLabel = localizationManager ? localizationManager.t('progress') : 'Progress';
+            let progressLabel = localizationManager ? localizationManager.t('progress') : 'Progress';
             diffDiv.innerHTML = '<p>' + progressLabel + ': ' + starsStr + '</p>';
         }
         
@@ -244,15 +201,15 @@ showLevelInfo: function(level) {
     },
 
 render: function() {
-        var grid = document.getElementById('levels-grid');
+        let grid = document.getElementById('levels-grid');
         if (!grid) return;
         
         grid.innerHTML = '';
         
-        var self = this;
-        var chapterNum = this.currentChapter;
+        let self = this;
+        let chapterNum = this.currentChapter;
         
-        var chapterData = null;
+        let chapterData = null;
         
         if (typeof localizationManager !== 'undefined' && localizationManager.getScenarioChapterInfo) {
             chapterData = localizationManager.getScenarioChapterInfo(chapterNum);
@@ -265,65 +222,65 @@ render: function() {
             };
         }
         
-        var chapterLabel = localizationManager ? localizationManager.t('chapter') : 'Глава';
-        var chaptersDescKey = 'chapters_description_' + chapterNum;
-        var chapterTitle = chapterLabel + ' ' + chapterNum;
-        var chapterDesc = chapterData && chapterData.description ? chapterData.description : (localizationManager ? localizationManager.t(chaptersDescKey) : '');
+        let chapterLabel = localizationManager ? localizationManager.t('chapter') : 'Глава';
+        let chaptersDescKey = 'chapters_description_' + chapterNum;
+        let chapterTitle = chapterLabel + ' ' + chapterNum;
+        let chapterDesc = chapterData && chapterData.description ? chapterData.description : (localizationManager ? localizationManager.t(chaptersDescKey) : '');
         
-        var chapterDivider = document.createElement('div');
+        let chapterDivider = document.createElement('div');
         chapterDivider.className = 'chapter-divider active';
         chapterDivider.innerHTML = '<div class="chapter-title">' + chapterTitle + '</div><div class="chapter-description">' + chapterDesc + '</div>';
         grid.appendChild(chapterDivider);
 
-        var startIdx = (chapterNum - 1) * 10;
-        var endIdx = chapterNum * 10;
-        var chapterLevels = self.levels.slice(startIdx, endIdx);
+        let startIdx = (chapterNum - 1) * 10;
+        let endIdx = chapterNum * 10;
+        let chapterLevels = self.levels.slice(startIdx, endIdx);
         
-        for (var i = 0; i < chapterLevels.length; i++) {
-            var level = chapterLevels[i];
-            var stars = 0;
-            var levelId = parseInt(level.id);
+        for (let i = 0; i < chapterLevels.length; i++) {
+            let level = chapterLevels[i];
+            let stars = 0;
+            let levelId = parseInt(level.id);
             
-            for (var j = 0; j < self.completedLevels.length; j++) {
-                var completedLevelId = parseInt(self.completedLevels[j].level_id);
+            for (let j = 0; j < self.completedLevels.length; j++) {
+                let completedLevelId = parseInt(self.completedLevels[j].level_id);
                 if (completedLevelId === levelId) {
                     stars = self.completedLevels[j].stars || 0;
                     break;
                 }
             }
             
-            var isUnlocked = self.isLevelUnlocked(level.id);
+            let isUnlocked = self.isLevelUnlocked(level.id);
             
-            var gender = 'boy';
+            let gender = 'boy';
             if (typeof localizationManager !== 'undefined' && localizationManager.currentGender) {
                 gender = localizationManager.currentGender;
             }
             
-            var levelNum = level.id < 10 ? '00' + level.id : (level.id < 100 ? '0' + level.id : '' + level.id);
-            var levelImgPath = '/frontend/src/levels/chapter_' + chapterNum + '/chapter_' + chapterNum + '_' + gender + '_' + levelNum + '.webp';
-            var fallbackBg = '';
+            let levelNum = level.id < 10 ? '00' + level.id : (level.id < 100 ? '0' + level.id : '' + level.id);
+            let levelImgPath = '/frontend/src/levels/chapter_' + chapterNum + '/chapter_' + chapterNum + '_' + gender + '_' + levelNum + '.webp';
+            let fallbackBg = '';
             
             if (typeof localizationManager !== 'undefined' && localizationManager.translations.scenario && chapterNum === 1) {
-                var emojis = {
+                let emojis = {
                     girl: ['🍳', '🥧', '🧁', '🍎', '🥛'],
                     boy: ['🏠', '🔨', '🚧', '📦', '🏴']
                 };
-                var themeEmojis = emojis[gender] || emojis.boy;
+                let themeEmojis = emojis[gender] || emojis.boy;
                 fallbackBg = themeEmojis[(level.id - 1) % themeEmojis.length];
             } else {
-                var levelIndex = (level.id - 1) % 10;
+                let levelIndex = (level.id - 1) % 10;
                 fallbackBg = ['🗺️', '🎮', '🏆', '⭐', '🎯', '🎲', '🎪', '🎭', '🎨', '🎬'][levelIndex];
             }
             
-            var starsStr = '';
-            for (var s = 0; s < 3; s++) {
+            let starsStr = '';
+            for (let s = 0; s < 3; s++) {
                 starsStr += s < stars ? '⭐' : '☆';
             }
             
-            var levelName = level.name || '';
+            let levelName = level.name || '';
             if (typeof localizationManager !== 'undefined') {
                 if (localizationManager.translations && localizationManager.translations.scenario) {
-                    var l10nName = localizationManager.getScenarioLevelName(chapterNum, level.id);
+                    let l10nName = localizationManager.getScenarioLevelName(chapterNum, level.id);
                     if (l10nName) {
                         levelName = l10nName;
                     }
@@ -335,14 +292,14 @@ render: function() {
                 levelName = level.name || 'Level ' + level.id;
             }
             
-            var levelBtn = document.createElement('button');
+            let levelBtn = document.createElement('button');
             levelBtn.className = 'level-btn';
             if (stars > 0) levelBtn.className += ' completed';
             if (!isUnlocked) levelBtn.className += ' locked';
             
-            var nameBgClass = gender === 'girl' ? 'bg-pink' : 'bg-blue';
+            let nameBgClass = gender === 'girl' ? 'bg-pink' : 'bg-blue';
             
-            var starsDisplay = stars > 0 ? '<span class="level-stars" style="display:block;">' + '⭐'.repeat(stars) + '</span>' : '';
+            let starsDisplay = stars > 0 ? '<span class="level-stars" style="display:block;">' + '⭐'.repeat(stars) + '</span>' : '';
             
             levelBtn.innerHTML = '<div class="level-btn-bg" data-bg="' + levelImgPath + '"></div>' +
                 '<div class="level-btn-content">' +
@@ -366,12 +323,12 @@ render: function() {
             grid.appendChild(levelBtn);
             
             (function(btn) {
-                var bgDiv = btn.querySelector('.level-btn-bg');
+                let bgDiv = btn.querySelector('.level-btn-bg');
                 if (bgDiv) {
-                    var imgPath = bgDiv.dataset.bg;
+                    let imgPath = bgDiv.dataset.bg;
                     if (imgPath) {
-                        var img = new Image();
-                        var div = bgDiv;
+                        let img = new Image();
+                        let div = bgDiv;
                         img.onload = function() {
                             div.style.backgroundImage = 'url(' + imgPath + ')';
                             div.textContent = '';
@@ -385,11 +342,11 @@ render: function() {
         }
         
         if (chapterNum === 1) {
-            var chapterLabel = localizationManager ? localizationManager.t('chapter') : 'Глава';
-            var ch2Info = localizationManager && localizationManager.getScenarioChapterInfo ? localizationManager.getScenarioChapterInfo(2) : null;
-            var ch2Title = chapterLabel + ' 2';
-            var ch2Desc = ch2Info && ch2Info.description ? ch2Info.description : (localizationManager ? localizationManager.t('chapters_description_2') : '');
-            var nextChapter = document.createElement('div');
+            let chapterLabel = localizationManager ? localizationManager.t('chapter') : 'Глава';
+            let ch2Info = localizationManager && localizationManager.getScenarioChapterInfo ? localizationManager.getScenarioChapterInfo(2) : null;
+            let ch2Title = chapterLabel + ' 2';
+            let ch2Desc = ch2Info && ch2Info.description ? ch2Info.description : (localizationManager ? localizationManager.t('chapters_description_2') : '');
+            let nextChapter = document.createElement('div');
             nextChapter.className = 'chapter-divider next-chapter';
             nextChapter.innerHTML = '<div class="chapter-title">' + ch2Title + '</div><div class="chapter-description">' + ch2Desc + '</div>';
             nextChapter.onclick = function() {
@@ -397,11 +354,11 @@ render: function() {
             };
             grid.appendChild(nextChapter);
         } else if (chapterNum === 2) {
-            var chapterLabel = localizationManager ? localizationManager.t('chapter') : 'Глава';
-            var ch1Info = localizationManager && localizationManager.getScenarioChapterInfo ? localizationManager.getScenarioChapterInfo(1) : null;
-            var ch1Title = chapterLabel + ' 1';
-            var ch1Desc = ch1Info && ch1Info.description ? ch1Info.description : (localizationManager ? localizationManager.t('chapters_description_1') : '');
-            var prevChapter = document.createElement('div');
+            let chapterLabel = localizationManager ? localizationManager.t('chapter') : 'Глава';
+            let ch1Info = localizationManager && localizationManager.getScenarioChapterInfo ? localizationManager.getScenarioChapterInfo(1) : null;
+            let ch1Title = chapterLabel + ' 1';
+            let ch1Desc = ch1Info && ch1Info.description ? ch1Info.description : (localizationManager ? localizationManager.t('chapters_description_1') : '');
+            let prevChapter = document.createElement('div');
             prevChapter.className = 'chapter-divider next-chapter';
             prevChapter.innerHTML = '<div class="chapter-title">' + ch1Title + '</div><div class="chapter-description">' + ch1Desc + '</div>';
             prevChapter.onclick = function() {
@@ -411,45 +368,8 @@ render: function() {
         }
     },
 
-setChapter: function(chapter) {
+    setChapter: function(chapter) {
         this.currentChapter = chapter;
         this.render();
-    },
-    
-updateChapterBoxes: function() {
-        var self = this;
-        
-        var chapter1Btn = document.getElementById('chapter1-btn');
-        var chapter2Btn = document.getElementById('chapter2-btn');
-        var chapter1Name = document.getElementById('chapter1-name');
-        var chapter2Name = document.getElementById('chapter2-name');
-        var chapter1Desc = document.getElementById('chapter1-desc');
-        var chapter2Desc = document.getElementById('chapter2-desc');
-        
-        if (typeof localizationManager !== 'undefined' && localizationManager.getScenarioChapterInfo) {
-            var chapterKey = localizationManager.t('chapter');
-            
-            var ch1Info = localizationManager.getScenarioChapterInfo(1);
-            if (ch1Info) {
-                var title1 = chapterKey + ' 1';
-                if (chapter1Name) chapter1Name.textContent = title1;
-                if (chapter1Desc) chapter1Desc.textContent = ch1Info.description || '';
-            }
-            
-            var ch2Info = localizationManager.getScenarioChapterInfo(2);
-            if (ch2Info) {
-                var title2 = chapterKey + ' 2';
-                if (chapter2Name) chapter2Name.textContent = title2;
-                if (chapter2Desc) chapter2Desc.textContent = ch2Info.description || '';
-            }
-        }
-        
-        var boxes = document.querySelectorAll('.chapter-box');
-        for (var i = 0; i < boxes.length; i++) {
-            boxes[i].classList.remove('active');
-            if (parseInt(boxes[i].dataset.chapter) === this.currentChapter) {
-                boxes[i].classList.add('active');
-            }
-        }
     }
 };

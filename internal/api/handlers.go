@@ -1,6 +1,7 @@
 package api
 
 import (
+	"codequest/internal/achievements"
 	"codequest/internal/auth"
 	"codequest/internal/db"
 	"codequest/internal/types"
@@ -15,27 +16,11 @@ import (
 
 func GetUserFromToken(r *http.Request) (*jwt.MapClaims, error) {
 	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		log.Printf("[AUTH] No Authorization header")
-		return nil, http.ErrNoCookie
-	}
-	
-	log.Printf("[AUTH] Parsing token...")
-
-	token, err := jwt.Parse(authHeader[7:], func(token *jwt.Token) (interface{}, error) {
-		return auth.GetSecret(), nil
-	})
-
-	if err != nil || !token.Valid {
+	if authHeader == "" || len(authHeader) < 7 || authHeader[:7] != "Bearer " {
 		return nil, http.ErrNoCookie
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, http.ErrNoCookie
-	}
-
-	return &claims, nil
+	return auth.ValidateToken(authHeader[7:])
 }
 
 func GetGenderFromToken(r *http.Request) string {
@@ -68,7 +53,7 @@ func GetLevel(database *sql.DB) http.HandlerFunc {
 		}
 
 		if id == 0 {
-			http.Error(w, "Level not found", http.StatusNotFound)
+			http.Error(w, "Уровень не найден", http.StatusNotFound)
 			return
 		}
 
@@ -79,7 +64,7 @@ func GetLevel(database *sql.DB) http.HandlerFunc {
 
 		level, err := db.GetLevelByIDWithGender(id, gender)
 		if err != nil {
-			http.Error(w, "Level not found", http.StatusNotFound)
+			http.Error(w, "Уровень не найден", http.StatusNotFound)
 			return
 		}
 
@@ -116,16 +101,15 @@ func CompleteLevel(database *sql.DB, hub *ws.Hub) http.HandlerFunc {
 
 		stars := result.Stars
 		score := 0
-		if result.Success {
+		updated := false
+		if result.Success && result.Improved {
 			score = stars * 100
-			db.UpdateScore(database, userID, score)
+			updated = db.UpdateScore(database, userID, score)
 		}
 
-		var totalScore int
-		if err := database.QueryRow(
-			"SELECT COALESCE(total_score, 0) FROM leaderboard WHERE user_id = ?", userID,
-		).Scan(&totalScore); err != nil {
-			totalScore = 0
+		totalScore := 0
+		if updated {
+			totalScore = db.GetUserScore(database, userID)
 		}
 		hub.BroadcastScoreUpdate(userID, totalScore)
 
@@ -166,7 +150,20 @@ func SaveAchievement(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		db.AddAchievement(database, userID, req.AchievementType)
+		if req.AchievementType == "level_completed" {
+			levelID := req.LevelID
+			progress := achievements.GetUserProgress(database, userID)
+
+			if progress.LevelsCompleted == 1 {
+				achievements.AddEarned(database, userID, "first_level")
+			}
+
+			chapter := (levelID-1)/10 + 1
+			if chapter == 1 && progress.Chapters[0] >= 10 {
+				achievements.AddEarned(database, userID, "chapter_1_complete")
+			}
+		}
+
 		RespondJSON(w, http.StatusOK, types.SuccessResponse{Success: "true"})
 	}
 }
@@ -179,21 +176,8 @@ func GetAchievements(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		dbAchievements, err := db.GetAchievements(database, userID)
-		if err != nil {
-			RespondError(w, "Не удалось получить достижения", http.StatusInternalServerError)
-			return
-		}
-
-		achievements := make([]types.Achievement, len(dbAchievements))
-		for i, a := range dbAchievements {
-			achievements[i] = types.Achievement{
-				Type:     a.Type,
-				EarnedAt: a.EarnedAt.Format("2006-01-02T15:04:05Z"),
-			}
-		}
-
-		RespondJSON(w, http.StatusOK, types.AchievementsResponse{Achievements: achievements})
+		statusList := achievements.GetAllWithProgress(database, userID)
+		RespondJSON(w, http.StatusOK, map[string]interface{}{"achievements": statusList})
 	}
 }
 
@@ -227,6 +211,19 @@ func GetProgress(database *sql.DB) http.HandlerFunc {
 	}
 }
 
+func GetUserScore(database *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID, err := GetUserIDFromToken(r)
+		if err != nil {
+			RespondError(w, "Требуется авторизация", http.StatusUnauthorized)
+			return
+		}
+
+		score := db.GetUserScore(database, userID)
+		RespondJSON(w, http.StatusOK, map[string]int{"score": score})
+	}
+}
+
 func HandleWebSocket(hub *ws.Hub) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("[WS] Connection attempt from %s, URL: %s", r.RemoteAddr, r.URL.String())
@@ -234,21 +231,21 @@ func HandleWebSocket(hub *ws.Hub) http.HandlerFunc {
 		token := r.URL.Query().Get("token")
 		if token == "" {
 			log.Printf("[WS] No token provided")
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			http.Error(w, "Неавторизован", http.StatusUnauthorized)
 			return
 		}
 
 		claims, err := auth.ValidateToken(token)
 		if err != nil {
 			log.Printf("[WS] Invalid token: %v", err)
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			http.Error(w, "Неверный токен", http.StatusUnauthorized)
 			return
 		}
 
 		userIDFloat, ok := (*claims)["user_id"].(float64)
 		if !ok {
 			log.Printf("[WS] Invalid user ID")
-			http.Error(w, "Invalid user ID", http.StatusUnauthorized)
+			http.Error(w, "Неверный ID пользователя", http.StatusUnauthorized)
 			return
 		}
 		userID := int(userIDFloat)
@@ -256,7 +253,7 @@ func HandleWebSocket(hub *ws.Hub) http.HandlerFunc {
 		nickname, ok := (*claims)["nickname"].(string)
 		if !ok {
 			log.Printf("[WS] Invalid nickname")
-			http.Error(w, "Invalid nickname", http.StatusUnauthorized)
+			http.Error(w, "Неверный псевдоним", http.StatusUnauthorized)
 			return
 		}
 

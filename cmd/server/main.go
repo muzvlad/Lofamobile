@@ -20,6 +20,9 @@ import (
 
 func main() {
 	cfg := config.Load()
+	if cfg == nil {
+		os.Exit(1)
+	}
 
 	staticDir := cfg.StaticDir
 	frontendDir := cfg.FrontendDir
@@ -27,7 +30,10 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 	log.Printf("[START] Static: %s, Frontend: %s", staticDir, frontendDir)
 
-	auth.Init()
+	if err := auth.Init(); err != nil {
+		log.Printf("[ERROR] Auth: %v", err)
+		os.Exit(1)
+	}
 
 	database, err := db.Connect()
 	if err != nil {
@@ -95,6 +101,7 @@ func main() {
 		}
 	})
 	mux.HandleFunc("/api/progress", api.GetProgress(database))
+	mux.HandleFunc("/api/score", api.GetUserScore(database))
 	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("[MAIN] /ws request received, method: %s", r.Method)
 		api.HandleWebSocket(hub)(w, r)
@@ -112,6 +119,7 @@ func main() {
 	mux.Handle("/styles/", http.StripPrefix("/styles/", staticHandler))
 	mux.Handle("/flags/", http.StripPrefix("/flags/", http.FileServer(http.Dir(staticDir+"/flags"))))
 	mux.Handle("/favicon.ico", staticHandler)
+	mux.Handle("/assets/", staticHandler)
 	mux.Handle("/frontend/", http.StripPrefix("/frontend/", frontendHandler))
 	mux.Handle("/", staticHandler)
 
@@ -156,10 +164,7 @@ func getLocalIP() string {
 	addrs, _ := net.InterfaceAddrs()
 	for _, addr := range addrs {
 		if ipNet, ok := addr.(*net.IPNet); ok && ipNet.IP.To4() != nil && !ipNet.IP.IsLoopback() {
-			ip := ipNet.IP.String()
-			if len(ip) > 3 && ip[:3] != "127" {
-				return ip
-			}
+			return ipNet.IP.String()
 		}
 	}
 	return "localhost"

@@ -1,54 +1,22 @@
 const achievementsManager = {
     API_URL: window.location.origin,
-    achievements: {
-        'first_login': {
-            id: 'first_login',
-            name: 'Первое посещение',
-            description: 'Впервые вошел в игру',
-            icon: '👋'
-        },
-        'first_level': {
-            id: 'first_level',
-            name: 'Первые шаги',
-            description: 'Прошел первый уровень',
-            icon: '🌟'
-        },
-        'level_5': {
-            id: 'level_5',
-            name: 'Начинающий герой',
-            description: 'Прошел 5 уровней',
-            icon: '⭐⭐⭐'
-        },
-        'chapter_1_complete': {
-            id: 'chapter_1_complete',
-            name: 'Первая глава пройдена',
-            description: 'Прошел все 10 уровней первой главы',
-            icon: '📖'
-        },
-        'all_levels': {
-            id: 'all_levels',
-            name: 'Мастер программирования',
-            description: 'Прошел все 20 уровней',
-            icon: '👑'
-        },
-        'perfect_level': {
-            id: 'perfect_level',
-            name: 'Идеальное решение',
-            description: 'Прошел уровень с 3 звездами',
-            icon: '💯'
-        }
-    },
+    achievements: [],
 
-    async load() {
-        try {
-            const res = await fetch(`${this.API_URL}/api/achievements`, {
-                headers: { 'Authorization': `Bearer ${auth.getToken()}` }
+    init() {
+        const closeBtn = document.getElementById('close-achievement-detail');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                document.getElementById('achievement-detail-modal').classList.remove('active');
             });
-            const data = await res.json();
-            return data.achievements || [];
-        } catch (err) {
-            console.error('Error loading achievements:', err);
-            return [];
+        }
+
+        const modal = document.getElementById('achievement-detail-modal');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
         }
     },
 
@@ -60,44 +28,115 @@ const achievementsManager = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${auth.getToken()}`
                 },
-                body: JSON.stringify({
-                    level_id: levelId,
-                    achievement_type: 'level_completed'
-                })
+                body: JSON.stringify({ achievement_type: 'level_completed', level_id: levelId })
             });
         } catch (err) {
             console.error('Error saving achievement:', err);
         }
     },
 
-    getAll() {
-        return Object.values(this.achievements);
+    getLocalizedAchievement(achievement) {
+        const l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        const name = l10n && l10n.t ? l10n.t(achievement.nameKey) : '';
+        const desc = l10n && l10n.t ? l10n.t(achievement.descKey) : '';
+        return { name, desc };
     },
 
-    get(id) {
-        return this.achievements[id];
+    async load() {
+        try {
+            const res = await fetch(`${this.API_URL}/api/achievements`, {
+                headers: { 'Authorization': `Bearer ${auth.getToken()}` }
+            });
+            
+            if (res.status === 401) {
+                auth.forceLogout();
+                return;
+            }
+            
+            const data = await res.json();
+            this.achievements = data.achievements || [];
+            this.render();
+        } catch (err) {
+            console.error('Error loading achievements:', err);
+            this.achievements = [];
+            this.render();
+        }
     },
 
-    render(earned) {
+    showDetail(achievementId) {
+        const achievement = this.achievements.find(a => a.id === achievementId);
+        if (!achievement) return;
+
+        const localized = this.getLocalizedAchievement(achievement);
+        const l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        const t = (key) => l10n && l10n.t ? l10n.t(key) : key;
+        
+        const modal = document.getElementById('achievement-detail-modal');
+        
+        document.getElementById('achievement-detail-icon').textContent = achievement.icon;
+        document.getElementById('achievement-detail-name').textContent = localized.name;
+        document.getElementById('achievement-detail-desc').textContent = localized.desc;
+
+        const progressFill = document.getElementById('achievement-progress-fill');
+        const progressText = document.getElementById('achievement-progress-text');
+        const statusEl = document.getElementById('achievement-detail-status');
+        const closeBtn = document.getElementById('close-achievement-detail');
+
+        if (achievement.progressMax > 1) {
+            const percent = (achievement.progress / achievement.progressMax) * 100;
+            progressFill.style.width = percent + '%';
+            progressText.textContent = achievement.progress + '/' + achievement.progressMax;
+            progressFill.parentElement.style.display = 'flex';
+            progressText.style.display = 'block';
+        } else {
+            progressFill.style.width = achievement.earned ? '100%' : '0%';
+            progressText.textContent = achievement.earned ? '✓' : '—';
+        }
+
+        if (achievement.earned) {
+            statusEl.textContent = t('achievementEarned');
+            statusEl.className = 'achievement-detail-status earned';
+        } else {
+            statusEl.textContent = t('achievementLocked');
+            statusEl.className = 'achievement-detail-status locked';
+        }
+
+        if (closeBtn) {
+            closeBtn.textContent = t('achievementClose');
+        }
+
+        modal.classList.add('active');
+    },
+
+    render() {
         const container = document.getElementById('achievements-list');
         if (!container) return;
-        
+
         container.innerHTML = '';
-        
-        const all = this.getAll();
-        all.forEach(achievement => {
-            const isEarned = earned && earned.some(e => e.type === achievement.id);
-            const div = document.createElement('div');
-            div.className = `achievement-item ${isEarned ? 'earned' : 'locked'}`;
-            div.innerHTML = `
-                <span class="achievement-icon">${achievement.icon}</span>
-                <span class="achievement-name">${achievement.name}</span>
-                <span class="achievement-desc">${achievement.description}</span>
+
+        this.achievements.forEach(achievement => {
+            const localized = this.getLocalizedAchievement(achievement);
+            
+            const card = document.createElement('div');
+            card.className = 'achievement-card ' + (achievement.earned ? 'earned' : 'locked');
+            card.innerHTML = `
+                <span class="achievement-card-icon">${achievement.icon}</span>
+                <div class="achievement-card-name">${localized.name}</div>
+                <div class="achievement-card-status">${achievement.earned ? '✓' : (achievement.progressMax > 1 ? achievement.progress + '/' + achievement.progressMax : '🔒')}</div>
             `;
-            container.appendChild(div);
+            
+            card.addEventListener('click', () => {
+                this.showDetail(achievement.id);
+            });
+
+            container.appendChild(card);
         });
-    }
+    },
+
+    
 };
+
+achievementsManager.init();
 
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = achievementsManager;

@@ -22,28 +22,21 @@ const gameManager = {
         this.originalPlayer = { ...level.player };
         this.editorCommands = [];
 
-        if (level.id === 3) {
-            level.items = level.items.filter(item => item.type !== 'flag_box');
-            level.items.forEach(item => {
-                if (item.type === 'nails') item.x += 1;
-            });
-        }
-
         this.originalItems = level.items ? level.items.map(item => ({ ...item })) : [];
         this.droppedItems = [];
 
-        var chapter = Math.ceil(level.id / 10);
-        var levelName = level.name;
+        let chapter = Math.ceil(level.id / 10);
+        let levelName = level.name;
 
         if (typeof localizationManager !== 'undefined' && localizationManager.getScenarioLevelName) {
-            var localizedName = localizationManager.getScenarioLevelName(chapter, level.id);
+            let localizedName = localizationManager.getScenarioLevelName(chapter, level.id);
             if (localizedName) {
                 levelName = localizedName;
             }
         }
 
-        var l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
-        var starsText = l10n ? l10n.t('emptyStars') : 'emptyStars';
+        let l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        let starsText = l10n ? l10n.t('emptyStars') : 'emptyStars';
 
         document.getElementById('level-name').textContent = levelName;
         document.getElementById('level-stars').textContent = starsText;
@@ -64,33 +57,6 @@ const gameManager = {
         const cmd = this.editorCommands.splice(fromIndex, 1)[0];
         this.editorCommands.splice(toIndex, 0, cmd);
         gameRenderer.renderEditor();
-    },
-
-    removeItemFromGrid(x, y) {
-        gameRenderer.removeItemFromGrid(x, y);
-    },
-
-    movePlayer(player, dir) {
-        const dx = [0, 1, 0, -1];
-        const dy = [-1, 0, 1, 0];
-        
-        const newX = player.x + dx[player.direction] * dir;
-        const newY = player.y + dy[player.direction] * dir;
-        
-        if (newX >= 0 && newY >= 0 && 
-            this.currentLevel.grid[newY] && 
-            this.currentLevel.grid[newY][newX] !== 1) {
-            player.x = newX;
-            player.y = newY;
-        }
-    },
-
-    movePlayerLeft(player) {
-        player.direction = (player.direction + 3) % 4;
-    },
-
-    movePlayerRight(player) {
-        player.direction = (player.direction + 1) % 4;
     }
 };
 

@@ -11,7 +11,12 @@ const gameLogic = {
         WALL: 1,
         START: 2,
         FINISH: 3,
-        ITEM: 4
+        ITEM: 4,
+        OBSTACLE: 5,
+        BRICK_WALL: 6,
+        WAREHOUSE: 7,
+        TRUCK: 8,
+        BALK: 9
     },
     
     movePlayer(player, direction) {
@@ -28,7 +33,7 @@ const gameLogic = {
         if (y < 0 || x < 0) return false;
         if (!grid[y] || grid[y][x] === undefined) return false;
         const cell = grid[y][x];
-        return cell !== this.cellTypes.WALL && cell !== 4 && cell !== 5 && cell !== 8 && cell !== 9;
+        return cell !== this.cellTypes.WALL && cell !== this.cellTypes.OBSTACLE && cell !== this.cellTypes.TRUCK && cell !== this.cellTypes.BALK;
     },
     
     isValidJump(grid, x, y) {
@@ -87,6 +92,9 @@ const gameLogic = {
                 if (this.isValidJump(grid, jumpX, jumpY)) {
                     player.x = jumpX;
                     player.y = jumpY;
+                } else {
+                    result.success = false;
+                    result.message = 'Не могу прыгнуть - стена или препятствие!';
                 }
                 break;
             case 'turn':
@@ -99,6 +107,9 @@ const gameLogic = {
                     player.direction = turnDir;
                     player.x = turnX;
                     player.y = turnY;
+                } else {
+                    result.success = false;
+                    result.message = 'Не могу развернуться - стена или препятствие!';
                 }
                 break;
             case 'collect':
@@ -128,44 +139,6 @@ const gameLogic = {
         }
         
         return result;
-    },
-    
-    async executeLevel(level, commands) {
-        const player = { ...level.player };
-        const items = level.items ? level.items.map(i => ({ ...i })) : [];
-        const grid = level.grid;
-        const results = [];
-        
-        for (const cmd of commands) {
-            const result = this.executeCommand(cmd, player, grid);
-            results.push(result);
-            
-            if (!result.success) {
-                return {
-                    success: false,
-                    player: player,
-                    items: items,
-                    error: result.message,
-                    results: results
-                };
-            }
-        }
-        
-        const finalCell = grid[player.y]?.[player.x];
-        const isFinish = finalCell === this.cellTypes.FINISH;
-        
-        return {
-            success: isFinish,
-            player: player,
-            items: items,
-            results: results
-        };
-    },
-    
-    calculateStars(moves, par) {
-        if (moves <= par) return 3;
-        if (moves <= par * 2) return 2;
-        return 1;
     }
 };
 

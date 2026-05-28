@@ -53,12 +53,12 @@ runTest("All languages have same UI keys count", function() {
     var minCount = Infinity;
     LANGUAGES.forEach(function(lang) {
         var data = readJson(path.join(LOCALIZATION_DIR, lang + ".json"));
-        var count = Object.keys(data.ui).length;
+        var count = Object.keys(data).length;
         if (count < minCount) minCount = count;
     });
     LANGUAGES.forEach(function(lang) {
         var data = readJson(path.join(LOCALIZATION_DIR, lang + ".json"));
-        var count = Object.keys(data.ui).length;
+        var count = Object.keys(data).length;
         if (count < minCount) {
             throw new Error(lang + " has fewer keys than minimum");
         }
@@ -69,12 +69,12 @@ runTest("All languages have same UI keys count", function() {
 console.log("\n[4] Translation completeness");
 runTest("All en.json keys exist in other languages", function() {
     var en = readJson(path.join(LOCALIZATION_DIR, "en.json"));
-    var enKeys = Object.keys(en.ui);
+    var enKeys = Object.keys(en);
     
     LANGUAGES.forEach(function(lang) {
         if (lang === "en") return;
         var data = readJson(path.join(LOCALIZATION_DIR, lang + ".json"));
-        var missing = enKeys.filter(function(k) { return !data.ui.hasOwnProperty(k); });
+        var missing = enKeys.filter(function(k) { return !data.hasOwnProperty(k); });
         if (missing.length > 0) {
             throw new Error(lang + " missing " + missing.length + " keys");
         }
@@ -111,15 +111,16 @@ runTest("Tajik has no Russian words", function() {
     }
 });
 
-// Test 7: Required sections
-console.log("\n[7] Required sections");
-runTest("All languages have required sections", function() {
-    var required = ["chapters", "commands", "items"];
+// Test 7: Required keys
+console.log("\n[7] Required keys");
+runTest("All languages have required translation keys", function() {
+    var required = ["language", "up", "down", "left", "right", "jump", "turn", "collect", "drop",
+        "chapter", "level", "start", "retry", "runCode", "resetCode", "score", "points"];
     LANGUAGES.forEach(function(lang) {
         var data = readJson(path.join(LOCALIZATION_DIR, lang + ".json"));
-        required.forEach(function(sec) {
-            if (!data[sec]) {
-                throw new Error(lang + " missing " + sec);
+        required.forEach(function(key) {
+            if (!data[key]) {
+                throw new Error(lang + " missing required key \"" + key + "\"");
             }
         });
     });

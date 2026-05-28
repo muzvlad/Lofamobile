@@ -5,11 +5,56 @@ const auth = {
     init() {
         this.token = localStorage.getItem('token');
         const userStr = localStorage.getItem('user');
-        this.user = userStr ? JSON.parse(userStr) : null;
+        try {
+            this.user = userStr ? JSON.parse(userStr) : null;
+        } catch (e) {
+            this.user = null;
+            this.token = null;
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+        }
     },
 
     isAuthenticated() {
         return this.token && this.user;
+    },
+
+    async fetchWithAuth(url, options = {}) {
+        const token = this.getToken();
+        if (!token) {
+            this.forceLogout();
+            return null;
+        }
+
+        try {
+            const res = await fetch(url, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (res.status === 401) {
+                this.forceLogout();
+                return null;
+            }
+
+            return res;
+        } catch (err) {
+            console.error('Fetch error:', err);
+            return null;
+        }
+    },
+
+    forceLogout() {
+        this.token = null;
+        this.user = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        if (typeof app !== 'undefined') {
+            app.showScreen('start-screen');
+        }
     },
 
     async checkAuth() {
@@ -22,15 +67,16 @@ const auth = {
                 headers: { 'Authorization': `Bearer ${this.token}` }
             });
             
-            if (res.ok) {
-                return true;
+            if (res.status === 401) {
+                this.forceLogout();
+                return false;
             }
+            
+            return res.ok;
         } catch (err) {
-            console.error('Auth check failed:', err);
+            this.forceLogout();
+            return false;
         }
-        
-        this.logout();
-        return false;
     },
 
     showMessage(elementId, message, isError = true) {
@@ -103,10 +149,7 @@ const auth = {
     },
 
     logout() {
-        this.token = null;
-        this.user = null;
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        this.forceLogout();
     },
 
     getUser() {
