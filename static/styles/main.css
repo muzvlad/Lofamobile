@@ -183,6 +183,10 @@ body {
     font-size: 12px;
     font-weight: bold;
 }
+.char-btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
 
 /* --- Language Select --- */
 .language-select { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
@@ -204,6 +208,10 @@ body {
 .lang-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+.lang-btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
 }
 .lang-btn.selected {
     border-color: var(--accent);
@@ -367,29 +375,41 @@ input::placeholder { color: var(--secondary-light); }
     border-radius: var(--radius-small);
     margin-bottom: 8px;
 }
-.leaderboard-rank { font-size: 20px; font-weight: bold; color: var(--accent); width: 40px; }
-.leaderboard-name { flex: 1; font-weight: bold; color: var(--dark-brown); }
-.leaderboard-score { font-weight: bold; color: var(--primary); }
+.rank { font-size: 20px; font-weight: bold; color: var(--accent); width: 40px; }
+.rank.gold { color: #FFD700; }
+.rank.silver { color: #C0C0C0; }
+.rank.bronze { color: #CD7F32; }
+.name { flex: 1; font-weight: bold; color: var(--dark-brown); }
+.score { font-weight: bold; color: var(--primary); }
 
 /* --- Achievements --- */
-.achievements-list { display: flex; flex-direction: column; gap: 8px; }
-.achievement-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: linear-gradient(90deg, var(--secondary-light) 0%, var(--secondary) 100%);
-    border: 2px solid var(--accent);
-    border-radius: var(--radius-small);
-}
-.achievement-icon { font-size: 26px; }
-.achievement-item .details { flex: 1; }
-.achievement-item .name { font-weight: bold; color: var(--light-gold); }
-.achievement-item .date { font-size: 11px; color: var(--light); opacity: 0.8; }
 
 /* ===========================================
    RESPONSIVE UTILITIES
    =========================================== */
+
+/* --- Utility Classes --- */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    padding: 8px 16px;
+    background: var(--accent);
+    color: var(--dark);
+    font-weight: bold;
+    z-index: 1000;
+    border-radius: 0 0 var(--radius-small) 0;
+}
+.skip-link:focus {
+    top: 0;
+}
+.welcome-msg {
+    font-size: 14px;
+    margin-top: 10px;
+}
+.btn-text {
+    display: inline;
+}
 
 @media (max-width: 480px) {
     .screen { padding: 12px; }

@@ -157,6 +157,11 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     border-color: #bbb;
 }
+.gender-option:focus-within {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-small);
+}
 .gender-option input { display: none; }
 .gender-option:has(input:checked) {
     border-color: var(--accent);
@@ -207,6 +212,10 @@
 .gender-icon { width: 50px; height: 50px; object-fit: contain; border-radius: 8px; }
 .gender-btn.selected .gender-icon { transform: scale(1.1); }
 .gender-btn:hover .gender-icon { transform: scale(1.05); }
+.gender-btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
 .gender-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);

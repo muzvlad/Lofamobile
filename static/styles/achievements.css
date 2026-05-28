@@ -51,7 +51,10 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.25), 0 0 20px rgba(255, 215, 0, 0.3);
     border-color: var(--accent);
 }
-
+.achievement-card:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
 .achievement-card:active {
     transform: translateY(-2px) scale(0.98);
 }

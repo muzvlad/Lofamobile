@@ -92,6 +92,8 @@ initUIComponents: function() {
                     if (typeof localizationManager !== 'undefined') {
                         localizationManager.setLanguage(lang);
                     }
+                    let langNames = { ru:'Русский', en:'English', es:'Español', tg:'Тоҷикӣ', uz:"O'zbekcha", bxr:'Буряад' };
+                    btn.setAttribute('aria-label', langNames[lang] || lang);
                 });
             })(langBtns[i]);
         }
@@ -104,8 +106,10 @@ initUIComponents: function() {
                     let allTabs = document.querySelectorAll('.menu-tabs .tab-btn');
                     for (let j = 0; j < allTabs.length; j++) {
                         allTabs[j].classList.remove('active');
+                        allTabs[j].setAttribute('aria-selected', 'false');
                     }
                     btn.classList.add('active');
+                    btn.setAttribute('aria-selected', 'true');
 
                     if (tab === 'levels') {
                         self.showMenu();
@@ -194,10 +198,15 @@ initUIComponents: function() {
         let screens = document.querySelectorAll('.screen');
         for (let i = 0; i < screens.length; i++) {
             screens[i].classList.remove('active');
+            screens[i].setAttribute('aria-hidden', 'true');
         }
         let screen = document.getElementById(screenId);
         if (screen) {
             screen.classList.add('active');
+            screen.removeAttribute('aria-hidden');
+            if (typeof localizationManager !== 'undefined') {
+                setTimeout(function() { localizationManager.updateAllUI(); }, 0);
+            }
         }
     },
 
@@ -399,6 +408,7 @@ initUIComponents: function() {
         for (let i = 0; i < langBtns.length; i++) {
             langBtns[i].classList.remove('selected');
             if (langBtns[i].dataset.lang === lang) langBtns[i].classList.add('selected');
+            langBtns[i].setAttribute('aria-label', langNames[lang] || lang);
         }
     },
 
@@ -507,6 +517,22 @@ initUIComponents: function() {
                 }
             }, 3000);
         };
+    },
+
+    openModal: function(modalId) {
+        let modal = document.getElementById(modalId);
+        if (!modal) return;
+        modal.classList.add('active');
+        modal.removeAttribute('aria-hidden');
+        let firstFocusable = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (firstFocusable) firstFocusable.focus();
+    },
+
+    closeModal: function(modalId) {
+        let modal = document.getElementById(modalId);
+        if (!modal) return;
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
     }
 };
 
@@ -518,7 +544,18 @@ document.addEventListener('DOMContentLoaded', function() {
         modals[i].addEventListener('click', function(e) {
             if (e.target === this) {
                 this.classList.remove('active');
+                this.setAttribute('aria-hidden', 'true');
             }
         });
     }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            let activeModal = document.querySelector('.modal.active');
+            if (activeModal) {
+                activeModal.classList.remove('active');
+                activeModal.setAttribute('aria-hidden', 'true');
+            }
+        }
+    });
 });

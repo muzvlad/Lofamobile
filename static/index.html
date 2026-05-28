@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1E4D6B">
+    <meta name="theme-color" content="#F5E6C8" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' ws: wss:;">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <title data-i18n="appTitle"></title>
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="manifest" href="/static/manifest.json">
     <link rel="stylesheet" href="/static/styles/main.css">
     <link rel="stylesheet" href="/static/styles/components.css">
     <link rel="stylesheet" href="/static/styles/levels.css">
@@ -34,6 +40,7 @@
     </script>
 </head>
 <body>
+    <a href="#app" class="skip-link" data-i18n="skipToContent">Перейти к содержанию</a>
     <div id="app">
         <div id="start-screen" class="screen">
             <div class="logo">
@@ -52,34 +59,34 @@
                     <span class="form-label" id="login-language-label" data-i18n="language"></span>
                     <div class="language-dropdown" id="login-language-select">
                         <button type="button" class="lang-dropdown-btn">
-                            <img src="/flags/ru.png" class="flag-icon" id="login-current-lang-flag">
+                            <img src="/flags/ru.png" class="flag-icon" id="login-current-lang-flag" alt="">
                             <span id="login-current-lang-name"></span>
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="lang-dropdown-menu">
                             <button type="button" class="lang-option" data-lang="ru">
-                                <img src="/flags/ru.png" class="flag-icon"> Русский
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Русский
                             </button>
                             <button type="button" class="lang-option" data-lang="en">
-                                <img src="/flags/us.png" class="flag-icon"> English
+                                <img src="/flags/us.png" class="flag-icon" alt=""> English
                             </button>
                             <button type="button" class="lang-option" data-lang="es">
-                                <img src="/flags/es.png" class="flag-icon"> Español
+                                <img src="/flags/es.png" class="flag-icon" alt=""> Español
                             </button>
                             <button type="button" class="lang-option" data-lang="tg">
-                                <img src="/flags/tg.png" class="flag-icon"> Тоҷикӣ
+                                <img src="/flags/tg.png" class="flag-icon" alt=""> Тоҷикӣ
                             </button>
                             <button type="button" class="lang-option" data-lang="uz">
-                                <img src="/flags/uz.png" class="flag-icon"> O'zbekcha
+                                <img src="/flags/uz.png" class="flag-icon" alt=""> O'zbekcha
                             </button>
                             <button type="button" class="lang-option" data-lang="bxr">
-                                <img src="/flags/ru.png" class="flag-icon"> Буряад
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Буряад
                             </button>
                         </div>
                     </div>
                 </div>
                 <button id="login-btn" class="primary-btn" data-i18n="loginBtn"></button>
-                <p id="login-message" class="form-message"></p>
+                <p id="login-message" class="form-message" aria-live="polite" role="alert"></p>
                 <div class="login-link">
                     <p><span data-i18n="noAccount"></span> <a href="#" id="show-register" data-i18n="create"></a></p>
                 </div>
@@ -122,34 +129,34 @@
                     <span class="form-label" id="language-label" data-i18n="language"></span>
                     <div class="language-dropdown" id="language-select">
                         <button type="button" class="lang-dropdown-btn">
-                            <img src="/flags/ru.png" class="flag-icon" id="current-lang-flag">
+                            <img src="/flags/ru.png" class="flag-icon" id="current-lang-flag" alt="">
                             <span id="current-lang-name"></span>
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="lang-dropdown-menu">
                             <button type="button" class="lang-option" data-lang="ru">
-                                <img src="/flags/ru.png" class="flag-icon"> Русский
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Русский
                             </button>
                             <button type="button" class="lang-option" data-lang="en">
-                                <img src="/flags/us.png" class="flag-icon"> English
+                                <img src="/flags/us.png" class="flag-icon" alt=""> English
                             </button>
                             <button type="button" class="lang-option" data-lang="es">
-                                <img src="/flags/es.png" class="flag-icon"> Español
+                                <img src="/flags/es.png" class="flag-icon" alt=""> Español
                             </button>
                             <button type="button" class="lang-option" data-lang="tg">
-                                <img src="/flags/tg.png" class="flag-icon"> Тоҷикӣ
+                                <img src="/flags/tg.png" class="flag-icon" alt=""> Тоҷикӣ
                             </button>
                             <button type="button" class="lang-option" data-lang="uz">
-                                <img src="/flags/uz.png" class="flag-icon"> O'zbekcha
+                                <img src="/flags/uz.png" class="flag-icon" alt=""> O'zbekcha
                             </button>
                             <button type="button" class="lang-option" data-lang="bxr">
-                                <img src="/flags/ru.png" class="flag-icon"> Буряад
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Буряад
                             </button>
                         </div>
                     </div>
                 </div>
                 <button id="register-btn" class="primary-btn" data-i18n="registerBtn"></button>
-                <p id="register-message" class="form-message"></p>
+                <p id="register-message" class="form-message" aria-live="polite" role="alert"></p>
             </div>
             <div class="login-link">
                 <p><span data-i18n="hasAccount"></span> <a href="#" id="show-login" data-i18n="enter"></a></p>
@@ -168,32 +175,32 @@
                 </div>
             </div>
             <div class="language-bar" style="display:none;">
-                <button type="button" class="lang-btn" data-lang="ru"><img src="/flags/ru.png" class="flag-icon"></button>
-                <button type="button" class="lang-btn" data-lang="en"><img src="/flags/us.png" class="flag-icon"></button>
-                <button type="button" class="lang-btn" data-lang="es"><img src="/flags/es.png" class="flag-icon"></button>
-                <button type="button" class="lang-btn" data-lang="tg"><img src="/flags/tg.png" class="flag-icon"></button>
-                <button type="button" class="lang-btn" data-lang="uz"><img src="/flags/uz.png" class="flag-icon"></button>
+                <button type="button" class="lang-btn" data-lang="ru" aria-label="Русский"><img src="/flags/ru.png" class="flag-icon" alt=""></button>
+                <button type="button" class="lang-btn" data-lang="en" aria-label="English"><img src="/flags/us.png" class="flag-icon" alt=""></button>
+                <button type="button" class="lang-btn" data-lang="es" aria-label="Español"><img src="/flags/es.png" class="flag-icon" alt=""></button>
+                <button type="button" class="lang-btn" data-lang="tg" aria-label="Тоҷикӣ"><img src="/flags/tg.png" class="flag-icon" alt=""></button>
+                <button type="button" class="lang-btn" data-lang="uz" aria-label="O'zbekcha"><img src="/flags/uz.png" class="flag-icon" alt=""></button>
             </div>
             <div class="menu-content">
                 <h2 id="menu-title" data-i18n="menuTitle"></h2>
                 <div class="levels-grid" id="levels-grid"></div>
                 
             </div>
-            <div class="menu-tabs">
-                <button class="tab-btn active" data-tab="levels" id="tab-levels" data-i18n="levels"></button>
-                <button class="tab-btn" data-tab="leaderboard" id="tab-leaderboard" data-i18n="leaderboard"></button>
-                <button class="tab-btn" data-tab="achievements" id="tab-achievements" data-i18n="achievements"></button>
+            <div class="menu-tabs" role="tablist">
+                <button class="tab-btn active" data-tab="levels" id="tab-levels" data-i18n="levels" role="tab" aria-selected="true" aria-controls="levels-panel"></button>
+                <button class="tab-btn" data-tab="leaderboard" id="tab-leaderboard" data-i18n="leaderboard" role="tab" aria-selected="false" aria-controls="leaderboard-panel"></button>
+                <button class="tab-btn" data-tab="achievements" id="tab-achievements" data-i18n="achievements" role="tab" aria-selected="false" aria-controls="achievements-panel"></button>
             </div>
         </div>
 
         <div id="game-screen" class="screen">
             <div class="game-header">
-                <button class="back-btn">←</button>
+                <button class="back-btn" aria-label="Back">←</button>
                 <div class="level-info">
                     <span id="level-name"></span>
                     <span id="level-stars" data-i18n="emptyStars"></span>
                 </div>
-                <button class="hint-btn">💡</button>
+                <button class="hint-btn" aria-label="Hint">💡</button>
             </div>
             <div class="game-area">
                 <div class="game-grid" id="game-grid"></div>
@@ -208,7 +215,7 @@
             </div>
         </div>
 
-        <div id="result-modal" class="modal">
+        <div id="result-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="result-title">
             <div class="modal-content">
                 <h2 id="result-title" data-i18n="resultTitle"></h2>
                 <div class="stars" id="result-stars"></div>
@@ -222,7 +229,7 @@
             </div>
         </div>
 
-        <div id="level-info-modal" class="modal">
+        <div id="level-info-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="level-info-title">
             <div class="modal-content level-info-content">
                 <h2 id="level-info-title"></h2>
                 <div class="level-info-image" id="level-info-image"></div>
@@ -236,7 +243,7 @@
 
         <div id="leaderboard-screen" class="screen">
             <div class="header">
-                <button class="back-btn">←</button>
+                <button class="back-btn" aria-label="Back">←</button>
                 <h2 data-i18n="heroesTable"></h2>
             </div>
             <div class="leaderboard-list" id="leaderboard-list"></div>
@@ -244,13 +251,13 @@
 
         <div id="achievements-screen" class="screen">
             <div class="header">
-                <button class="back-btn">←</button>
+                <button class="back-btn" aria-label="Back">←</button>
                 <h2 id="achievements-title" data-i18n="achievements"></h2>
             </div>
             <div class="achievements-grid" id="achievements-list"></div>
         </div>
 
-        <div id="achievement-detail-modal" class="modal">
+        <div id="achievement-detail-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="achievement-detail-name">
             <div class="modal-content achievement-detail-content">
                 <span class="achievement-detail-icon" id="achievement-detail-icon"></span>
                 <h2 class="achievement-detail-name" id="achievement-detail-name"></h2>
@@ -268,7 +275,7 @@
 
         <div id="profile-screen" class="screen">
             <div class="header">
-                <button class="back-btn">←</button>
+                <button class="back-btn" aria-label="Back">←</button>
                 <h2 id="profile-screen-title" data-i18n="settings"></h2>
             </div>
             <div class="profile-form">
@@ -284,28 +291,28 @@
                     <span class="form-label" id="profile-language-label" data-i18n="language"></span>
                     <div class="language-dropdown" id="profile-language-select">
                         <button type="button" class="lang-dropdown-btn">
-                            <img src="/flags/ru.png" class="flag-icon" id="profile-current-lang-flag">
+                            <img src="/flags/ru.png" class="flag-icon" id="profile-current-lang-flag" alt="">
                             <span id="profile-current-lang-name"></span>
                             <span class="dropdown-arrow">▼</span>
                         </button>
                         <div class="lang-dropdown-menu">
                             <button type="button" class="lang-option" data-lang="ru">
-                                <img src="/flags/ru.png" class="flag-icon"> Русский
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Русский
                             </button>
                             <button type="button" class="lang-option" data-lang="en">
-                                <img src="/flags/us.png" class="flag-icon"> English
+                                <img src="/flags/us.png" class="flag-icon" alt=""> English
                             </button>
                             <button type="button" class="lang-option" data-lang="es">
-                                <img src="/flags/es.png" class="flag-icon"> Español
+                                <img src="/flags/es.png" class="flag-icon" alt=""> Español
                             </button>
                             <button type="button" class="lang-option" data-lang="tg">
-                                <img src="/flags/tg.png" class="flag-icon"> Тоҷикӣ
+                                <img src="/flags/tg.png" class="flag-icon" alt=""> Тоҷикӣ
                             </button>
                             <button type="button" class="lang-option" data-lang="uz">
-                                <img src="/flags/uz.png" class="flag-icon"> O'zbekcha
+                                <img src="/flags/uz.png" class="flag-icon" alt=""> O'zbekcha
                             </button>
                             <button type="button" class="lang-option" data-lang="bxr">
-                                <img src="/flags/ru.png" class="flag-icon"> Буряад
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Буряад
                             </button>
                         </div>
                     </div>

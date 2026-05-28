@@ -160,6 +160,7 @@ showLevelInfo: function(level) {
             let img = document.createElement('img');
             let targetSrc = '/frontend/src/levels/chapter_' + this.currentChapter + '/chapter_' + this.currentChapter + '_' + gender + '_' + levelNum + '.webp';
             img.src = targetSrc;
+            img.alt = level.name || '';
             img.style.cssText = 'width:100%;height:100%;object-fit:contain;';
             img.onerror = function() {
                 img.style.display = 'none';
