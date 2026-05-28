@@ -4,6 +4,44 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v2.0.0] - 28.05.2026
+
+### Security (Critical)
+- **JWT alg:none fix** — добавлена проверка signing algorithm (HMAC-SHA256) в `ValidateToken` и `GetUserFromToken`. Предотвращает подделку токенов.
+- **Stored XSS fix** — `leaderboardManager.js`: `innerHTML` заменён на `createElement` + `textContent`. Имя пользователя больше не может выполнить JS в таблице лидеров.
+- **JSON.parse crash fix** — `auth.init()`: обёрнут в `try/catch`. При битых данных в localStorage приложение больше не падает.
+- **CORS fix** — `Access-Control-Allow-Credentials` больше не устанавливается вместе с `Origin: *`. Установлено корректное поведение.
+- **WebSocket Origin check** — добавлен `CheckOrigin` в `upgrader` для защиты от Cross-Site WebSocket Hijacking.
+
+### Performance & Stability (Critical)
+- **SQLite connection pool fix** — `MaxOpenConns` уменьшен с 25 до 1. Предотвращает `database is locked` на SQLite.
+- **Data race fix** — `levels.go`: глобальный `chapterCache` защищён `sync.RWMutex`. Устранена гонка данных при параллельных запросах.
+- **CompleteLevel race fix** — `db.go`: SELECT-INSERT заменён на `INSERT ... ON CONFLICT DO UPDATE` (UPSERT). Устранена гонка при одновременном завершении уровня.
+- **last_insert_rowid() race fix** — `auth.go`: вызов `SELECT last_insert_rowid()` заменён на `result.LastInsertId()` из того же Exec. Избегает race через connection pool.
+- **WS hub shutdown fix** — `hub.go`: добавлен канал `quit` для остановки `Run()`. Устранён double-close канала `send`.
+- **Multiple run() guard** — `gameEngine.js`: флаг `isRunning` блокирует повторный запуск выполнения.
+- **Duplicate event listeners fix** — `app.js`: убраны накопления обработчиков в `showLeaderboard`/`showAchievements`.
+
+### Infrastructure
+- **Rate limiter goroutine leak fix** — `ratelimit.go`: добавлен `Stop()` с каналом `stopCh` для graceful shutdown.
+- **Rate limiter proxy support** — `ratelimit.go`: добавлен парсинг `X-Forwarded-For` и `X-Real-IP`.
+- **log.Fatalf → error return** — `config.go`, `jwt.go`: библиотечные пакеты больше не вызывают `os.Exit`. Ошибки пробрасываются в `main()`.
+- **Duplicate JWT parsing removed** — `handlers.go`: `GetUserFromToken` теперь вызывает `auth.ValidateToken` вместо дублирования логики.
+- **go mod tidy** — удалена неиспользуемая зависимость `gorilla/mux`.
+
+### Localization
+- **Missing "character" key** — добавлен во все 5 языков: en, es, tg, uz, bxr.
+- **chapter_1.json level 3 data fix** — `par=6, optimal=10` → `par=10, optimal=6` (было swapped).
+
+### CSS
+- **Undefined CSS variables fix** — `--danger-light`, `--success-light`, `--text-gray` добавлены в `:root` (main.css). Ранее работали только после загрузки темы.
+
+### Code Quality
+- **getLocalIP** — убран избыточный `ip[:3] != "127"` (дублировал `IsLoopback()`).
+- **BroadcastScoreUpdate nil guard** — добавлена проверка `h.database == nil`.
+
+---
+
 ## [v0.5.0] - 15.05.2026
 
 ### Added
