@@ -169,7 +169,7 @@ func generateLevel(id int, gender string) types.Level {
 		Goal:       tpl.Goal,
 		Items:      tpl.Items,
 		Par:        tpl.Par,
-		Optimal:   optimal,
+		Optimal:    optimal,
 		Difficulty: difficulty,
 		Background: tpl.Background,
 	}
@@ -196,7 +196,7 @@ func generateLevel(id int, gender string) types.Level {
 		level.AvailableCommands = []string{"up", "down", "left", "right"}
 	}
 
-if len(tpl.Items) > 0 {
+	if len(tpl.Items) > 0 {
 		hasCollect := false
 		hasDrop := false
 		for _, cmd := range level.AvailableCommands {
@@ -230,11 +230,11 @@ if len(tpl.Items) > 0 {
 }
 
 type LevelResult struct {
-	Success   bool
-	Par       int
-	Stars     int
-	Moves     int
-	Improved  bool
+	Success  bool
+	Par      int
+	Stars    int
+	Moves    int
+	Improved bool
 }
 
 func CompleteLevel(database *sql.DB, userID, levelID, moves int, code string, hasItem, requiredItems int, gender string) LevelResult {

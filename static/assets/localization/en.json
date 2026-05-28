@@ -142,5 +142,15 @@
   "achCollect10": "Collector",
   "achCollect10Desc": "Use the take command 10 times",
   "achAllChapters": "Master",
-  "achAllChaptersDesc": "Complete all chapters"
+  "achAllChaptersDesc": "Complete all chapters",
+  "errWallUp": "Can't go up - wall!",
+  "errWallDown": "Can't go down - wall!",
+  "errWallLeft": "Can't go left - wall!",
+  "errWallRight": "Can't go right - wall!",
+  "errJump": "Can't jump - wall or obstacle!",
+  "errTurn": "Can't turn - wall or obstacle!",
+  "errNoItem": "No item here",
+  "errNothingToDrop": "Nothing to drop",
+  "itemTaken": "Item taken",
+  "itemPlaced": "Item placed"
 }

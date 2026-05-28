@@ -1,7 +1,6 @@
 let app = {
     API_URL: window.location.origin,
     currentUser: null,
-    currentLevel: null,
     ws: null,
 
     init: function() {
@@ -144,23 +143,6 @@ initUIComponents: function() {
                     btn.classList.add('selected');
                 });
             })(genderBtns[i]);
-        }
-        
-        let chapterBtns = document.querySelectorAll('.chapter-btn');
-        for (let i = 0; i < chapterBtns.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function() {
-                    let chapter = parseInt(btn.dataset.chapter);
-                    let btns = document.querySelectorAll('.chapter-btn');
-                    for (let j = 0; j < btns.length; j++) {
-                        btns[j].classList.remove('active');
-                    }
-                    btn.classList.add('active');
-                    if (typeof levelsManager !== 'undefined') {
-                        levelsManager.setChapter(chapter);
-                    }
-                });
-            })(chapterBtns[i]);
         }
         
         let dropdownBtns = document.querySelectorAll('.lang-dropdown-btn');
@@ -421,7 +403,6 @@ initUIComponents: function() {
     },
 
     startLevel: function(level) {
-        this.currentLevel = level;
         if (typeof gameManager !== 'undefined') {
             gameManager.start(level);
         } else if (typeof window.gameManager !== 'undefined') {

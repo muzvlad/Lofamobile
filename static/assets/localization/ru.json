@@ -144,5 +144,15 @@
   "achCollect10": "Собиратель",
   "achCollect10Desc": "Используй команду взять 10 раз",
   "achAllChapters": "Мастер",
-  "achAllChaptersDesc": "Пройди все главы"
+  "achAllChaptersDesc": "Пройди все главы",
+  "errWallUp": "Не могу идти вверх - стена!",
+  "errWallDown": "Не могу идти вниз - стена!",
+  "errWallLeft": "Не могу идти влево - стена!",
+  "errWallRight": "Не могу идти вправо - стена!",
+  "errJump": "Не могу прыгнуть - стена или препятствие!",
+  "errTurn": "Не могу развернуться - стена или препятствие!",
+  "errNoItem": "Здесь нет предмета",
+  "errNothingToDrop": "Нечего класть",
+  "itemTaken": "Предмет взят",
+  "itemPlaced": "Предмет положен"
 }

@@ -2,8 +2,6 @@ const leaderboardManager = {
     API_URL: window.location.origin,
     entries: [],
 
-    init() {},
-
     async load(genderFilter = 'all') {
         try {
             const url = genderFilter !== 'all' 

@@ -19,13 +19,19 @@ const gameLogic = {
         BALK: 9
     },
     
+    t(key) {
+        if (typeof localizationManager !== 'undefined' && localizationManager.t) {
+            const val = localizationManager.t(key);
+            return val || key;
+        }
+        return key;
+    },
+
     movePlayer(player, direction) {
         const dx = [0, 1, 0, -1];
         const dy = [-1, 0, 1, 0];
-        
         const newX = player.x + dx[direction];
         const newY = player.y + dy[direction];
-        
         return { x: newX, y: newY };
     },
     
@@ -40,7 +46,7 @@ const gameLogic = {
         if (y < 0 || x < 0) return false;
         if (!grid[y] || grid[y][x] === undefined) return false;
         const cell = grid[y][x];
-        return cell !== this.cellTypes.WALL && cell !== 7;
+        return cell !== this.cellTypes.WALL && cell !== this.cellTypes.WAREHOUSE;
     },
     
     executeCommand(command, player, grid, level) {
@@ -53,7 +59,7 @@ const gameLogic = {
                     player.direction = 0;
                 } else {
                     result.success = false;
-                    result.message = 'Не могу идти вверх - стена!';
+                    result.message = this.t('errWallUp');
                 }
                 break;
             case 'down':
@@ -62,7 +68,7 @@ const gameLogic = {
                     player.direction = 2;
                 } else {
                     result.success = false;
-                    result.message = 'Не могу идти вниз - стена!';
+                    result.message = this.t('errWallDown');
                 }
                 break;
             case 'left':
@@ -71,7 +77,7 @@ const gameLogic = {
                     player.direction = 3;
                 } else {
                     result.success = false;
-                    result.message = 'Не могу идти влево - стена!';
+                    result.message = this.t('errWallLeft');
                 }
                 break;
             case 'right':
@@ -80,7 +86,7 @@ const gameLogic = {
                     player.direction = 1;
                 } else {
                     result.success = false;
-                    result.message = 'Не могу идти вправо - стена!';
+                    result.message = this.t('errWallRight');
                 }
                 break;
             case 'jump':
@@ -94,7 +100,7 @@ const gameLogic = {
                     player.y = jumpY;
                 } else {
                     result.success = false;
-                    result.message = 'Не могу прыгнуть - стена или препятствие!';
+                    result.message = this.t('errJump');
                 }
                 break;
             case 'turn':
@@ -109,7 +115,7 @@ const gameLogic = {
                     player.y = turnY;
                 } else {
                     result.success = false;
-                    result.message = 'Не могу развернуться - стена или препятствие!';
+                    result.message = this.t('errTurn');
                 }
                 break;
             case 'collect':
@@ -120,20 +126,20 @@ const gameLogic = {
                     if (!player.heldItems) player.heldItems = [];
                     player.heldItems.push(level.items[itemIndex].type);
                     level.items.splice(itemIndex, 1);
-                    result.message = 'Предмет взят';
+                    result.message = this.t('itemTaken');
                 } else {
                     result.success = false;
-                    result.message = 'Здесь нет предмета';
+                    result.message = this.t('errNoItem');
                 }
                 break;
             case 'drop':
                 if (player.heldItems && player.heldItems.length > 0) {
                     const item = player.heldItems.pop();
                     level.items.push({ x: player.x, y: player.y, type: item });
-                    result.message = 'Предмет положен';
+                    result.message = this.t('itemPlaced');
                 } else {
                     result.success = false;
-                    result.message = 'Нечего класть';
+                    result.message = this.t('errNothingToDrop');
                 }
                 break;
         }
@@ -143,7 +149,3 @@ const gameLogic = {
 };
 
 window.gameLogic = gameLogic;
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = gameLogic;
-}

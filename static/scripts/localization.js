@@ -14,6 +14,9 @@ let localizationManager = {
     init: function() {
         let savedLang = localStorage.getItem('language');
         if (savedLang) {
+            document.documentElement.lang = savedLang;
+        }
+        if (savedLang) {
             this.currentLanguage = savedLang;
         } else {
             this.currentLanguage = 'ru';
@@ -93,25 +96,10 @@ let localizationManager = {
     setLanguage: function(lang) {
         this.currentLanguage = lang;
         localStorage.setItem('language', lang);
-        let self = this;
-        this.loadTranslations().then(function() {
-            self.updateUI();
-            self.updateAllUI();
-
-            if (typeof app !== 'undefined' && app.updateLanguageDropdowns) {
-                app.updateLanguageDropdowns(lang);
-            }
-
-            if (typeof gameManager !== 'undefined' && gameManager.currentLevel) {
-                let chapter = Math.ceil(gameManager.currentLevel.id / 10);
-                let levelName = gameManager.currentLevel.name;
-                let localizedName = self.getScenarioLevelName(chapter, gameManager.currentLevel.id);
-                if (localizedName) {
-                    levelName = localizedName;
-                }
-                let nameEl = document.getElementById('level-name');
-                if (nameEl) nameEl.textContent = levelName;
-            }
+        document.documentElement.lang = lang;
+        this.init().then(function() {
+            localizationManager.updateUI();
+            localizationManager.updateAllUI();
         });
     },
 

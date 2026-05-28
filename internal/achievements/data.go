@@ -37,7 +37,7 @@ var All = []Achievement{
 	{ID: "jump_10", NameKey: "achJump10", DescKey: "achJump10Desc", Icon: "🦘", TriggerType: "jump_used", ProgressMax: 10},
 	{ID: "turn_10", NameKey: "achTurn10", DescKey: "achTurn10Desc", Icon: "↩️", TriggerType: "turn_used", ProgressMax: 10},
 	{ID: "collect_10", NameKey: "achCollect10", DescKey: "achCollect10Desc", Icon: "✋", TriggerType: "collect_used", ProgressMax: 10},
-	{ID: "all_chapters", NameKey: "achAllChapters", DescKey: "achAllChaptersDesc", Icon: "👑", TriggerType: "all_chapters", ProgressMax: 50},
+	{ID: "all_chapters", NameKey: "achAllChapters", DescKey: "achAllChaptersDesc", Icon: "👑", TriggerType: "all_chapters", ProgressMax: 2},
 }
 
 func GetByID(id string) Achievement {
