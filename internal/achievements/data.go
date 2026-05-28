@@ -40,15 +40,17 @@ var All = []Achievement{
 	{ID: "all_chapters", NameKey: "achAllChapters", DescKey: "achAllChaptersDesc", Icon: "👑", TriggerType: "all_chapters", ProgressMax: 50},
 }
 
-func GetByID(id string) *Achievement {
+func GetByID(id string) Achievement {
 	for i := range All {
 		if All[i].ID == id {
-			return &All[i]
+			return All[i]
 		}
 	}
-	return nil
+	return Achievement{}
 }
 
 func GetAll() []Achievement {
-	return All
+	result := make([]Achievement, len(All))
+	copy(result, All)
+	return result
 }

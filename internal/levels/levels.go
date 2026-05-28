@@ -37,6 +37,8 @@ type ChapterData struct {
 	Girl    []LevelTemplate `json:"girl"`
 }
 
+const MaxChapters = 2
+
 var (
 	chapterCache = make(map[int]*ChapterData)
 	chapterMu    sync.RWMutex

@@ -7,12 +7,19 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"regexp"
+	"unicode/utf8"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 func Register(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
+
 		var req types.RegisterRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			log.Printf("[REGISTER] JSON decode error: %v", err)
@@ -25,6 +32,17 @@ func Register(database *sql.DB) http.HandlerFunc {
 		if req.Phone == "" || req.Password == "" || req.Gender == "" || req.Nickname == "" {
 			log.Printf("[REGISTER] Missing required fields")
 			RespondError(w, "Заполните обязательные поля", http.StatusBadRequest)
+			return
+		}
+
+		if utf8.RuneCountInString(req.Password) < 6 {
+			RespondError(w, "Пароль должен содержать минимум 6 символов", http.StatusBadRequest)
+			return
+		}
+
+		phoneRe := regexp.MustCompile(`^\+?[0-9]{7,15}$`)
+		if !phoneRe.MatchString(req.Phone) {
+			RespondError(w, "Неверный формат номера телефона", http.StatusBadRequest)
 			return
 		}
 
@@ -88,6 +106,11 @@ func Register(database *sql.DB) http.HandlerFunc {
 
 func Login(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
+
 		var req types.LoginRequest
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			log.Printf("[LOGIN] JSON decode error: %v", err)
@@ -150,6 +173,11 @@ func Login(database *sql.DB) http.HandlerFunc {
 
 func GetMe(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
+
 		userID, err := GetUserIDFromToken(r)
 		if err != nil {
 			RespondError(w, "Требуется авторизация", http.StatusUnauthorized)
@@ -179,6 +207,11 @@ func GetMe(database *sql.DB) http.HandlerFunc {
 
 func UpdateProfile(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
+
 		userID, err := GetUserIDFromToken(r)
 		if err != nil {
 			RespondError(w, "Требуется авторизация", http.StatusUnauthorized)
@@ -227,6 +260,9 @@ func UpdateProfile(database *sql.DB) http.HandlerFunc {
 		)
 		if err != nil {
 			log.Printf("[UPDATE_PROFILE] Leaderboard sync error: %v", err)
+			tx.Rollback()
+			RespondError(w, "Ошибка сохранения", http.StatusInternalServerError)
+			return
 		}
 
 		if err := tx.Commit(); err != nil {

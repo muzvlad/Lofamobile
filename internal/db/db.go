@@ -233,6 +233,7 @@ type LevelResult struct {
 	Success   bool
 	Par       int
 	Stars     int
+	Moves     int
 	Improved  bool
 }
 
@@ -303,6 +304,7 @@ func CompleteLevel(database *sql.DB, userID, levelID, moves int, code string, ha
 		Success:  success,
 		Par:      par,
 		Stars:    stars,
+		Moves:    moves,
 		Improved: improved,
 	}
 }

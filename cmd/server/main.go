@@ -5,6 +5,7 @@ import (
 	"codequest/internal/auth"
 	"codequest/internal/config"
 	"codequest/internal/db"
+	"codequest/internal/types"
 	"codequest/internal/ws"
 	"context"
 	"log"
@@ -16,6 +17,12 @@ import (
 	"strings"
 	"syscall"
 	"time"
+)
+
+type contextKey string
+
+const (
+	ctxLevelID contextKey = "level_id"
 )
 
 func main() {
@@ -70,25 +77,25 @@ func main() {
 		if strings.HasSuffix(path, "/complete") {
 			levelIDStr := path[:len(path)-9]
 			id, err := strconv.Atoi(levelIDStr)
-			if err != nil || id < 1 || id > 20 {
+			if err != nil || id < 1 || id > types.MaxLevels {
 				http.Error(w, "Неверный уровень", http.StatusBadRequest)
 				return
 			}
 			ctx := r.Context()
-			ctx = context.WithValue(ctx, "level_id", id)
+			ctx = context.WithValue(ctx, ctxLevelID, id)
 			r = r.WithContext(ctx)
 			api.CompleteLevel(database, hub)(w, r)
 			return
 		}
 
 		id, err := strconv.Atoi(path)
-		if err != nil || id < 1 || id > 20 {
+		if err != nil || id < 1 || id > types.MaxLevels {
 			http.Error(w, "Неверный уровень", http.StatusBadRequest)
 			return
 		}
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, "level_id", id)
+		ctx = context.WithValue(ctx, ctxLevelID, id)
 		r = r.WithContext(ctx)
 		api.GetLevel(database)(w, r)
 	})

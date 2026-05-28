@@ -36,6 +36,10 @@ func GetGenderFromToken(r *http.Request) string {
 
 func GetLevels(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
 		gender := r.URL.Query().Get("gender")
 		if gender == "" {
 			gender = "boy"
@@ -47,6 +51,10 @@ func GetLevels(database *sql.DB) http.HandlerFunc {
 
 func GetLevel(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
 		id := 0
 		if lid := r.Context().Value("level_id"); lid != nil {
 			id = lid.(int)
@@ -74,6 +82,10 @@ func GetLevel(database *sql.DB) http.HandlerFunc {
 
 func CompleteLevel(database *sql.DB, hub *ws.Hub) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
 		userID, err := GetUserIDFromToken(r)
 		if err != nil {
 			RespondError(w, "Требуется авторизация", http.StatusUnauthorized)
@@ -85,7 +97,7 @@ func CompleteLevel(database *sql.DB, hub *ws.Hub) http.HandlerFunc {
 			levelID = lid.(int)
 		}
 
-		if levelID < 1 || levelID > 20 {
+		if levelID < 1 || levelID > types.MaxLevels {
 			RespondError(w, "Неверный уровень", http.StatusBadRequest)
 			return
 		}
@@ -116,7 +128,7 @@ func CompleteLevel(database *sql.DB, hub *ws.Hub) http.HandlerFunc {
 		RespondJSON(w, http.StatusOK, types.CompleteResponse{
 			Success: result.Success,
 			Stars:   stars,
-			Moves:   req.Moves,
+			Moves:   result.Moves,
 			Score:   score,
 		})
 	}
@@ -124,6 +136,10 @@ func CompleteLevel(database *sql.DB, hub *ws.Hub) http.HandlerFunc {
 
 func GetLeaderboard(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
 		gender := r.URL.Query().Get("gender")
 
 		entries, err := db.GetLeaderboard(database, gender)
@@ -138,6 +154,10 @@ func GetLeaderboard(database *sql.DB) http.HandlerFunc {
 
 func SaveAchievement(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
 		userID, err := GetUserIDFromToken(r)
 		if err != nil {
 			RespondError(w, "Требуется авторизация", http.StatusUnauthorized)
@@ -170,6 +190,10 @@ func SaveAchievement(database *sql.DB) http.HandlerFunc {
 
 func GetAchievements(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
 		userID, err := GetUserIDFromToken(r)
 		if err != nil {
 			RespondError(w, "Требуется авторизация", http.StatusUnauthorized)
@@ -183,6 +207,10 @@ func GetAchievements(database *sql.DB) http.HandlerFunc {
 
 func GetProgress(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
 		userID, err := GetUserIDFromToken(r)
 		if err != nil {
 			RespondError(w, "Требуется авторизация", http.StatusUnauthorized)
@@ -213,6 +241,10 @@ func GetProgress(database *sql.DB) http.HandlerFunc {
 
 func GetUserScore(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			RespondError(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
+			return
+		}
 		userID, err := GetUserIDFromToken(r)
 		if err != nil {
 			RespondError(w, "Требуется авторизация", http.StatusUnauthorized)

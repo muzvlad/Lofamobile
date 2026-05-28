@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v2.1.0] - 28.05.2026
+
+### Security
+- **Password validation** — добавлена проверка длины пароля (≥6 символов) и формата телефона (7-15 цифр, опционально `+`) на регистрации.
+- **HTTP method validation** — все API-эндпоинты проверяют HTTP-метод (GET/POST) и возвращают 405 при неверном.
+
+### Stability
+- **Context key type fix** — `context.WithValue` теперь использует тип `contextKey` вместо plain string для избежания коллизий.
+- **MaxLevels constant** — хардкод `20` заменён на `types.MaxLevels` во всех файлах.
+- **CompleteResponse.Moves** — теперь возвращает реальное количество ходов, подтверждённое сервером, а не присланное клиентом.
+- **UpdateProfile rollback** — при ошибке синхронизации leaderboard транзакция корректно откатывается.
+- **Achievement data immutability** — `GetAll()` возвращает копию слайса, `GetByID()` возвращает значение, а не указатель.
+
+---
+
 ## [v2.0.0] - 28.05.2026
 
 ### Security (Critical)

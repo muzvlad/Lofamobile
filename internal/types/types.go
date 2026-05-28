@@ -1,5 +1,7 @@
 package types
 
+const MaxLevels = 20
+
 type User struct {
 	ID        int    `json:"id"`
 	Phone     string `json:"phone"`

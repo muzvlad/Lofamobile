@@ -29,7 +29,7 @@ func GetEarned(db *sql.DB, userID int) ([]EarnedAchievement, error) {
 		if err := rows.Scan(&e.Type, &e.EarnedAt); err != nil {
 			continue
 		}
-		if a := GetByID(e.Type); a != nil {
+		if a := GetByID(e.Type); a.ID != "" {
 			e.MaxProgress = a.ProgressMax
 			e.Progress = a.ProgressMax
 		}
