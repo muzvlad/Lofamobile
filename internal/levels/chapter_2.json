@@ -3,11 +3,11 @@
   "boy": [
     {
       "id": 1,
-      "name": "Цикл",
-      "description": "Теперь ты изучил основы. Впереди - циклы!",
+      "name": "level_1_name",
+      "description": "level_1_desc",
       "grid": [[2, 0, 0, 0, 0, 3]],
       "player": {"x": 0, "y": 0, "direction": 1},
-      "goal": "Достигни флага",
+      "goal": "level_1_goal",
       "items": [],
       "par": 3,
       "optimal": 3,
@@ -17,11 +17,11 @@
   "girl": [
     {
       "id": 1,
-      "name": "Цикл",
-      "description": "Теперь ты изучила основы. Впереди - циклы!",
+      "name": "level_1_name",
+      "description": "level_1_desc",
       "grid": [[2, 0, 0, 0, 0, 3]],
       "player": {"x": 0, "y": 0, "direction": 1},
-      "goal": "Достигни флага",
+      "goal": "level_1_goal",
       "items": [],
       "par": 3,
       "optimal": 3,

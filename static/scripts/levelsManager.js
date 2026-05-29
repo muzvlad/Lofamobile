@@ -107,11 +107,11 @@ showLevelInfo: function(level) {
         }
         
         if (typeof localizationManager !== 'undefined') {
-            if (this.currentChapter === 1 && localizationManager.getScenarioLevel) {
+            if (localizationManager.getScenarioLevel) {
                 scenarioLevel = localizationManager.getScenarioLevel(this.currentChapter, level.id);
             }
             
-            if (!scenarioLevel && this.currentChapter === 2 && localizationManager.getLevelText) {
+            if (!scenarioLevel && localizationManager.getLevelText) {
                 localized = localizationManager.getLevelText(this.currentChapter, level.id, 'name');
             }
         }
@@ -160,7 +160,7 @@ showLevelInfo: function(level) {
             let img = document.createElement('img');
             let targetSrc = '/frontend/src/levels/chapter_' + this.currentChapter + '/chapter_' + this.currentChapter + '_' + gender + '_' + levelNum + '.webp';
             img.src = targetSrc;
-            img.alt = level.name || '';
+            img.alt = levelName || '';
             img.style.cssText = 'width:100%;height:100%;object-fit:contain;';
             img.onerror = function() {
                 img.style.display = 'none';
