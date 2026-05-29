@@ -3,7 +3,6 @@ package auth
 import (
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -11,10 +10,10 @@ import (
 
 var jwtSecret []byte
 
-func Init() error {
-	secret := os.Getenv("JWT_SECRET")
+func Init(secret string) error {
 	if secret == "" {
-		return fmt.Errorf("[AUTH] JWT_SECRET environment variable is required")
+		log.Printf("[AUTH] JWT_SECRET not set, using development default")
+		secret = "dev-secret-lofa-mobile-2024"
 	}
 	jwtSecret = []byte(secret)
 	log.Printf("[AUTH] JWT secret initialized, len=%d", len(jwtSecret))

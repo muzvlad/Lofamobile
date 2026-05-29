@@ -37,7 +37,7 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 	log.Printf("[START] Static: %s, Frontend: %s", staticDir, frontendDir)
 
-	if err := auth.Init(); err != nil {
+	if err := auth.Init(cfg.JWTSecret); err != nil {
 		log.Printf("[ERROR] Auth: %v", err)
 		os.Exit(1)
 	}

@@ -14,7 +14,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestInit(t *testing.T) {
-	Init()
+	Init("test_secret_for_tests")
 
 	secret := GetSecret()
 	if secret == nil {
@@ -27,7 +27,7 @@ func TestInit(t *testing.T) {
 }
 
 func TestGenerateToken(t *testing.T) {
-	Init()
+	Init("test_secret_for_tests")
 
 	token, err := GenerateToken(1, "+79001234567", "testuser", "boy", "builder")
 	if err != nil {
@@ -40,7 +40,7 @@ func TestGenerateToken(t *testing.T) {
 }
 
 func TestValidateToken_Valid(t *testing.T) {
-	Init()
+	Init("test_secret_for_tests")
 
 	token, err := GenerateToken(1, "+79001234567", "testuser", "boy", "builder")
 	if err != nil {
@@ -68,7 +68,7 @@ func TestValidateToken_Valid(t *testing.T) {
 }
 
 func TestValidateToken_Invalid(t *testing.T) {
-	Init()
+	Init("test_secret_for_tests")
 
 	_, err := ValidateToken("invalid.token.here")
 	if err == nil {
@@ -77,7 +77,7 @@ func TestValidateToken_Invalid(t *testing.T) {
 }
 
 func TestValidateToken_Empty(t *testing.T) {
-	Init()
+	Init("test_secret_for_tests")
 
 	_, err := ValidateToken("")
 	if err == nil {
@@ -86,7 +86,7 @@ func TestValidateToken_Empty(t *testing.T) {
 }
 
 func TestGenerateToken_DifferentUsers(t *testing.T) {
-	Init()
+	Init("test_secret_for_tests")
 
 	token1, _ := GenerateToken(1, "+79001234567", "user1", "boy", "builder")
 	token2, _ := GenerateToken(2, "+79009876543", "user2", "girl", "performer")
@@ -97,7 +97,7 @@ func TestGenerateToken_DifferentUsers(t *testing.T) {
 }
 
 func TestTokenExpiration(t *testing.T) {
-	Init()
+	Init("test_secret_for_tests")
 
 	token, _ := GenerateToken(1, "+79001234567", "testuser", "boy", "builder")
 

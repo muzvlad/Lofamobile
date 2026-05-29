@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"codequest/internal/auth"
@@ -17,8 +16,7 @@ import (
 )
 
 func init() {
-	os.Setenv("JWT_SECRET", "test_secret_for_tests")
-	auth.Init()
+	auth.Init("test_secret_for_tests")
 }
 
 func setupTestDB(t *testing.T) (*sql.DB, func()) {
