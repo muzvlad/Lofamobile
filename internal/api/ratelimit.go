@@ -91,6 +91,16 @@ func getClientIP(req *http.Request) string {
 
 func (r *IPRateLimiter) Limit(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		path := req.URL.Path
+
+		staticPrefixes := []string{"/static/", "/scripts/", "/styles/", "/flags/", "/assets/", "/frontend/", "/favicon.ico"}
+		for _, prefix := range staticPrefixes {
+			if strings.HasPrefix(path, prefix) {
+				next.ServeHTTP(w, req)
+				return
+			}
+		}
+
 		ip := getClientIP(req)
 
 		limiter := r.getLimiter(ip)
