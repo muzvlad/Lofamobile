@@ -4,6 +4,7 @@ import (
 	"codequest/internal/types"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"sync"
@@ -22,6 +23,7 @@ type LevelTemplate struct {
 	Grid               [][]int        `json:"grid"`
 	Player             types.Player   `json:"player"`
 	Goal               string         `json:"goal"`
+	Goals              []types.Goal   `json:"goals,omitempty"`
 	Items              []types.Item   `json:"items"`
 	Par                int            `json:"par"`
 	Optimal            int            `json:"optimal"`
@@ -68,7 +70,7 @@ func GetChapterLevels(chapter int, gender string) []LevelTemplate {
 
 	loaded, err := LoadChapterFromJSON(chapter)
 	if err != nil {
-		fmt.Printf("[LEVELS] Error loading chapter %d: %v\n", chapter, err)
+		log.Printf("[LEVELS] Error loading chapter %d: %v", chapter, err)
 		return getDefaultChapter()
 	}
 
@@ -106,15 +108,21 @@ func getLevelsDir() (string, error) {
 		return "", err
 	}
 
-	for i := 0; i < 20; i++ {
-		testPath := cwd
-		for j := 0; j < i; j++ {
-			testPath = filepath.Join(testPath, "..")
-		}
-		levelsPath := filepath.Join(testPath, "internal", "levels")
+	dir := cwd
+	for {
+		levelsPath := filepath.Join(dir, "internal", "levels")
 		if _, err := os.Stat(levelsPath); err == nil {
 			return levelsPath, nil
 		}
+		goModPath := filepath.Join(dir, "go.mod")
+		if _, err := os.Stat(goModPath); err == nil {
+			break
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
 	}
 
 	return "", fmt.Errorf("levels directory not found")

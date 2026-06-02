@@ -115,14 +115,14 @@ let localizationManager = {
         });
     },
 
-    t: function(key) {
+    t: function(key, fallback) {
         let translations = this.translations;
 
         if (translations && translations[key] !== undefined) {
             return translations[key];
         }
 
-        return '';
+        return fallback !== undefined ? fallback : key;
     },
 
     getLevelText: function(chapter, levelId, field) {
@@ -312,6 +312,6 @@ let localizationManager = {
     }
 };
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = localizationManager;
+function getL10n() {
+    return localizationManager || null;
 }

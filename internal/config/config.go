@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const defaultJWTSecret = "codequest_dev_secret"
+
 type Config struct {
 	DBPath       string
 	JWTSecret    string
@@ -21,7 +23,7 @@ type Config struct {
 func Load() *Config {
 	cfg := &Config{
 		DBPath:       getEnv("DB_PATH", "./codequest.db"),
-		JWTSecret:    getEnv("JWT_SECRET", ""),
+		JWTSecret:    getEnv("JWT_SECRET", defaultJWTSecret),
 		Port:         getEnv("PORT", "8080"),
 		Env:          getEnv("ENV", "development"),
 		StaticDir:    getEnv("STATIC_DIR", "./static"),
@@ -31,9 +33,13 @@ func Load() *Config {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	if cfg.Env == "production" && cfg.JWTSecret == "" {
-		log.Printf("[CONFIG] JWT_SECRET required in production mode")
+	if cfg.JWTSecret == "" {
+		log.Printf("[CONFIG] JWT_SECRET cannot be empty")
 		return nil
+	}
+
+	if cfg.Env == "production" && cfg.JWTSecret == defaultJWTSecret {
+		log.Printf("[WARN] JWT_SECRET is using default dev value in production!")
 	}
 
 	log.Printf("[CONFIG] Loaded: env=%s, port=%s, db=%s", cfg.Env, cfg.Port, cfg.DBPath)

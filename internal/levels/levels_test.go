@@ -225,3 +225,50 @@ func TestChapterCache(t *testing.T) {
 		t.Error("Chapter cache should return the same slice")
 	}
 }
+
+func TestGetLevels(t *testing.T) {
+	levels := GetLevelsWithGender("girl")
+	if len(levels) != 20 {
+		t.Errorf("Expected 20 levels, got %d", len(levels))
+	}
+
+	if levels[0].Name == "" {
+		t.Error("Level name should not be empty")
+	}
+
+	if levels[0].Grid == nil {
+		t.Error("Level grid should not be nil")
+	}
+}
+
+func TestGetLevelByID(t *testing.T) {
+	level, err := GetLevelByIDWithGender(1, "girl")
+	if err != nil {
+		t.Fatalf("Failed to get level: %v", err)
+	}
+
+	if level.ID != 1 {
+		t.Errorf("Expected level ID 1, got %d", level.ID)
+	}
+
+	level2, err := GetLevelByIDWithGender(5, "girl")
+	if err != nil {
+		t.Fatalf("Failed to get level: %v", err)
+	}
+
+	if len(level2.AvailableCommands) == 0 {
+		t.Error("Level 5 should have available commands")
+	}
+}
+
+func TestGetLevelByID_Invalid(t *testing.T) {
+	_, err := GetLevelByIDWithGender(0, "girl")
+	if err == nil {
+		t.Error("Should return error for invalid ID")
+	}
+
+	_, err = GetLevelByIDWithGender(21, "girl")
+	if err == nil {
+		t.Error("Should return error for ID > 20")
+	}
+}

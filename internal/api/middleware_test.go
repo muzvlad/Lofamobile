@@ -88,7 +88,7 @@ func TestCorsMiddleware_Options(t *testing.T) {
 
 func TestRespondJSON(t *testing.T) {
 	w := httptest.NewRecorder()
-	RespondJSON(w, http.StatusCreated, types.AuthResponse{ID: 1, Nickname: "test"})
+	RespondJSON(w, http.StatusCreated, types.User{ID: 1, Nickname: "test"})
 
 	if w.Code != http.StatusCreated {
 		t.Errorf("Expected status 201, got %d", w.Code)

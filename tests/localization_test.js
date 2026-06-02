@@ -86,8 +86,8 @@ console.log("\n[5] Uzbek check");
 runTest("Uzbek UI has no Cyrillic", function() {
     var uz = readJson(path.join(LOCALIZATION_DIR, "uz.json"));
     var cyrillic = /[\u0430-\u044F\u0410-\u042F]/;
-    for (var key in uz.ui) {
-        var val = uz.ui[key];
+    for (var key in uz) {
+        var val = uz[key];
         if (typeof val === "string" && cyrillic.test(val)) {
             throw new Error("UZ has Cyrillic in " + key);
         }
@@ -99,8 +99,8 @@ console.log("\n[6] Tajik check");
 runTest("Tajik has no Russian words", function() {
     var tg = readJson(path.join(LOCALIZATION_DIR, "tg.json"));
     var badWords = ["\u041E\u0447\u043A\u0438", "\u041F\u0440\u043E\u0433\u0440\u0435\u0441\u0441"];
-    for (var key in tg.ui) {
-        var val = tg.ui[key];
+    for (var key in tg) {
+        var val = tg[key];
         if (typeof val === "string") {
             badWords.forEach(function(w) {
                 if (val.indexOf(w) !== -1) {

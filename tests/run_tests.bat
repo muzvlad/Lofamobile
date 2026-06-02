@@ -1,7 +1,8 @@
 @echo off
 setlocal EnableDelayedExpansion
 chcp 65001 >nul
-set "PROJECT_DIR=C:\Users\Muzika\Documents\Projects\LofaMobile"
+set "SCRIPT_DIR=%~dp0"
+for %%I in ("%SCRIPT_DIR%..") do set "PROJECT_DIR=%%~fI"
 cd /d "%PROJECT_DIR%"
 
 echo ========================================

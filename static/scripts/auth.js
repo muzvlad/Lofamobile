@@ -74,7 +74,6 @@ const auth = {
             
             return res.ok;
         } catch (err) {
-            this.forceLogout();
             return false;
         }
     },
@@ -163,15 +162,14 @@ const auth = {
     initUI() {
         const registerBtn = document.getElementById('register-btn');
         const loginBtn = document.getElementById('login-btn');
-        
-        const getL10n = () => typeof localizationManager !== 'undefined' ? localizationManager : null;
+        const t = (key, fallback) => { const m = getL10n(); return m ? m.t(key, fallback) : fallback; };
         
         if (registerBtn) {
             registerBtn.addEventListener('click', async () => {
                 const phone = document.getElementById('reg-phone').value.trim();
                 const nickname = document.getElementById('reg-nickname').value.trim();
                 const name = document.getElementById('reg-name').value.trim();
-                const password = document.getElementById('reg-password').value;
+                const password = document.getElementById('reg-password').value.trim();
                 const gender = document.querySelector('#register-screen .gender-btn.selected')?.dataset.gender || 'boy';
                 const performer = document.querySelector('#register-screen .char-btn.selected')?.dataset.performer || (gender === 'girl' ? 'cook' : 'builder');
                 const ageInput = document.getElementById('reg-age').value;
@@ -179,41 +177,37 @@ const auth = {
                 const language = localStorage.getItem('language') || 'ru';
 
                 registerBtn.disabled = true;
-                registerBtn.textContent = getL10n() ? getL10n().t('creating') : 'Создание...';
+                registerBtn.textContent = t('creating', 'Создание...');
 
                 try {
                     await this.register(phone, nickname, name, password, gender, performer, age, language);
                     app.onLoginSuccess();
                 } catch (err) {
-                    const getL10n = () => typeof localizationManager !== 'undefined' ? localizationManager : null;
-                    const translate = getL10n() ? (key) => getL10n().t(key) : (key) => key;
-                    this.showMessage('register-message', translate(err.message) || err.message);
+                    this.showMessage('register-message', t(err.message, err.message));
                 }
                 
                 registerBtn.disabled = false;
-                registerBtn.textContent = getL10n() ? getL10n().t('registerBtn') : 'Начать приключение!';
+                registerBtn.textContent = t('registerBtn', 'Начать приключение!');
             });
         }
 
         if (loginBtn) {
             loginBtn.addEventListener('click', async () => {
                 const phone = document.getElementById('login-phone').value.trim();
-                const password = document.getElementById('login-password').value;
+                const password = document.getElementById('login-password').value.trim();
 
                 loginBtn.disabled = true;
-                loginBtn.textContent = getL10n() ? getL10n().t('loggingIn') : 'Вход...';
+                loginBtn.textContent = t('loggingIn', 'Вход...');
 
                 try {
                     await this.login(phone, password);
                     app.onLoginSuccess();
                 } catch (err) {
-                    const getL10n = () => typeof localizationManager !== 'undefined' ? localizationManager : null;
-                    const translate = getL10n() ? (key) => getL10n().t(key) : (key) => key;
-                    this.showMessage('login-message', translate(err.message) || err.message);
+                    this.showMessage('login-message', t(err.message, err.message));
                 }
                 
                 loginBtn.disabled = false;
-                loginBtn.textContent = getL10n() ? getL10n().t('loginBtn') : 'Войти';
+                loginBtn.textContent = t('loginBtn', 'Войти');
             });
         }
 

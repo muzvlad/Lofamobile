@@ -9,20 +9,36 @@ lofa/
 │       └── main.go              # Точка входа Go сервера
 ├── internal/
 │   ├── api/
+│   │   ├── auth.go              # Регистрация, логин, профиль
 │   │   ├── handlers.go          # HTTP обработчики (REST API)
-│   │   └── handlers_test.go     # Тесты API
+│   │   ├── middleware.go        # Логирование, CORS, recovery
+│   │   ├── ratelimit.go         # Rate limiter
+│   │   ├── handlers_test.go     # Тесты API
+│   │   └── middleware_test.go   # Тесты middleware
+│   ├── auth/
+│   │   └── jwt.go               # Генерация/валидация JWT
+│   ├── config/
+│   │   └── config.go            # Конфигурация (env, JWT, CORS)
 │   ├── db/
-│   │   ├── db.go                # SQLite база данных
+│   │   ├── db.go                # SQLite подключение + миграции
 │   │   └── db_test.go           # Тесты БД
 │   ├── levels/
-│   │   ├── levels.go            # Шаблоны уровней
+│   │   ├── levels.go            # Загрузка глав из JSON + кеш
+│   │   ├── levels_gen.go        # Генерация уровней (шаблоны → команды)
+│   │   ├── chapter_1.json       # Данные 1-й главы (20 уровней)
 │   │   └── levels_test.go       # Тесты уровней
+│   ├── scoring/
+│   │   ├── scoring.go           # Валидация целей + расчёт звёзд
+│   │   └── scoring_test.go      # Тесты скоринга
 │   ├── types/
-│   │   └── types.go             # Типы данных
+│   │   ├── types.go             # Типы данных (User, Level, Goal, ...)
+│   │   └── api.go               # Типы запросов/ответов API
+│   ├── achievements/
+│   │   └── service.go           # Система достижений
 │   ├── ws/
-│   │   ├── hub.go               # WebSocket хаб
-│   │   └── hub_test.go         # Тесты WebSocket
-│   └── api/
+│   │   ├── hub.go               # WebSocket хаб + обработка
+│   │   └── hub_test.go          # Тесты WebSocket
+│   └──
 ├── static/
 │   ├── index.html               # Главная страница
 │   ├── manifest.json            # PWA манифест
@@ -40,14 +56,16 @@ lofa/
 │   ├── scripts/
 │   │   ├── theme.js             # Темизация (мальчик/девочка)
 │   │   ├── themeManager.js      # Управление темами
-│   │   ├── localization.js      # Локализация (5 языков)
-│   │   ├── auth.js             # Авторизация
+│   │   ├── localization.js      # Локализация (6 языков)
+│   │   ├── auth.js             # Авторизация + JWT
 │   │   ├── levelsManager.js    # Управление уровнями
 │   │   ├── achievementsManager.js # Система достижений
 │   │   ├── gameLogic.js        # Логика прохождения
-│   │   ├── gameManager.js      # Менеджер игры
+│   │   ├── gameEngine.js       # Движок игры (выполнение команд)
+│   │   ├── gameManager.js      # Менеджер игры (UI)
+│   │   ├── gameRenderer.js     # Рендеринг поля
 │   │   ├── leaderboardManager.js # Таблица лидеров
-│   │   └── soundsManager.js    # Звуки (заготовка)
+│   │   └── soundsManager.js    # Звуки (заготовка — не удалять)
 │   └── assets/
 │       ├── localization/        # Файлы локализации
 │       │   ├── ru.json         # Русский
@@ -55,6 +73,7 @@ lofa/
 │       │   ├── es.json         # Español
 │       │   ├── tg.json         # Тоҷикӣ
 │       │   ├── uz.json         # O'zbekcha
+│       │   ├── bxr.json        # Буряад
 │       │   └── scenarios/
 │       │       └── chapter_1/   # Сценарии главы 1
 │       │           ├── chapter_1_ru.json
@@ -71,7 +90,8 @@ lofa/
 │       │   └── Character/       # Персонажи (builder, cook, pilot, robot, etc.)
 │       └── assets/components/  # Игровые предметы (flour, apple, flag, и т.д.)
 ├── tests/
-│   ├── run_tests.bat           # Запуск тестов
+│   ├── run_tests.bat           # Запуск Go-тестов
+│   ├── localization_test.js    # Тесты локализации
 │   ├── api_coverage.out        # Покрытие API
 │   ├── db_coverage.out         # Покрытие БД
 │   └── ws_coverage.out         # Покрытие WebSocket
@@ -105,16 +125,18 @@ users (
   updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 
--- Прогресс игрока
+-- Прогресс игрока (раздельный по гендеру)
 progress (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id     INTEGER REFERENCES users(id),
   level_id    INTEGER NOT NULL,
   stars       INTEGER DEFAULT 0,     -- 0-3
   moves       INTEGER DEFAULT 0,
+  attempts    INTEGER DEFAULT 0,
   code        TEXT,
+  gender      VARCHAR(10) DEFAULT '',
   completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(user_id, level_id)
+  UNIQUE(user_id, level_id, gender)
 )
 
 -- Достижения
@@ -154,32 +176,38 @@ GET /api/auth/me
 POST /api/auth/profile
   Headers: Authorization: Bearer <token>
   Body: { "nickname", "name", "age", "gender", "performer" }
-  Response: { "success": "Профиль обновлен" }
+  Response: { "success": true, "token": "<new_jwt>" }  -- новый токен при смене гендера
 ```
 
 ### Игра
 ```
 GET /api/levels
-  Response: { "levels": [{ "id", "name", "grid", "player", "goal", "items", "par", "difficulty", "availableCommands", "description" }] }
+  Query: ?gender=boy|girl
+  Response: { "levels": [{ "id", "name", "grid", "player", "goal", "goals", "items", "par", "optimal", "difficulty", "availableCommands", "description" }] }
 
 GET /api/levels/:id
+  Query: ?gender=boy|girl
   Response: { 
     "id", "name", "description", "grid": [[...]],
     "player": { "x", "y", "direction" },
     "items": [{ "x", "y", "type" }],
     "goal": "string",
+    "goals": [{ "type": "reach_finish|collect_all|deliver_to_warehouse", "count": 0 }],
     "availableCommands": ["up", "down", ...],
     "par": 5,
+    "optimal": 4,
     "difficulty": 1-3
   }
 
 POST /api/levels/:id/complete
   Headers: Authorization: Bearer <token>
-  Body: { "code": "up\nright\ndown", "moves": 3 }
+  Body: { "code": "up\nright\ndown", "moves": 3, "playerX": 0, "playerY": 3, "itemsCollected": 0, "itemsOnWarehouse": 0 }
   Response: { "success": true, "stars": 3, "moves": 3, "score": 300 }
+  -- Звёзды: 1 за прохождение + 1 если ходы ≤ optimal + 1 если первая попытка
 
 GET /api/progress
   Headers: Authorization: Bearer <token>
+  Query: ?gender=boy|girl (опционально, иначе из JWT)
   Response: { "progress": [{ "level_id", "stars", "moves" }] }
 ```
 
@@ -198,7 +226,10 @@ POST /api/achievements
   Body: { "level_id": 1, "achievement_type": "level_completed" }
   Response: { "success": true }
 
-WS /ws?token=<jwt_token>
+WS /ws
+  -- Аутентификация первым сообщением (не в URL):
+     {"type":"auth","token":"<jwt_token>"}
+  -- После валидации — регистрация в хабе
   -- Realtime обновления (score updates, achievements)
 ```
 
@@ -254,6 +285,21 @@ styles/
 - Система достижений
 - Достижения: first_login, first_level, level_5, chapter_1_complete, all_levels, perfect_level
 
+## Скоринг (internal/scoring/scoring.go)
+
+### Расчёт звёзд
+```
+stars = 1  // за прохождение
+if moves <= level.Optimal { stars++ }  // +1 за оптимальные ходы
+if firstAttempt { stars++ }            // +1 за первую попытку (нет строки в progress)
+```
+
+### Цели (Goals)
+Уровни могут иметь несколько целей. Сервер валидирует все:
+- `reach_finish` — игрок на клетке 3 (финиш)
+- `collect_all` — собраны все предметы уровня
+- `deliver_to_warehouse` — предметы доставлены на склад (клетка 7)
+
 ### gameLogic.js
 - Выполнение команд игрока
 - Проверка валидности ходов
@@ -274,23 +320,36 @@ styles/
 ## Сетка уровня (grid)
 
 ```
-0 = пусто
-1 = стена
-2 = старт (начальная позиция игрока)
-3 = финиш (цель/флаг)
-4 = предмет (кристалл/сердечко)
+0  = пусто
+1  = стена
+2  = старт (начальная позиция игрока)
+3  = финиш (цель/флаг)
+4  = предмет (блокирует движение, можно подобрать)
+5  = вода/яма
+6  = телепорт
+7  = склад (warehouse — для deliver_to_warehouse)
+8  = кнопка/переключатель
+9  = подвижная платформа
 ```
 
 ## Команды
 
 ```
-up    - движение вверх
-down  - движение вниз
-left  - движение влево
-right - движение вправо
-jump  - прыжок через 1-2 клетки
-turn  - разворот на 180°
+up      - движение вверх
+down    - движение вниз
+left    - движение влево
+right   - движение вправо
+jump    - прыжок через 1-2 клетки
+turn    - разворот на 180°
+collect - взять предмет
+drop    - положить предмет на склад
 ```
+
+Набор команд зависит от сложности уровня:
+- 1: up, down, left, right
+- 2: +jump
+- 3: +turn
+- +collect / drop (если есть предметы)
 
 ## Структура UI
 

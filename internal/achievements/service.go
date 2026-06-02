@@ -35,6 +35,11 @@ func GetEarned(db *sql.DB, userID int) ([]EarnedAchievement, error) {
 		}
 		earned = append(earned, e)
 	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return earned, nil
 }
 
@@ -56,7 +61,6 @@ func AddEarned(db *sql.DB, userID int, achievementType string) bool {
 		log.Printf("[ACHIEVEMENTS] Add error: %v", err)
 		return false
 	}
-	log.Printf("[ACHIEVEMENTS] Added: %s for user %d", achievementType, userID)
 	return true
 }
 
@@ -142,6 +146,10 @@ func GetUserProgress(db *sql.DB, userID int) UserProgress {
 					p.ChaptersCompleted++
 				}
 			}
+		}
+
+		if err := rows.Err(); err != nil {
+			log.Printf("[ACHIEVEMENTS] rows error: %v", err)
 		}
 	}
 

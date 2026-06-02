@@ -7,7 +7,12 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"strings"
 	"testing"
+	"time"
+
+	"github.com/gorilla/websocket"
 
 	"codequest/internal/auth"
 	"codequest/internal/db"
@@ -20,21 +25,27 @@ func init() {
 }
 
 func setupTestDB(t *testing.T) (*sql.DB, func()) {
-	database, err := db.Connect()
+	f, err := os.CreateTemp("", "codequest_test_*.db")
 	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	f.Close()
+
+	database, err := db.ConnectPath(f.Name())
+	if err != nil {
+		os.Remove(f.Name())
 		t.Fatalf("Failed to connect: %v", err)
 	}
 
 	if err := db.Migrate(database); err != nil {
+		database.Close()
+		os.Remove(f.Name())
 		t.Fatalf("Failed to migrate: %v", err)
 	}
 
 	cleanup := func() {
-		database.Exec("DELETE FROM users")
-		database.Exec("DELETE FROM progress")
-		database.Exec("DELETE FROM leaderboard")
-		database.Exec("DELETE FROM achievements")
 		database.Close()
+		os.Remove(f.Name())
 	}
 
 	return database, cleanup
@@ -234,7 +245,7 @@ func TestGetLevel(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	ctx := req.Context()
-	ctx = context.WithValue(ctx, "level_id", 1)
+	ctx = context.WithValue(ctx, types.CtxLevelID, 1)
 	r := req.WithContext(ctx)
 	handler(w, r)
 
@@ -302,17 +313,33 @@ func TestGetAchievements_Unauthorized(t *testing.T) {
 	}
 }
 
-func TestHandleWebSocket_EmptyToken(t *testing.T) {
+func TestHandleWebSocket_InvalidAuth(t *testing.T) {
 	hub := ws.NewHub(nil)
+	go hub.Run()
+	defer hub.Shutdown()
+
 	handler := HandleWebSocket(hub)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		handler(w, r)
+	}))
+	defer server.Close()
 
-	req := httptest.NewRequest("GET", "/ws", nil)
-	w := httptest.NewRecorder()
+	wsURL := "ws" + strings.TrimPrefix(server.URL, "http")
+	conn, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
+	if err != nil {
+		t.Fatalf("Failed to connect: %v", err)
+	}
+	defer conn.Close()
 
-	handler(w, req)
+	err = conn.WriteMessage(websocket.TextMessage, []byte(`{"type":"auth","token":""}`))
+	if err != nil {
+		t.Fatalf("Failed to write auth message: %v", err)
+	}
 
-	if w.Code != http.StatusUnauthorized {
-		t.Errorf("Expected status 401, got %d", w.Code)
+	conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond))
+	_, _, err = conn.ReadMessage()
+	if err == nil {
+		t.Error("Expected connection to close after invalid auth")
 	}
 }
 
@@ -423,7 +450,7 @@ func TestCompleteLevel_API(t *testing.T) {
 	httpReq.Header.Set("Authorization", "Bearer "+user.Token)
 
 	ctx := httpReq.Context()
-	ctx = context.WithValue(ctx, "level_id", 1)
+	ctx = context.WithValue(ctx, types.CtxLevelID, 1)
 	r := httpReq.WithContext(ctx)
 
 	httpW := httptest.NewRecorder()
@@ -443,7 +470,7 @@ func TestCompleteLevel_Unauthorized(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/levels/1/complete", nil)
 	ctx := req.Context()
-	ctx = context.WithValue(ctx, "level_id", 1)
+	ctx = context.WithValue(ctx, types.CtxLevelID, 1)
 	r := req.WithContext(ctx)
 
 	w := httptest.NewRecorder()
@@ -550,6 +577,84 @@ func TestGetProgress(t *testing.T) {
 	}
 }
 
+func TestGetProgress_GenderFilter(t *testing.T) {
+	database, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	registerHandler := Register(database)
+	body := types.RegisterRequest{
+		Phone:    "+79008889900",
+		Nickname: "gendertest",
+		Password: "pass123",
+		Gender:   "m",
+	}
+
+	jsonBody, _ := json.Marshal(body)
+	req := httptest.NewRequest("POST", "/register", bytes.NewBuffer(jsonBody))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	registerHandler(w, req)
+
+	var user types.User
+	json.Unmarshal(w.Body.Bytes(), &user)
+
+	hub := ws.NewHub(database)
+	go hub.Run()
+
+	completeHandler := CompleteLevel(database, hub)
+	completeReq := types.CompleteRequest{
+		Code:    "right\nright\nright",
+		Moves:   3,
+		PlayerX: 3,
+		PlayerY: 0,
+	}
+	jsonComplete, _ := json.Marshal(completeReq)
+	httpReq := httptest.NewRequest("POST", "/levels/1/complete", bytes.NewBuffer(jsonComplete))
+	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("Authorization", "Bearer "+user.Token)
+	ctx := httpReq.Context()
+	ctx = context.WithValue(ctx, types.CtxLevelID, 1)
+	r := httpReq.WithContext(ctx)
+	httpW := httptest.NewRecorder()
+	completeHandler(httpW, r)
+
+	if httpW.Code != http.StatusOK {
+		t.Fatalf("Complete level 1 failed: %d, body: %s", httpW.Code, httpW.Body.String())
+	}
+
+	progressHandler := GetProgress(database)
+	progReq := httptest.NewRequest("GET", "/progress", nil)
+	progReq.Header.Set("Authorization", "Bearer "+user.Token)
+	progW := httptest.NewRecorder()
+	progressHandler(progW, progReq)
+
+	if progW.Code != http.StatusOK {
+		t.Fatalf("GetProgress failed: %d", progW.Code)
+	}
+
+	var resp types.ProgressResponse
+	if err := json.Unmarshal(progW.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("Failed to parse progress: %v", err)
+	}
+
+	if len(resp.Progress) == 0 {
+		t.Fatal("Progress should not be empty after completing level 1")
+	}
+
+	found := false
+	for _, p := range resp.Progress {
+		if p.LevelID == 1 {
+			found = true
+			if p.Stars == 0 {
+				t.Error("Level 1 should have stars > 0")
+			}
+		}
+	}
+	if !found {
+		t.Error("Level 1 should be in progress response")
+	}
+}
+
 func TestGetProgress_Unauthorized(t *testing.T) {
 	database, cleanup := setupTestDB(t)
 	defer cleanup()
@@ -587,10 +692,31 @@ func TestHandleWebSocket_ValidToken(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &user)
 
 	hub := ws.NewHub(database)
+	go hub.Run()
+	defer hub.Shutdown()
+
 	handler := HandleWebSocket(hub)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		handler(w, r)
+	}))
+	defer server.Close()
 
-	wsReq := httptest.NewRequest("GET", "/ws?token="+user.Token, nil)
-	wsW := httptest.NewRecorder()
+	wsURL := "ws" + strings.TrimPrefix(server.URL, "http")
+	conn, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
+	if err != nil {
+		t.Fatalf("Failed to connect: %v", err)
+	}
+	defer conn.Close()
 
-	handler(wsW, wsReq)
+	authMsg := wsAuthMessage{Type: "auth", Token: user.Token}
+	authJSON, _ := json.Marshal(authMsg)
+	if err := conn.WriteMessage(websocket.TextMessage, authJSON); err != nil {
+		t.Fatalf("Failed to send auth: %v", err)
+	}
+
+	conn.SetReadDeadline(time.Now().Add(200 * time.Millisecond))
+	_, _, err = conn.ReadMessage()
+	if err == nil {
+		t.Log("Connection established successfully after auth")
+	}
 }

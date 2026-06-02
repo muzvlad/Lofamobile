@@ -58,28 +58,29 @@ func (r *IPRateLimiter) cleanup() {
 }
 
 func (r *IPRateLimiter) getLimiter(ip string) *rate.Limiter {
+	r.mu.RLock()
+	entry, exists := r.entries[ip]
+	if exists {
+		entry.lastSeen = time.Now()
+		r.mu.RUnlock()
+		return entry.limiter
+	}
+	r.mu.RUnlock()
+
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	entry, exists := r.entries[ip]
-	if exists {
+	if entry, exists = r.entries[ip]; exists {
 		entry.lastSeen = time.Now()
 		return entry.limiter
 	}
 
 	limiter := rate.NewLimiter(r.rps, r.burst)
 	r.entries[ip] = &ipEntry{limiter: limiter, lastSeen: time.Now()}
-
 	return limiter
 }
 
 func getClientIP(req *http.Request) string {
-	if fwd := req.Header.Get("X-Forwarded-For"); fwd != "" {
-		if idx := strings.IndexByte(fwd, ','); idx > 0 {
-			return strings.TrimSpace(fwd[:idx])
-		}
-		return strings.TrimSpace(fwd)
-	}
 	if real := req.Header.Get("X-Real-IP"); real != "" {
 		return strings.TrimSpace(real)
 	}
@@ -105,7 +106,8 @@ func (r *IPRateLimiter) Limit(next http.Handler) http.Handler {
 
 		limiter := r.getLimiter(ip)
 		if !limiter.Allow() {
-			http.Error(w, "Слишком много запросов", http.StatusTooManyRequests)
+			w.Header().Set("Content-Type", "application/json")
+		http.Error(w, `{"error":"Слишком много запросов"}`, http.StatusTooManyRequests)
 			return
 		}
 

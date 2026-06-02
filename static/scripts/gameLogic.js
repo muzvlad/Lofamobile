@@ -20,8 +20,9 @@ const gameLogic = {
     },
     
     t(key) {
-        if (typeof localizationManager !== 'undefined' && localizationManager.t) {
-            const val = localizationManager.t(key);
+        const l10n = getL10n();
+        if (l10n && l10n.t) {
+            const val = l10n.t(key);
             return val || key;
         }
         return key;

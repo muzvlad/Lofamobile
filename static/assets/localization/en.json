@@ -152,5 +152,22 @@
   "errNoItem": "No item here",
   "errNothingToDrop": "Nothing to drop",
   "itemTaken": "Item taken",
-  "itemPlaced": "Item placed"
+  "itemPlaced": "Item placed",
+  "Метод не поддерживается": "Method not supported",
+  "Требуется авторизация": "Authorization required",
+  "Неверные данные": "Invalid data",
+  "Ошибка сервера": "Server error",
+  "Ошибка сохранения": "Save error",
+  "Неверный номер телефона или пароль": "Invalid phone number or password",
+  "Уровень не найден": "Level not found",
+  "Неверный уровень": "Invalid level",
+  "Не удалось получить таблицу лидеров": "Failed to load leaderboard",
+  "Заполните обязательные поля": "Fill in required fields",
+  "Пароль должен содержать минимум 6 символов": "Password must be at least 6 characters",
+  "Неверный формат номера телефона": "Invalid phone number format",
+  "Номер телефона уже зарегистрирован": "Phone number already registered",
+  "Пользователь не найден": "User not found",
+  "Псевдоним не может быть пустым": "Nickname cannot be empty",
+  "Внутренняя ошибка сервера": "Internal server error",
+  "Слишком много запросов": "Too many requests"
 }

@@ -28,13 +28,6 @@
         window.addEventListener('unhandledrejection', function(e) {
             console.error('[GLOBAL] Unhandled rejection:', e.reason);
         });
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for(var registration of registrations) {
-                    registration.unregister();
-                }
-            });
-        }
     </script>
 </head>
 <body>
@@ -245,6 +238,7 @@
                 <h2 data-i18n="heroesTable"></h2>
             </div>
             <div class="leaderboard-list" id="leaderboard-list"></div>
+            <p id="leaderboard-message" class="form-message" aria-live="polite"></p>
         </div>
 
         <div id="achievements-screen" class="screen">
@@ -253,6 +247,7 @@
                 <h2 id="achievements-title" data-i18n="achievements"></h2>
             </div>
             <div class="achievements-grid" id="achievements-list"></div>
+            <p id="achievements-message" class="form-message" aria-live="polite"></p>
         </div>
 
         <div id="achievement-detail-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="achievement-detail-name">
@@ -351,7 +346,6 @@
     <script src="/static/scripts/themeManager.js"></script>
     <script src="/static/scripts/localization.js"></script>
     <script src="/static/scripts/auth.js"></script>
-    <script src="/static/scripts/achievementsData.js"></script>
     <script src="/static/scripts/levelsManager.js"></script>
     <script src="/static/scripts/leaderboardManager.js"></script>
     <script src="/static/scripts/achievementsManager.js"></script>

@@ -4,40 +4,31 @@ import (
 	"codequest/internal/achievements"
 	"database/sql"
 	"os"
-	"path/filepath"
 	"testing"
 )
 
-func hasLevelsDir() bool {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return false
-	}
-	suffixes := []string{"", "..", "../..", "../../.."}
-	for _, suffix := range suffixes {
-		dir := cwd
-		if suffix != "" {
-			dir = filepath.Join(cwd, suffix)
-		}
-		levelsPath := filepath.Join(dir, "internal", "levels")
-		if _, err := os.Stat(levelsPath); err == nil {
-			return true
-		}
-	}
-	return false
-}
-
 func getTestDB(t *testing.T) (*sql.DB, func()) {
-	database, err := Connect()
+	f, err := os.CreateTemp("", "codequest_test_*.db")
 	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	f.Close()
+
+	database, err := ConnectPath(f.Name())
+	if err != nil {
+		os.Remove(f.Name())
 		t.Fatalf("Failed to connect: %v", err)
 	}
 
-	cleanup := func() {
-		database.Exec("DELETE FROM progress WHERE user_id IN (333, 444, 555, 666, 777, 888, 999)")
-		database.Exec("DELETE FROM achievements WHERE user_id IN (333, 444)")
-		database.Exec("DELETE FROM leaderboard WHERE user_id IN (555, 556, 777, 778, 888)")
+	if err := Migrate(database); err != nil {
 		database.Close()
+		os.Remove(f.Name())
+		t.Fatalf("Failed to migrate: %v", err)
+	}
+
+	cleanup := func() {
+		database.Close()
+		os.Remove(f.Name())
 	}
 
 	return database, cleanup
@@ -67,82 +58,12 @@ func TestMigrate(t *testing.T) {
 	}
 }
 
-func TestGetLevels(t *testing.T) {
-	levels := GetLevelsWithGender("girl")
-	if len(levels) != 20 {
-		t.Errorf("Expected 20 levels, got %d", len(levels))
-	}
-
-	if levels[0].Name == "" {
-		t.Error("Level name should not be empty")
-	}
-
-	if levels[0].Grid == nil {
-		t.Error("Level grid should not be nil")
-	}
-}
-
-func TestGetLevelByID(t *testing.T) {
-	level, err := GetLevelByIDWithGender(1, "girl")
-	if err != nil {
-		t.Fatalf("Failed to get level: %v", err)
-	}
-
-	if level.ID != 1 {
-		t.Errorf("Expected level ID 1, got %d", level.ID)
-	}
-
-	level2, err := GetLevelByIDWithGender(5, "girl")
-	if err != nil {
-		t.Fatalf("Failed to get level: %v", err)
-	}
-
-	if len(level2.AvailableCommands) == 0 {
-		t.Error("Level 5 should have available commands")
-	}
-}
-
-func TestGetLevelByID_Invalid(t *testing.T) {
-	_, err := GetLevelByIDWithGender(0, "girl")
-	if err == nil {
-		t.Error("Should return error for invalid ID")
-	}
-
-	_, err = GetLevelByIDWithGender(21, "girl")
-	if err == nil {
-		t.Error("Should return error for ID > 20")
-	}
-}
-
-func TestCompleteLevel_Insert(t *testing.T) {
-	db, cleanup := getTestDB(t)
-	defer cleanup()
-
-	result := CompleteLevel(db, 999, 1, 1, "right\nright\nright", 0, 0, "girl")
-	if result.Par == 0 && hasLevelsDir() {
-		t.Error("Par should not be 0")
-	}
-
-	if hasLevelsDir() && result.Par != 3 {
-		t.Errorf("Expected par 3, got %d", result.Par)
-	}
-}
-
-func TestCompleteLevel_InvalidLevel(t *testing.T) {
-	db, cleanup := getTestDB(t)
-	defer cleanup()
-
-	result := CompleteLevel(db, 1, 999, 5, "code", 0, 0, "girl")
-	if result.Par != 0 {
-		t.Error("Invalid level should have par 0")
-	}
-}
-
 func TestUpdateScore(t *testing.T) {
 	db, cleanup := getTestDB(t)
 	defer cleanup()
 
-	db.Exec("INSERT OR REPLACE INTO leaderboard (user_id, username, gender, total_score) VALUES (888, 'testuser', 'm', 0)")
+	db.Exec("INSERT INTO users (id, phone, nickname, password_hash, gender) VALUES (888, '+7000888', 'testuser', 'hash', 'm')")
+	db.Exec("INSERT INTO leaderboard (user_id, username, gender, total_score) VALUES (888, 'testuser', 'm', 0)")
 
 	UpdateScore(db, 888, 100)
 
@@ -161,8 +82,10 @@ func TestGetLeaderboard_All(t *testing.T) {
 	db, cleanup := getTestDB(t)
 	defer cleanup()
 
-	db.Exec("INSERT OR REPLACE INTO leaderboard (user_id, username, gender, total_score) VALUES (777, 'player1', 'm', 500)")
-	db.Exec("INSERT OR REPLACE INTO leaderboard (user_id, username, gender, total_score) VALUES (778, 'player2', 'f', 300)")
+	db.Exec("INSERT INTO users (id, phone, nickname, password_hash, gender) VALUES (777, '+7000777', 'player1', 'hash', 'm')")
+	db.Exec("INSERT INTO users (id, phone, nickname, password_hash, gender) VALUES (778, '+7000778', 'player2', 'hash', 'f')")
+	db.Exec("INSERT INTO leaderboard (user_id, username, gender, total_score) VALUES (777, 'player1', 'm', 500)")
+	db.Exec("INSERT INTO leaderboard (user_id, username, gender, total_score) VALUES (778, 'player2', 'f', 300)")
 
 	entries, err := GetLeaderboard(db, "")
 	if err != nil {
@@ -182,8 +105,10 @@ func TestGetLeaderboard_Filtered(t *testing.T) {
 	db, cleanup := getTestDB(t)
 	defer cleanup()
 
-	db.Exec("INSERT OR REPLACE INTO leaderboard (user_id, username, gender, total_score) VALUES (555, 'boy1', 'm', 100)")
-	db.Exec("INSERT OR REPLACE INTO leaderboard (user_id, username, gender, total_score) VALUES (556, 'girl1', 'f', 200)")
+	db.Exec("INSERT INTO users (id, phone, nickname, password_hash, gender) VALUES (555, '+7000555', 'boy1', 'hash', 'm')")
+	db.Exec("INSERT INTO users (id, phone, nickname, password_hash, gender) VALUES (556, '+7000556', 'girl1', 'hash', 'f')")
+	db.Exec("INSERT INTO leaderboard (user_id, username, gender, total_score) VALUES (555, 'boy1', 'm', 100)")
+	db.Exec("INSERT INTO leaderboard (user_id, username, gender, total_score) VALUES (556, 'girl1', 'f', 200)")
 
 	entries, err := GetLeaderboard(db, "m")
 	if err != nil {
@@ -201,6 +126,7 @@ func TestAddAchievement(t *testing.T) {
 	db, cleanup := getTestDB(t)
 	defer cleanup()
 
+	db.Exec("INSERT INTO users (id, phone, nickname, password_hash, gender) VALUES (333, '+7000333', 'user333', 'hash', 'm')")
 	achievements.AddEarned(db, 333, "first_login")
 
 	var count int
@@ -218,6 +144,7 @@ func TestGetAchievements(t *testing.T) {
 	db, cleanup := getTestDB(t)
 	defer cleanup()
 
+	db.Exec("INSERT INTO users (id, phone, nickname, password_hash, gender) VALUES (444, '+7000444', 'user444', 'hash', 'f')")
 	achievements.AddEarned(db, 444, "first_level")
 	achievements.AddEarned(db, 444, "level_5")
 

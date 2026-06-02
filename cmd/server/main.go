@@ -19,12 +19,6 @@ import (
 	"time"
 )
 
-type contextKey string
-
-const (
-	ctxLevelID contextKey = "level_id"
-)
-
 func main() {
 	cfg := config.Load()
 	if cfg == nil {
@@ -78,11 +72,11 @@ func main() {
 			levelIDStr := path[:len(path)-9]
 			id, err := strconv.Atoi(levelIDStr)
 			if err != nil || id < 1 || id > types.MaxLevels {
-				http.Error(w, "Неверный уровень", http.StatusBadRequest)
+				http.Error(w, "Invalid level ID: "+path, http.StatusBadRequest)
 				return
 			}
 			ctx := r.Context()
-			ctx = context.WithValue(ctx, ctxLevelID, id)
+			ctx = context.WithValue(ctx, types.CtxLevelID, id)
 			r = r.WithContext(ctx)
 			api.CompleteLevel(database, hub)(w, r)
 			return
@@ -90,12 +84,12 @@ func main() {
 
 		id, err := strconv.Atoi(path)
 		if err != nil || id < 1 || id > types.MaxLevels {
-			http.Error(w, "Неверный уровень", http.StatusBadRequest)
+			http.Error(w, "Invalid level ID: "+path, http.StatusBadRequest)
 			return
 		}
 
 		ctx := r.Context()
-		ctx = context.WithValue(ctx, ctxLevelID, id)
+		ctx = context.WithValue(ctx, types.CtxLevelID, id)
 		r = r.WithContext(ctx)
 		api.GetLevel(database)(w, r)
 	})
@@ -114,13 +108,6 @@ func main() {
 		api.HandleWebSocket(hub)(w, r)
 	})
 
-	handler := api.CorsMiddleware(mux)
-	handler = api.LoggingMiddleware(handler)
-	handler = api.RecoverMiddleware(handler)
-
-	rateLimiter := api.NewIPRateLimiter(30, 50)
-	handler = rateLimiter.Limit(handler)
-
 	mux.Handle("/static/", http.StripPrefix("/static/", staticHandler))
 	mux.Handle("/scripts/", http.StripPrefix("/scripts/", staticHandler))
 	mux.Handle("/styles/", http.StripPrefix("/styles/", staticHandler))
@@ -129,6 +116,14 @@ func main() {
 	mux.Handle("/assets/", staticHandler)
 	mux.Handle("/frontend/", http.StripPrefix("/frontend/", frontendHandler))
 	mux.Handle("/", staticHandler)
+
+	rateLimiter := api.NewIPRateLimiter(30, 50)
+	defer rateLimiter.Stop()
+
+	handler := api.CorsMiddleware(mux)
+	handler = api.LoggingMiddleware(handler)
+	handler = api.RecoverMiddleware(handler)
+	handler = rateLimiter.Limit(handler)
 
 	addr := ":" + cfg.Port
 	srv := &http.Server{
@@ -168,7 +163,11 @@ func main() {
 }
 
 func getLocalIP() string {
-	addrs, _ := net.InterfaceAddrs()
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		log.Printf("[WARN] getLocalIP: %v", err)
+		return "localhost"
+	}
 	for _, addr := range addrs {
 		if ipNet, ok := addr.(*net.IPNet); ok && ipNet.IP.To4() != nil && !ipNet.IP.IsLoopback() {
 			return ipNet.IP.String()

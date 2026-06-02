@@ -25,11 +25,12 @@ type UpdateProfileRequest struct {
 }
 
 type CompleteRequest struct {
-	Code          string `json:"code"`
-	Moves         int    `json:"moves"`
-	HasItem       int    `json:"hasItem,omitempty"`
-	RequiredItems int    `json:"requiredItems,omitempty"`
-	Gender        string `json:"gender,omitempty"`
+	Code             string `json:"code"`
+	Moves            int    `json:"moves"`
+	PlayerX         int    `json:"playerX"`
+	PlayerY         int    `json:"playerY"`
+	ItemsCollected  int    `json:"itemsCollected"`
+	ItemsOnWarehouse int   `json:"itemsOnWarehouse"`
 }
 
 type CompleteResponse struct {
@@ -69,7 +70,7 @@ type ErrorResponse struct {
 }
 
 type SuccessResponse struct {
-	Success string `json:"success"`
+	Success bool `json:"success"`
 }
 
 type LevelsResponse struct {
@@ -88,13 +89,4 @@ type ProgressResponse struct {
 	Progress []ProgressEntry `json:"progress"`
 }
 
-type AuthResponse struct {
-	ID        int    `json:"id"`
-	Phone     string `json:"phone"`
-	Nickname  string `json:"nickname"`
-	Name      string `json:"name"`
-	Gender    string `json:"gender"`
-	Performer string `json:"performer"`
-	Age       *int   `json:"age,omitempty"`
-	Token     string `json:"token,omitempty"`
-}
+

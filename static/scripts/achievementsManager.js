@@ -36,13 +36,19 @@ const achievementsManager = {
     },
 
     getLocalizedAchievement(achievement) {
-        const l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        const l10n = getL10n();
         const name = l10n && l10n.t ? l10n.t(achievement.nameKey) : '';
         const desc = l10n && l10n.t ? l10n.t(achievement.descKey) : '';
         return { name, desc };
     },
 
     async load() {
+        const container = document.getElementById('achievements-list');
+        const msgEl = document.getElementById('achievements-message');
+        const l10n = getL10n();
+        if (msgEl) { msgEl.className = 'form-message'; msgEl.textContent = ''; }
+        if (container) { container.innerHTML = '<div class="loading-text">' + (l10n && l10n.t ? l10n.t('loading') : 'Загрузка...') + '</div>'; }
+
         try {
             const res = await fetch(`${this.API_URL}/api/achievements`, {
                 headers: { 'Authorization': `Bearer ${auth.getToken()}` }
@@ -59,7 +65,11 @@ const achievementsManager = {
         } catch (err) {
             console.error('Error loading achievements:', err);
             this.achievements = [];
-            this.render();
+            if (container) { container.innerHTML = ''; }
+            if (msgEl) {
+                msgEl.textContent = l10n && l10n.t ? l10n.t('connectionError') : 'Ошибка соединения';
+                msgEl.className = 'form-message error';
+            }
         }
     },
 
@@ -68,7 +78,7 @@ const achievementsManager = {
         if (!achievement) return;
 
         const localized = this.getLocalizedAchievement(achievement);
-        const l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        const l10n = getL10n();
         const t = (key) => l10n && l10n.t ? l10n.t(key) : key;
         
         const modal = document.getElementById('achievement-detail-modal');
@@ -137,7 +147,3 @@ const achievementsManager = {
 };
 
 achievementsManager.init();
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = achievementsManager;
-}

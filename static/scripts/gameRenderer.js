@@ -584,18 +584,9 @@ const gameRenderer = {
 
         const level = gameManager.currentLevel;
         const availableCommands = level.availableCommands || ['up', 'down', 'left', 'right', 'jump', 'turn'];
-        const commands = [
-            { id: 'up', icon: '\u2B06\uFE0F' },
-            { id: 'down', icon: '\u2B07\uFE0F' },
-            { id: 'left', icon: '\u2B05\uFE0F' },
-            { id: 'right', icon: '\u27A1\uFE0F' },
-            { id: 'jump', icon: '\uD83E\uDD98' },
-            { id: 'turn', icon: '\u21A9\uFE0F' },
-            { id: 'collect', icon: '\u270B' },
-            { id: 'drop', icon: '\uD83D\uDCE6' }
-        ];
+        const commands = gameManager.commands;
 
-        const l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        const l10n = getL10n();
 
         commands.forEach(cmd => {
             if (!availableCommands.includes(cmd.id)) return;
@@ -632,20 +623,12 @@ const gameRenderer = {
 
         editor.innerHTML = '';
 
-        const l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        const l10n = getL10n();
         const placeholder = l10n && l10n.t ? l10n.t('dragHere') : '';
         editor.setAttribute('data-placeholder', placeholder);
 
-        const cmdIcons = {
-            up: '\u2B06\uFE0F',
-            down: '\u2B07\uFE0F',
-            left: '\u2B05\uFE0F',
-            right: '\u27A1\uFE0F',
-            jump: '\uD83E\uDD98',
-            turn: '\u21A9\uFE0F',
-            collect: '\u270B',
-            drop: '\uD83D\uDCE6'
-        };
+        const cmdIconMap = {};
+        gameManager.commands.forEach(function(c) { cmdIconMap[c.id] = c.icon; });
 
         gameManager.editorCommands.forEach((cmd, index) => {
             const cmdDiv = document.createElement('div');
@@ -653,7 +636,7 @@ const gameRenderer = {
             cmdDiv.dataset.index = index;
             cmdDiv.draggable = true;
 
-            const icon = cmdIcons[cmd] || '\u2753';
+            const icon = cmdIconMap[cmd] || '\u2753';
             const localizedLabel = l10n && l10n.t ? l10n.t(cmd) : cmd;
             cmdDiv.innerHTML = '<span class="cmd-icon">' + icon + '</span><span class="cmd-label">' + localizedLabel + '</span>';
 
@@ -696,18 +679,6 @@ const gameRenderer = {
         }
     },
 
-    removeItemFromGrid(x, y) {
-        const grid = document.getElementById('game-grid');
-        if (!grid) return;
-
-        const cells = grid.querySelectorAll('.grid-cell');
-        cells.forEach(cell => {
-            if (parseInt(cell.dataset.x) === x && parseInt(cell.dataset.y) === y) {
-                cell.classList.remove('item');
-                cell.innerHTML = '';
-            }
-        });
-    }
 };
 
 window.gameRenderer = gameRenderer;

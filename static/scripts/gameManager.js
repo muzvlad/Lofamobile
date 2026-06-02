@@ -28,14 +28,14 @@ const gameManager = {
         let chapter = Math.ceil(level.id / 10);
         let levelName = level.name;
 
-        if (typeof localizationManager !== 'undefined' && localizationManager.getScenarioLevelName) {
+        if (localizationManager && localizationManager.getScenarioLevelName) {
             let localizedName = localizationManager.getScenarioLevelName(chapter, level.id);
             if (localizedName) {
                 levelName = localizedName;
             }
         }
 
-        let l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        let l10n = getL10n();
         let starsText = l10n ? l10n.t('emptyStars') : 'emptyStars';
 
         document.getElementById('level-name').textContent = levelName;

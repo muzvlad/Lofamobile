@@ -95,11 +95,11 @@ func TestScoreUpdateMessageJSON_AllScores(t *testing.T) {
 }
 
 func TestUpgraderCheckOrigin(t *testing.T) {
-	if upgrader.ReadBufferSize != 1024 {
-		t.Errorf("Expected ReadBufferSize 1024, got %d", upgrader.ReadBufferSize)
+	if Upgrader.ReadBufferSize != 1024 {
+		t.Errorf("Expected ReadBufferSize 1024, got %d", Upgrader.ReadBufferSize)
 	}
 
-	if upgrader.WriteBufferSize != 1024 {
-		t.Errorf("Expected WriteBufferSize 1024, got %d", upgrader.WriteBufferSize)
+	if Upgrader.WriteBufferSize != 1024 {
+		t.Errorf("Expected WriteBufferSize 1024, got %d", Upgrader.WriteBufferSize)
 	}
 }

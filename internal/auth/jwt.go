@@ -12,11 +12,10 @@ var jwtSecret []byte
 
 func Init(secret string) error {
 	if secret == "" {
-		log.Printf("[AUTH] JWT_SECRET not set, using development default")
-		secret = "dev-secret-lofa-mobile-2024"
+		log.Printf("[AUTH] JWT_SECRET not set")
+		return fmt.Errorf("JWT_SECRET is required")
 	}
 	jwtSecret = []byte(secret)
-	log.Printf("[AUTH] JWT secret initialized, len=%d", len(jwtSecret))
 	return nil
 }
 
@@ -25,7 +24,6 @@ func GetSecret() []byte {
 }
 
 func GenerateToken(userID int, phone, nickname, gender, performer string) (string, error) {
-	log.Printf("[JWT] Generating token with secret len=%d", len(jwtSecret))
 	claims := jwt.MapClaims{
 		"user_id":   userID,
 		"phone":     phone,

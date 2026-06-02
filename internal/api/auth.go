@@ -8,10 +8,15 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strings"
 	"unicode/utf8"
 
 	"golang.org/x/crypto/bcrypt"
 )
+
+func isDuplicatePhone(err error) bool {
+	return strings.Contains(err.Error(), "UNIQUE constraint")
+}
 
 func Register(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -27,10 +32,7 @@ func Register(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		log.Printf("[REGISTER] Attempt for phone: %s, nickname: %s", req.Phone, req.Nickname)
-
 		if req.Phone == "" || req.Password == "" || req.Gender == "" || req.Nickname == "" {
-			log.Printf("[REGISTER] Missing required fields")
 			RespondError(w, "Заполните обязательные поля", http.StatusBadRequest)
 			return
 		}
@@ -53,15 +55,17 @@ func Register(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		log.Printf("[REGISTER] Generated hash: %s", string(hash)[:20])
-
 		result, err := database.Exec(
 			"INSERT INTO users (phone, nickname, name, password_hash, gender, performer, age, language) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
 			req.Phone, req.Nickname, req.Name, string(hash), req.Gender, req.Performer, req.Age, req.Language,
 		)
 		if err != nil {
 			log.Printf("[REGISTER] Insert error: %v", err)
-			RespondError(w, "Номер телефона уже зарегистрирован", http.StatusBadRequest)
+			if isDuplicatePhone(err) {
+				RespondError(w, "Номер телефона уже зарегистрирован", http.StatusBadRequest)
+			} else {
+				RespondError(w, "Ошибка сервера", http.StatusInternalServerError)
+			}
 			return
 		}
 
@@ -72,16 +76,12 @@ func Register(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		log.Printf("[REGISTER] Created user %d", userID)
-
 		tokenString, err := auth.GenerateToken(int(userID), req.Phone, req.Nickname, req.Gender, req.Performer)
 		if err != nil {
 			log.Printf("[REGISTER] Token error: %v", err)
 			RespondError(w, "Ошибка сервера", http.StatusInternalServerError)
 			return
 		}
-		
-		log.Printf("[REGISTER] Token generated for user %d, token len=%d", userID, len(tokenString))
 
 		_, err = database.Exec(
 			"INSERT INTO leaderboard (user_id, username, gender, total_score) VALUES (?, ?, ?, 0)",
@@ -91,7 +91,7 @@ func Register(database *sql.DB) http.HandlerFunc {
 			log.Printf("Error inserting leaderboard entry: %v", err)
 		}
 
-		RespondJSON(w, http.StatusCreated, types.AuthResponse{
+		RespondJSON(w, http.StatusCreated, types.User{
 			ID:        int(userID),
 			Phone:     req.Phone,
 			Nickname:  req.Nickname,
@@ -118,8 +118,6 @@ func Login(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		log.Printf("[LOGIN] Attempt for phone: %s", req.Phone)
-
 		var id int
 		var hash, nickname, name, gender, performer string
 		var age sql.NullInt64
@@ -135,15 +133,11 @@ func Login(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		log.Printf("[LOGIN] Found user: id=%d, nickname=%s", id, nickname)
-
 		if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(req.Password)); err != nil {
 			log.Printf("[LOGIN] Password mismatch for user %d, error: %v", id, err)
 			RespondError(w, "Неверный номер телефона или пароль", http.StatusUnauthorized)
 			return
 		}
-
-		log.Printf("[LOGIN] SUCCESS for user %d", id)
 
 		var agePtr *int
 		if age.Valid {
@@ -158,7 +152,7 @@ func Login(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		RespondJSON(w, http.StatusOK, types.AuthResponse{
+		RespondJSON(w, http.StatusOK, types.User{
 			ID:        id,
 			Phone:     req.Phone,
 			Nickname:  nickname,
@@ -184,7 +178,7 @@ func GetMe(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		var user types.AuthResponse
+		var user types.User
 		var age sql.NullInt64
 		err = database.QueryRow(
 			"SELECT id, phone, nickname, name, gender, COALESCE(performer, 'builder'), age FROM users WHERE id = ?",
@@ -260,17 +254,30 @@ func UpdateProfile(database *sql.DB) http.HandlerFunc {
 		)
 		if err != nil {
 			log.Printf("[UPDATE_PROFILE] Leaderboard sync error: %v", err)
-			tx.Rollback()
 			RespondError(w, "Ошибка сохранения", http.StatusInternalServerError)
 			return
 		}
 
-		if err := tx.Commit(); err != nil {
-			log.Printf("[UPDATE_PROFILE] TX commit error: %v", err)
-			RespondError(w, "Ошибка сохранения", http.StatusInternalServerError)
-			return
-		}
-
-		RespondJSON(w, http.StatusOK, types.SuccessResponse{Success: "Профиль обновлен"})
+	if err := tx.Commit(); err != nil {
+		log.Printf("[UPDATE_PROFILE] TX commit error: %v", err)
+		RespondError(w, "Ошибка сохранения", http.StatusInternalServerError)
+		return
 	}
+
+	claims, err := GetUserFromToken(r)
+	if err != nil || claims == nil {
+		RespondError(w, "Ошибка авторизации", http.StatusUnauthorized)
+		return
+	}
+	phone, _ := (*claims)["phone"].(string)
+
+	newToken, err := auth.GenerateToken(userID, phone, req.Nickname, req.Gender, req.Performer)
+	if err != nil {
+		log.Printf("[UPDATE_PROFILE] Token generation error: %v", err)
+		RespondError(w, "Ошибка сохранения", http.StatusInternalServerError)
+		return
+	}
+
+	RespondJSON(w, http.StatusOK, map[string]interface{}{"success": true, "token": newToken})
+}
 }

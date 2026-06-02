@@ -1,17 +1,21 @@
 package api
 
 import (
-	"codequest/internal/achievements"
-	"codequest/internal/auth"
-	"codequest/internal/db"
-	"codequest/internal/types"
-	"codequest/internal/ws"
 	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/gorilla/websocket"
+
+	"codequest/internal/achievements"
+	"codequest/internal/auth"
+	"codequest/internal/db"
+	"codequest/internal/levels"
+	"codequest/internal/scoring"
+	"codequest/internal/types"
+	"codequest/internal/ws"
 )
 
 func GetUserFromToken(r *http.Request) (*jwt.MapClaims, error) {
@@ -42,10 +46,10 @@ func GetLevels(database *sql.DB) http.HandlerFunc {
 		}
 		gender := r.URL.Query().Get("gender")
 		if gender == "" {
-			gender = "boy"
+			gender = GetGenderFromToken(r)
 		}
-		levels := db.GetLevelsWithGender(gender)
-		RespondJSON(w, http.StatusOK, types.LevelsResponse{Levels: levels})
+		levelList := levels.GetLevelsWithGender(gender)
+		RespondJSON(w, http.StatusOK, types.LevelsResponse{Levels: levelList})
 	}
 }
 
@@ -56,7 +60,7 @@ func GetLevel(database *sql.DB) http.HandlerFunc {
 			return
 		}
 		id := 0
-		if lid := r.Context().Value("level_id"); lid != nil {
+		if lid := r.Context().Value(types.CtxLevelID); lid != nil {
 			id = lid.(int)
 		}
 
@@ -67,10 +71,10 @@ func GetLevel(database *sql.DB) http.HandlerFunc {
 
 		gender := r.URL.Query().Get("gender")
 		if gender == "" {
-			gender = "boy"
+			gender = GetGenderFromToken(r)
 		}
 
-		level, err := db.GetLevelByIDWithGender(id, gender)
+		level, err := levels.GetLevelByIDWithGender(id, gender)
 		if err != nil {
 			http.Error(w, "Уровень не найден", http.StatusNotFound)
 			return
@@ -93,7 +97,7 @@ func CompleteLevel(database *sql.DB, hub *ws.Hub) http.HandlerFunc {
 		}
 
 		var levelID int
-		if lid := r.Context().Value("level_id"); lid != nil {
+		if lid := r.Context().Value(types.CtxLevelID); lid != nil {
 			levelID = lid.(int)
 		}
 
@@ -109,21 +113,21 @@ func CompleteLevel(database *sql.DB, hub *ws.Hub) http.HandlerFunc {
 		}
 
 		gender := GetGenderFromToken(r)
-		result := db.CompleteLevel(database, userID, levelID, req.Moves, req.Code, req.HasItem, req.RequiredItems, gender)
-
+		result := scoring.CompleteLevel(database, userID, levelID, req, gender)
 		stars := result.Stars
 		score := 0
-		updated := false
 		if result.Success && result.Improved {
 			score = stars * 100
-			updated = db.UpdateScore(database, userID, score)
+			if db.UpdateScore(database, userID, score) {
+				username := ""
+				if claims, err := GetUserFromToken(r); err == nil {
+					if n, ok := (*claims)["nickname"].(string); ok {
+						username = n
+					}
+				}
+				hub.BroadcastScoreUpdate(userID, username, db.GetUserScore(database, userID))
+			}
 		}
-
-		totalScore := 0
-		if updated {
-			totalScore = db.GetUserScore(database, userID)
-		}
-		hub.BroadcastScoreUpdate(userID, totalScore)
 
 		RespondJSON(w, http.StatusOK, types.CompleteResponse{
 			Success: result.Success,
@@ -184,7 +188,7 @@ func SaveAchievement(database *sql.DB) http.HandlerFunc {
 			}
 		}
 
-		RespondJSON(w, http.StatusOK, types.SuccessResponse{Success: "true"})
+		RespondJSON(w, http.StatusOK, types.SuccessResponse{Success: true})
 	}
 }
 
@@ -217,11 +221,16 @@ func GetProgress(database *sql.DB) http.HandlerFunc {
 			return
 		}
 
+		gender := r.URL.Query().Get("gender")
+		if gender == "" {
+			gender = GetGenderFromToken(r)
+		}
 		rows, err := database.Query(
-			"SELECT level_id, stars, moves FROM progress WHERE user_id = ?",
-			userID,
+			"SELECT level_id, stars, moves FROM progress WHERE user_id = ? AND gender = ?",
+			userID, gender,
 		)
 		if err != nil {
+			log.Printf("[PROGRESS] Query error: %v", err)
 			RespondJSON(w, http.StatusOK, types.ProgressResponse{Progress: make([]types.ProgressEntry, 0)})
 			return
 		}
@@ -233,6 +242,11 @@ func GetProgress(database *sql.DB) http.HandlerFunc {
 			if err := rows.Scan(&p.LevelID, &p.Stars, &p.Moves); err == nil {
 				progress = append(progress, p)
 			}
+		}
+
+		if err := rows.Err(); err != nil {
+			RespondJSON(w, http.StatusOK, types.ProgressResponse{Progress: make([]types.ProgressEntry, 0)})
+			return
 		}
 
 		RespondJSON(w, http.StatusOK, types.ProgressResponse{Progress: progress})
@@ -256,40 +270,60 @@ func GetUserScore(database *sql.DB) http.HandlerFunc {
 	}
 }
 
+type wsAuthMessage struct {
+	Type  string `json:"type"`
+	Token string `json:"token"`
+}
+
 func HandleWebSocket(hub *ws.Hub) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("[WS] Connection attempt from %s, URL: %s", r.RemoteAddr, r.URL.String())
+		log.Printf("[WS] Connection attempt from %s", r.RemoteAddr)
 
-		token := r.URL.Query().Get("token")
-		if token == "" {
-			log.Printf("[WS] No token provided")
-			http.Error(w, "Неавторизован", http.StatusUnauthorized)
+		conn, err := ws.Upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Printf("[WS] Upgrade error: %v", err)
 			return
 		}
 
-		claims, err := auth.ValidateToken(token)
+		_, message, err := conn.ReadMessage()
+		if err != nil {
+			log.Printf("[WS] Auth read error: %v", err)
+			conn.Close()
+			return
+		}
+
+		var authMsg wsAuthMessage
+		if err := json.Unmarshal(message, &authMsg); err != nil || authMsg.Type != "auth" || authMsg.Token == "" {
+			log.Printf("[WS] Invalid auth message")
+			conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(4001, "auth required"))
+			conn.Close()
+			return
+		}
+
+		claims, err := auth.ValidateToken(authMsg.Token)
 		if err != nil {
 			log.Printf("[WS] Invalid token: %v", err)
-			http.Error(w, "Неверный токен", http.StatusUnauthorized)
+			conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(4001, "invalid token"))
+			conn.Close()
 			return
 		}
 
 		userIDFloat, ok := (*claims)["user_id"].(float64)
 		if !ok {
-			log.Printf("[WS] Invalid user ID")
-			http.Error(w, "Неверный ID пользователя", http.StatusUnauthorized)
+			log.Printf("[WS] Invalid user ID in token")
+			conn.Close()
 			return
 		}
 		userID := int(userIDFloat)
 
 		nickname, ok := (*claims)["nickname"].(string)
 		if !ok {
-			log.Printf("[WS] Invalid nickname")
-			http.Error(w, "Неверный псевдоним", http.StatusUnauthorized)
+			log.Printf("[WS] Invalid nickname in token")
+			conn.Close()
 			return
 		}
 
 		log.Printf("[WS] Accepting connection for user %d (%s)", userID, nickname)
-		ws.ServeWs(hub, w, r, userID, nickname)
+		ws.ServeWsFromConn(hub, conn, userID, nickname)
 	}
 }

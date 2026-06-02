@@ -7,7 +7,7 @@ let levelsManager = {
     init: function() {
     },
 
-load: function() {
+    load: function() {
         let self = this;
         
         let gender = 'boy';
@@ -17,8 +17,13 @@ load: function() {
             token = auth.getToken();
         }
         
-        if (typeof localizationManager !== 'undefined' && localizationManager.currentGender) {
+        if (localizationManager && localizationManager.currentGender) {
             gender = localizationManager.currentGender;
+        }
+        
+        let gridEl = document.getElementById('levels-grid');
+        if (gridEl) {
+            gridEl.innerHTML = '<div class="loading-text">' + (localizationManager && localizationManager.t ? localizationManager.t('loading') : 'Загрузка...') + '</div>';
         }
         
         let fetchOptions = { 
@@ -31,7 +36,7 @@ load: function() {
         
         Promise.all([
             fetch(this.API_URL + '/api/levels?gender=' + gender + '&t=' + Date.now(), fetchOptions),
-            token ? fetch(this.API_URL + '/api/progress?t=' + Date.now(), fetchOptions) : Promise.resolve({ ok: true, json: function() { return Promise.resolve({progress: []}); } })
+            token ? fetch(this.API_URL + '/api/progress?gender=' + gender + '&t=' + Date.now(), fetchOptions) : Promise.resolve({ ok: true, json: function() { return Promise.resolve({progress: []}); } })
         ])
         .then(function(responses) {
             return Promise.all(responses.map(function(r) { return r.json(); }));
@@ -44,14 +49,13 @@ load: function() {
             self.completedLevels = progressData.progress || [];
             
             self.render();
-            if (typeof leaderboardManager !== 'undefined') {
-                leaderboardManager.load();
-            }
         })
         .catch(function(err) {
             console.error('Error loading levels:', err);
             self.levels = [];
-            self.render();
+            if (gridEl) {
+                gridEl.innerHTML = '<div class="error-text">' + (localizationManager && localizationManager.t ? localizationManager.t('connectionError') : 'Ошибка загрузки') + '</div>';
+            }
         });
     },
 
@@ -78,7 +82,7 @@ load: function() {
     },
 
 getLevelLocalized: function(chapter, levelId) {
-        if (typeof localizationManager !== 'undefined' && localizationManager.getLevelText) {
+        if (localizationManager && localizationManager.getLevelText) {
             let name = localizationManager.getLevelText(chapter, levelId, 'name');
             let desc = localizationManager.getLevelText(chapter, levelId, 'description');
             let goal = localizationManager.getLevelText(chapter, levelId, 'goal');
@@ -102,11 +106,11 @@ showLevelInfo: function(level) {
         let localized = null;
         let gender = 'boy';
         
-        if (typeof localizationManager !== 'undefined' && localizationManager.currentGender) {
+        if (localizationManager && localizationManager.currentGender) {
             gender = localizationManager.currentGender;
         }
         
-        if (typeof localizationManager !== 'undefined') {
+        if (localizationManager) {
             if (localizationManager.getScenarioLevel) {
                 scenarioLevel = localizationManager.getScenarioLevel(this.currentChapter, level.id);
             }
@@ -139,7 +143,7 @@ showLevelInfo: function(level) {
         }
         
         let scenarioLevelName = null;
-        let l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+        let l10n = getL10n();
         let titleContainer = document.getElementById('level-info-title');
         
         if (l10n && l10n.getScenarioLevelName) {
@@ -212,7 +216,7 @@ render: function() {
         
         let chapterData = null;
         
-        if (typeof localizationManager !== 'undefined' && localizationManager.getScenarioChapterInfo) {
+        if (localizationManager && localizationManager.getScenarioChapterInfo) {
             chapterData = localizationManager.getScenarioChapterInfo(chapterNum);
         }
         
@@ -253,7 +257,7 @@ render: function() {
             let isUnlocked = self.isLevelUnlocked(level.id);
             
             let gender = 'boy';
-            if (typeof localizationManager !== 'undefined' && localizationManager.currentGender) {
+            if (localizationManager && localizationManager.currentGender) {
                 gender = localizationManager.currentGender;
             }
             
@@ -261,7 +265,7 @@ render: function() {
             let levelImgPath = '/frontend/src/levels/chapter_' + chapterNum + '/chapter_' + chapterNum + '_' + gender + '_' + levelNum + '.webp';
             let fallbackBg = '';
             
-            if (typeof localizationManager !== 'undefined' && localizationManager.translations.scenario && chapterNum === 1) {
+            if (localizationManager && localizationManager.translations.scenario && chapterNum === 1) {
                 let emojis = {
                     girl: ['🍳', '🥧', '🧁', '🍎', '🥛'],
                     boy: ['🏠', '🔨', '🚧', '📦', '🏴']
@@ -279,7 +283,7 @@ render: function() {
             }
             
             let levelName = level.name || '';
-            if (typeof localizationManager !== 'undefined') {
+            if (localizationManager) {
                 if (localizationManager.translations && localizationManager.translations.scenario) {
                     let l10nName = localizationManager.getScenarioLevelName(chapterNum, level.id);
                     if (l10nName) {

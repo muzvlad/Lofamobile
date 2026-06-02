@@ -18,12 +18,16 @@
     --magic: #C485A5;
     --magic-light: #D8A5C5;
     
-    --dark: #3A2A30;
-    --dark-brown: #4A383F;
-    --brown: #6A4855;
-    --light-brown: #8A6875;
+    --dark: #000000;
+    --dark-brown: #000000;
+    --brown: #000000;
+    --light-brown: #000000;
     
     --light: #F5E8ED;
     --light-gold: #FAF0F5;
     --white: #FFFAFC;
+}
+
+body, .modal-content, p, span, h1, h2, h3, h4, h5, h6, a, li, label, input, textarea, button, .description {
+    color: #000;
 }

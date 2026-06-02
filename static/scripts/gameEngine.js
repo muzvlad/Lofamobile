@@ -20,30 +20,24 @@ const gameEngine = {
             items: levelItems
         };
         const moves = gameManager.editorCommands.length;
-        const requiredItems = gameManager.originalItems ? gameManager.originalItems.length : 0;
 
         const executeStep = async (index) => {
             if (index >= gameManager.editorCommands.length) {
                 const itemsCollected = player.heldItems ? player.heldItems.length : 0;
                 
-                const isLevel10 = gameManager.currentLevel && gameManager.currentLevel.id === 10;
-                let itemsOnTarget = itemsCollected;
-                if (isLevel10 && requiredItems > 0) {
-                    let itemsOnWarehouse = 0;
-                    level.items.forEach(item => {
-                        let cellX = item.x;
-                        let cellY = item.y;
-                        if (cellX >= 0 && cellX < grid[0].length && cellY >= 0 && cellY < grid.length) {
-                            if (grid[cellY][cellX] === 7) {
-                                itemsOnWarehouse++;
-                            }
+                let itemsOnWarehouse = 0;
+                level.items.forEach(item => {
+                    let cellX = item.x;
+                    let cellY = item.y;
+                    if (cellX >= 0 && cellX < grid[0].length && cellY >= 0 && cellY < grid.length) {
+                        if (grid[cellY][cellX] === 7) {
+                            itemsOnWarehouse++;
                         }
-                    });
-                    itemsOnTarget = itemsOnWarehouse;
-                }
+                    }
+                });
                 
-                    this.isRunning = false;
-                    await this.executeFinish(itemsOnTarget, moves, requiredItems);
+                this.isRunning = false;
+                await this.executeFinish(moves, itemsCollected, itemsOnWarehouse);
                 return;
             }
 
@@ -72,59 +66,59 @@ const gameEngine = {
         return gameManager.currentLevel.grid[y][x] !== 1;
     },
 
-    async executeFinish(hasItem, moves, requiredItems) {
+    async executeFinish(moves, itemsCollected, itemsOnWarehouse) {
         const grid = gameManager.currentLevel.grid;
         const player = gameManager.player;
 
         if (player.y < 0 || player.x < 0 || !grid[player.y] || !grid[player.y][player.x]) {
-            await this.completeLevel(false, moves, hasItem, requiredItems);
+            await this.completeLevel(moves, itemsCollected, itemsOnWarehouse);
             return;
         }
 
-        const isFinish = grid[player.y][player.x] === 3;
-
-        await this.completeLevel(isFinish, moves, hasItem, requiredItems);
+        await this.completeLevel(moves, itemsCollected, itemsOnWarehouse);
     },
 
-    async completeLevel(success, moves, hasItem, requiredItems) {
+    async completeLevel(moves, itemsCollected, itemsOnWarehouse) {
         const levelId = gameManager.currentLevel.id;
         
         try {
+            const requestBody = {
+                code: gameManager.editorCommands.join('\n'),
+                moves: moves,
+                playerX: gameManager.player.x,
+                playerY: gameManager.player.y,
+                itemsCollected: itemsCollected,
+                itemsOnWarehouse: itemsOnWarehouse
+            };
+            console.log('[LEVEL] Sending:', requestBody);
             const res = await fetch(`${window.location.origin}/api/levels/${gameManager.currentLevel.id}/complete`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${auth.getToken()}`
                 },
-                body: JSON.stringify({
-                    code: gameManager.editorCommands.join('\n'),
-                    moves: moves,
-                    hasItem: hasItem,
-                    requiredItems: requiredItems || 0
-                })
+                body: JSON.stringify(requestBody)
             });
 
             if (!res.ok) {
+                console.warn('[LEVEL] Server returned', res.status, 'for level', levelId);
                 this.showResult(0, 0, false);
                 return;
             }
             
             const data = await res.json();
+            console.log('[LEVEL] Result:', data);
             
-            if (data.success && success) {
+            if (data.success) {
                 await achievementsManager.save(gameManager.currentLevel.id);
                 
                 if (typeof levelsManager !== 'undefined') {
                     await levelsManager.load();
-                    await new Promise(r => setTimeout(r, 100));
                 }
                 
                 const nextLevelId = gameManager.currentLevel.id + 1;
-                
-                setTimeout(() => {
-                    const nextUnlocked = nextLevelId <= 20 && levelsManager.isLevelUnlocked(nextLevelId);
-                    this.showResult(data.stars, data.score, nextUnlocked);
-                }, 200);
+                const nextUnlocked = nextLevelId <= 20 && levelsManager.isLevelUnlocked(nextLevelId);
+                this.showResult(data.stars, data.score, nextUnlocked);
             } else {
                 this.showResult(0, 0, false);
             }
@@ -133,12 +127,11 @@ const gameEngine = {
         }
     },
 
-    t(key) {
+    t(key, fallback) {
         if (localizationManager && localizationManager.t) {
-            let result = localizationManager.t(key);
-            return result !== '' ? result : key;
+            return localizationManager.t(key, fallback);
         }
-        return key;
+        return fallback !== undefined ? fallback : key;
     },
 
     showResult(stars, score, hasNext) {
@@ -152,18 +145,19 @@ const gameEngine = {
         modal.classList.remove('active');
         
         setTimeout(() => {
+            const msgEl = document.getElementById('result-message');
             if (stars > 0) {
                 if (titleEl) titleEl.textContent = this.t('resultTitle');
                 if (starsEl) starsEl.textContent = '⭐'.repeat(stars);
                 if (scoreEl && scoreEl.previousElementSibling) {
                     scoreEl.textContent = '+' + score;
                 }
-                const msgEl = document.getElementById('result-message');
                 if (msgEl) msgEl.textContent = this.t('resultMessage');
             } else {
                 if (titleEl) titleEl.textContent = this.t('resultTitleFail');
                 if (starsEl) starsEl.textContent = this.t('tryAgain');
                 if (scoreEl) scoreEl.textContent = '';
+                if (msgEl) msgEl.textContent = '';
             }
 
             const retryBtnEl = document.getElementById('retry-level-btn');

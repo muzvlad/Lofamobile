@@ -5,16 +5,25 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
+var Upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
-		return true
+		origin := r.Header.Get("Origin")
+		if origin == "" {
+			return true
+		}
+		parsed, err := url.Parse(origin)
+		if err != nil {
+			return false
+		}
+		return parsed.Host == r.Host
 	},
 }
 
@@ -27,12 +36,13 @@ type Client struct {
 }
 
 type Hub struct {
-	clients    map[int]*Client
-	register   chan *Client
-	unregister chan *Client
-	broadcast  chan []byte
-	database   *sql.DB
-	quit       chan struct{}
+	clients      map[int]*Client
+	register     chan *Client
+	unregister   chan *Client
+	broadcast    chan []byte
+	database     *sql.DB
+	quit         chan struct{}
+	shutdownDone chan struct{}
 }
 
 type ScoreUpdateMessage struct {
@@ -44,12 +54,13 @@ type ScoreUpdateMessage struct {
 
 func NewHub(database *sql.DB) *Hub {
 	return &Hub{
-		clients:    make(map[int]*Client),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		broadcast:  make(chan []byte),
-		database:   database,
-		quit:       make(chan struct{}),
+		clients:      make(map[int]*Client),
+		register:     make(chan *Client),
+		unregister:   make(chan *Client),
+		broadcast:    make(chan []byte),
+		database:     database,
+		quit:         make(chan struct{}),
+		shutdownDone: make(chan struct{}),
 	}
 }
 
@@ -57,6 +68,11 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case <-h.quit:
+			for _, client := range h.clients {
+				close(client.send)
+			}
+			h.clients = make(map[int]*Client)
+			close(h.shutdownDone)
 			return
 
 		case client := <-h.register:
@@ -88,40 +104,33 @@ func (h *Hub) Shutdown() {
 	default:
 		close(h.quit)
 	}
-	for _, client := range h.clients {
-		close(client.send)
+	select {
+	case <-h.shutdownDone:
+	default:
+		for _, client := range h.clients {
+			close(client.send)
+		}
+		h.clients = make(map[int]*Client)
 	}
-	h.clients = make(map[int]*Client)
 	log.Printf("[WS] Hub shutdown complete")
 }
 
-func (h *Hub) BroadcastScoreUpdate(userID int, newScore int) {
-	if h.database == nil {
-		return
-	}
-	var username string
-	err := h.database.QueryRow("SELECT nickname FROM users WHERE id = ?", userID).Scan(&username)
-	if err != nil {
-		username = "Unknown"
-	}
-
+func (h *Hub) BroadcastScoreUpdate(userID int, username string, newScore int) {
 	msg := ScoreUpdateMessage{
 		Type:     "score_update",
 		UserID:   userID,
 		Username: username,
 		Score:    newScore,
 	}
-	data, _ := json.Marshal(msg)
+	data, err := json.Marshal(msg)
+	if err != nil {
+		log.Printf("[WS] Marshal error: %v", err)
+		return
+	}
 	h.broadcast <- data
 }
 
-func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request, userID int, username string) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Printf("[WS] Upgrade error: %v", err)
-		return
-	}
-
+func ServeWsFromConn(hub *Hub, conn *websocket.Conn, userID int, username string) {
 	client := &Client{
 		hub:      hub,
 		conn:     conn,
@@ -129,11 +138,18 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request, userID int, usern
 		userID:   userID,
 		username: username,
 	}
-
 	hub.register <- client
-
 	go client.writePump()
 	go client.readPump()
+}
+
+func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request, userID int, username string) {
+	conn, err := Upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Printf("[WS] Upgrade error: %v", err)
+		return
+	}
+	ServeWsFromConn(hub, conn, userID, username)
 }
 
 func (c *Client) readPump() {

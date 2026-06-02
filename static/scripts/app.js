@@ -1,3 +1,21 @@
+const LANG_NAMES = {
+    ru: 'Русский',
+    en: 'English',
+    es: 'Español',
+    tg: 'Тоҷикӣ',
+    uz: "O'zbekcha",
+    bxr: 'Буряад'
+};
+
+const LANG_FLAGS = {
+    ru: '/flags/ru.png',
+    en: '/flags/us.png',
+    es: '/flags/es.png',
+    tg: '/flags/tg.png',
+    uz: '/flags/uz.png',
+    bxr: '/flags/ru.png'
+};
+
 let app = {
     API_URL: window.location.origin,
     currentUser: null,
@@ -11,7 +29,7 @@ let app = {
             themeManager.apply();
         }
         
-        if (typeof localizationManager !== 'undefined') {
+        if (localizationManager) {
             localizationManager.init().then(function() {
                 localizationManager.updateUI();
                 localizationManager.updateAllUI();
@@ -43,17 +61,18 @@ initUIComponents: function() {
         
         let backBtns = document.querySelectorAll('.back-btn');
         for (let i = 0; i < backBtns.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function() {
-                    let currentScreen = document.querySelector('.screen.active');
-                    if (currentScreen && currentScreen.id === 'game-screen') {
-                        levelsManager.load();
-                        self.showMenu();
-                    } else if (currentScreen && currentScreen.id === 'profile-screen') {
-                        app.showMenu();
-                    }
-                });
-            })(backBtns[i]);
+            let btn = backBtns[i];
+            btn.addEventListener('click', function() {
+                let currentScreen = document.querySelector('.screen.active');
+                if (currentScreen && currentScreen.id === 'game-screen') {
+                    levelsManager.load();
+                    self.showMenu();
+                } else if (currentScreen && currentScreen.id === 'profile-screen') {
+                    app.showMenu();
+                } else {
+                    self.showMenu();
+                }
+            });
         }
         
         let startLevelBtn = document.getElementById('start-level-btn');
@@ -86,99 +105,92 @@ initUIComponents: function() {
         
         let langBtns = document.querySelectorAll('.language-bar .lang-btn');
         for (let i = 0; i < langBtns.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function() {
-                    let lang = btn.dataset.lang;
-                    if (typeof localizationManager !== 'undefined') {
-                        localizationManager.setLanguage(lang);
-                    }
-                    let langNames = { ru:'Русский', en:'English', es:'Español', tg:'Тоҷикӣ', uz:"O'zbekcha", bxr:'Буряад' };
-                    btn.setAttribute('aria-label', langNames[lang] || lang);
-                });
-            })(langBtns[i]);
+            let btn = langBtns[i];
+            btn.addEventListener('click', function() {
+                let lang = btn.dataset.lang;
+                if (localizationManager) {
+                    localizationManager.setLanguage(lang);
+                }
+                btn.setAttribute('aria-label', LANG_NAMES[lang] || lang);
+            });
         }
 
         let menuTabs = document.querySelectorAll('.menu-tabs .tab-btn');
         for (let i = 0; i < menuTabs.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function() {
-                    let tab = btn.dataset.tab;
-                    let allTabs = document.querySelectorAll('.menu-tabs .tab-btn');
-                    for (let j = 0; j < allTabs.length; j++) {
-                        allTabs[j].classList.remove('active');
-                        allTabs[j].setAttribute('aria-selected', 'false');
-                    }
-                    btn.classList.add('active');
-                    btn.setAttribute('aria-selected', 'true');
+            let btn = menuTabs[i];
+            btn.addEventListener('click', function() {
+                let tab = btn.dataset.tab;
+                let allTabs = document.querySelectorAll('.menu-tabs .tab-btn');
+                for (let j = 0; j < allTabs.length; j++) {
+                    allTabs[j].classList.remove('active');
+                    allTabs[j].setAttribute('aria-selected', 'false');
+                }
+                btn.classList.add('active');
+                btn.setAttribute('aria-selected', 'true');
 
-                    if (tab === 'levels') {
-                        self.showMenu();
-                    } else if (tab === 'leaderboard') {
-                        self.showLeaderboard();
-                    } else if (tab === 'achievements') {
-                        self.showAchievements();
-                    }
-                });
-            })(menuTabs[i]);
+                if (tab === 'levels') {
+                    self.showMenu();
+                } else if (tab === 'leaderboard') {
+                    self.showLeaderboard();
+                } else if (tab === 'achievements') {
+                    self.showAchievements();
+                }
+            });
         }
         
         let performerBtns = document.querySelectorAll('#register-screen .char-btn, #profile-screen .char-btn');
         for (let i = 0; i < performerBtns.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function() {
-                    let container = btn.closest('.character-select') || btn.closest('.form-group');
-                    let btns = container.querySelectorAll('.char-btn');
-                    for (let j = 0; j < btns.length; j++) {
-                        btns[j].classList.remove('selected');
-                    }
-                    btn.classList.add('selected');
-                });
-            })(performerBtns[i]);
+            let btn = performerBtns[i];
+            btn.addEventListener('click', function() {
+                let container = btn.closest('.character-select') || btn.closest('.form-group');
+                let btns = container.querySelectorAll('.char-btn');
+                for (let j = 0; j < btns.length; j++) {
+                    btns[j].classList.remove('selected');
+                }
+                btn.classList.add('selected');
+            });
         }
         
         let genderBtns = document.querySelectorAll('#register-screen .gender-btn');
         for (let i = 0; i < genderBtns.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function() {
-                    let btns = document.querySelectorAll('#register-screen .gender-btn');
-                    for (let j = 0; j < btns.length; j++) {
-                        btns[j].classList.remove('selected');
-                    }
-                    btn.classList.add('selected');
-                });
-            })(genderBtns[i]);
+            let btn = genderBtns[i];
+            btn.addEventListener('click', function() {
+                let btns = document.querySelectorAll('#register-screen .gender-btn');
+                for (let j = 0; j < btns.length; j++) {
+                    btns[j].classList.remove('selected');
+                }
+                btn.classList.add('selected');
+            });
         }
         
         let dropdownBtns = document.querySelectorAll('.lang-dropdown-btn');
         for (let i = 0; i < dropdownBtns.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    let dropdown = btn.closest('.language-dropdown');
-                    let allDropdowns = document.querySelectorAll('.language-dropdown');
-                    for (let j = 0; j < allDropdowns.length; j++) {
-                        if (allDropdowns[j] !== dropdown) allDropdowns[j].classList.remove('open');
-                    }
-                    dropdown.classList.toggle('open');
-                });
-            })(dropdownBtns[i]);
+            let btn = dropdownBtns[i];
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                let dropdown = btn.closest('.language-dropdown');
+                let allDropdowns = document.querySelectorAll('.language-dropdown');
+                for (let j = 0; j < allDropdowns.length; j++) {
+                    if (allDropdowns[j] !== dropdown) allDropdowns[j].classList.remove('open');
+                }
+                dropdown.classList.toggle('open');
+            });
         }
         
         let langOptions = document.querySelectorAll('.lang-option');
         for (let i = 0; i < langOptions.length; i++) {
-            (function(btn) {
-                btn.addEventListener('click', function() {
-                    let lang = btn.dataset.lang;
-                    let dropdown = btn.closest('.language-dropdown');
-                    dropdown.classList.remove('open');
-                    
-                    if (typeof localizationManager !== 'undefined') {
-                        localizationManager.setLanguage(lang);
-                    }
-                    
-                    self.updateLanguageDropdowns(lang);
-                });
-            })(langOptions[i]);
+            let btn = langOptions[i];
+            btn.addEventListener('click', function() {
+                let lang = btn.dataset.lang;
+                let dropdown = btn.closest('.language-dropdown');
+                dropdown.classList.remove('open');
+                
+                if (localizationManager) {
+                    localizationManager.setLanguage(lang);
+                }
+                
+                self.updateLanguageDropdowns(lang);
+            });
         }
         
         document.addEventListener('click', function() {
@@ -204,7 +216,7 @@ initUIComponents: function() {
         if (screen) {
             screen.classList.add('active');
             screen.removeAttribute('aria-hidden');
-            if (typeof localizationManager !== 'undefined') {
+            if (localizationManager) {
                 setTimeout(function() { localizationManager.updateAllUI(); }, 0);
             }
         }
@@ -213,14 +225,14 @@ initUIComponents: function() {
     showWelcomeMessage: function() {
         let welcomeEl = document.querySelector('.welcome-msg');
         if (welcomeEl) {
-            if (typeof localizationManager !== 'undefined') {
+            if (localizationManager) {
                 welcomeEl.textContent = localizationManager.t('welcome');
             }
         }
     },
 
     showMenu: function() {
-        let username = (typeof localizationManager !== 'undefined' && localizationManager.t) ? localizationManager.t('hero') : 'Герой';
+        let username = (localizationManager && localizationManager.t) ? localizationManager.t('hero') : 'Герой';
         if (this.currentUser) {
             username = this.currentUser.nickname || this.currentUser.name || username;
         }
@@ -229,7 +241,7 @@ initUIComponents: function() {
             usernameEl.textContent = username;
         }
         
-        if (typeof localizationManager !== 'undefined') {
+        if (localizationManager) {
             localizationManager.updateAllUI();
         }
         
@@ -267,7 +279,7 @@ initUIComponents: function() {
         }
         
         document.getElementById('profile-message').textContent = '';
-        if (typeof localizationManager !== 'undefined') {
+        if (localizationManager) {
             localizationManager.updateAllUI();
             if (typeof app.updateLanguageDropdowns === 'function') {
                 app.updateLanguageDropdowns(localizationManager.currentLanguage);
@@ -277,7 +289,7 @@ initUIComponents: function() {
     },
 
     showLeaderboard: function() {
-        if (typeof localizationManager !== 'undefined') {
+        if (localizationManager) {
             localizationManager.updateAllUI();
         }
 
@@ -288,13 +300,13 @@ initUIComponents: function() {
     },
 
     showAchievements: function() {
-        if (typeof localizationManager !== 'undefined') {
+        if (localizationManager) {
             localizationManager.updateAllUI();
         }
 
         let titleEl = document.querySelector('#achievements-screen .header h2');
         if (titleEl) {
-            let l10n = typeof localizationManager !== 'undefined' ? localizationManager : null;
+            let l10n = getL10n();
             titleEl.textContent = l10n ? l10n.t('achievements') : 'Награды';
         }
 
@@ -346,6 +358,11 @@ initUIComponents: function() {
                 auth.user.age = age ? parseInt(age) : null;
                 auth.user.gender = gender;
                 auth.user.performer = performer;
+                if (data.token) {
+                    auth.user.token = data.token;
+                    auth.token = data.token;
+                }
+                localStorage.setItem('token', auth.token);
                 localStorage.setItem('user', JSON.stringify(auth.user));
                 
                 themeManager.apply(gender);
@@ -356,7 +373,7 @@ initUIComponents: function() {
                     saveBtn.classList.add(gender === 'girl' ? 'btn-pink' : 'btn-blue');
                 }
                 
-                if (typeof localizationManager !== 'undefined') {
+                if (localizationManager) {
                     localizationManager.setGender(gender);
                 }
                 
@@ -378,37 +395,20 @@ initUIComponents: function() {
     },
 
     updateLanguageDropdowns: function(lang) {
-        let langNames = {
-            ru: 'Русский',
-            en: 'English',
-            es: 'Español',
-            tg: 'Тоҷикӣ',
-            uz: "O'zbekcha",
-            bxr: 'Буряад'
-        };
-        let langFlags = {
-            ru: '/flags/ru.png',
-            en: '/flags/us.png',
-            es: '/flags/es.png',
-            tg: '/flags/tg.png',
-            uz: '/flags/uz.png',
-            bxr: '/flags/ru.png'
-        };
-        
         let dropdownBtns = document.querySelectorAll('.lang-dropdown-btn');
         for (let i = 0; i < dropdownBtns.length; i++) {
             let btn = dropdownBtns[i];
             let flagImg = btn.querySelector('.flag-icon');
             let nameSpan = btn.querySelector('span:not(.dropdown-arrow)');
-            if (flagImg) flagImg.src = langFlags[lang] || langFlags.ru;
-            if (nameSpan) nameSpan.textContent = langNames[lang] || langNames.ru;
+            if (flagImg) flagImg.src = LANG_FLAGS[lang] || LANG_FLAGS.ru;
+            if (nameSpan) nameSpan.textContent = LANG_NAMES[lang] || LANG_NAMES.ru;
         }
         
         let langBtns = document.querySelectorAll('.language-bar .lang-btn');
         for (let i = 0; i < langBtns.length; i++) {
             langBtns[i].classList.remove('selected');
             if (langBtns[i].dataset.lang === lang) langBtns[i].classList.add('selected');
-            langBtns[i].setAttribute('aria-label', langNames[lang] || lang);
+            langBtns[i].setAttribute('aria-label', LANG_NAMES[lang] || lang);
         }
     },
 
@@ -435,7 +435,7 @@ initUIComponents: function() {
             saveBtn.classList.add(gender === 'girl' ? 'btn-pink' : 'btn-blue');
         }
 
-        if (typeof localizationManager !== 'undefined') {
+        if (localizationManager) {
             localizationManager.setGender(gender);
         }
 
@@ -475,11 +475,11 @@ initUIComponents: function() {
         this.showScreen('start-screen');
     },
 
-    connectWebSocket: function(token) {
+    connectWebSocket: function(attempt) {
         let actualToken = auth.getToken();
+        attempt = attempt || 0;
         
         if (!actualToken) {
-            console.error('[WS] NO TOKEN!');
             return;
         }
         
@@ -488,21 +488,29 @@ initUIComponents: function() {
         }
         
         let self = this;
-        let wsUrl = window.location.origin.replace(/^http:/i, 'ws:') + '/ws?token=' + encodeURIComponent(actualToken);
+        let wsUrl = window.location.origin.replace(/^http:/i, 'ws:') + '/ws';
         this.ws = new WebSocket(wsUrl);
         
+        this.ws.onopen = function() {
+            self.ws.send(JSON.stringify({ type: 'auth', token: auth.getToken() }));
+        };
+        
         this.ws.onmessage = function(event) {
-            let data = JSON.parse(event.data);
-            
-            if (data.type === 'score_update') {
-                leaderboardManager.load();
-                let user = auth.getUser();
-                if (user && data.userId === user.id) {
-                    let scoreEl = document.getElementById('total-score');
-                    if (scoreEl) {
-                        scoreEl.textContent = data.score;
+            attempt = 0;
+            try {
+                let data = JSON.parse(event.data);
+                if (data.type === 'score_update') {
+                    leaderboardManager.load();
+                    let user = auth.getUser();
+                    if (user && data.userId === user.id) {
+                        let scoreEl = document.getElementById('total-score');
+                        if (scoreEl) {
+                            scoreEl.textContent = data.score;
+                        }
                     }
                 }
+            } catch (e) {
+                console.error('[WS] Parse error:', e);
             }
         };
 
@@ -511,11 +519,12 @@ initUIComponents: function() {
         };
         
         this.ws.onclose = function() {
+            let delay = Math.min(1000 * Math.pow(2, attempt), 30000);
             setTimeout(function() {
                 if (auth.isAuthenticated()) {
-                    self.connectWebSocket(auth.getToken());
+                    self.connectWebSocket(attempt + 1);
                 }
-            }, 3000);
+            }, delay);
         };
     },
 

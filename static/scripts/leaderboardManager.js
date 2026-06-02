@@ -3,6 +3,12 @@ const leaderboardManager = {
     entries: [],
 
     async load(genderFilter = 'all') {
+        const list = document.getElementById('leaderboard-list');
+        const msgEl = document.getElementById('leaderboard-message');
+        const l10n = getL10n();
+        if (msgEl) { msgEl.className = 'form-message'; msgEl.textContent = ''; }
+        if (list) { list.innerHTML = '<div class="loading-text">' + (l10n && l10n.t ? l10n.t('loading') : 'Загрузка...') + '</div>'; }
+
         try {
             const url = genderFilter !== 'all' 
                 ? `${this.API_URL}/api/leaderboard?gender=${genderFilter}`
@@ -14,6 +20,11 @@ const leaderboardManager = {
             this.render();
         } catch (err) {
             console.error('Error loading leaderboard:', err);
+            if (list) { list.innerHTML = ''; }
+            if (msgEl) {
+                msgEl.textContent = l10n && l10n.t ? l10n.t('connectionError') : 'Ошибка соединения';
+                msgEl.className = 'form-message error';
+            }
         }
     },
 
@@ -57,7 +68,3 @@ const leaderboardManager = {
         });
     }
 };
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = leaderboardManager;
-}

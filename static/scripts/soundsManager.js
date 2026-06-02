@@ -2,3 +2,4 @@ const soundsManager = {
     play() {
     }
 };
+
