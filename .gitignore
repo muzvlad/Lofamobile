@@ -1,6 +1,7 @@
 # Binaries
 server.exe
 *.exe
+*.exe~
 
 # Database
 *.db
@@ -19,6 +20,7 @@ Thumbs.db
 # Go
 *.test
 coverage.out
+auth_cov
 
 # IDE
 .idea/

@@ -1,12 +1,11 @@
 package config
 
 import (
+	"crypto/rand"
 	"log"
 	"os"
 	"time"
 )
-
-const defaultJWTSecret = "codequest_dev_secret"
 
 type Config struct {
 	DBPath       string
@@ -23,7 +22,7 @@ type Config struct {
 func Load() *Config {
 	cfg := &Config{
 		DBPath:       getEnv("DB_PATH", "./codequest.db"),
-		JWTSecret:    getEnv("JWT_SECRET", defaultJWTSecret),
+		JWTSecret:    getJWTSecret(),
 		Port:         getEnv("PORT", "8080"),
 		Env:          getEnv("ENV", "development"),
 		StaticDir:    getEnv("STATIC_DIR", "./static"),
@@ -33,17 +32,27 @@ func Load() *Config {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	if cfg.JWTSecret == "" {
-		log.Printf("[CONFIG] JWT_SECRET cannot be empty")
+	if cfg.Env == "production" && os.Getenv("JWT_SECRET") == "" {
+		log.Printf("[CONFIG] JWT_SECRET required in production mode")
 		return nil
-	}
-
-	if cfg.Env == "production" && cfg.JWTSecret == defaultJWTSecret {
-		log.Printf("[WARN] JWT_SECRET is using default dev value in production!")
 	}
 
 	log.Printf("[CONFIG] Loaded: env=%s, port=%s, db=%s", cfg.Env, cfg.Port, cfg.DBPath)
 	return cfg
+}
+
+func getJWTSecret() string {
+	secret := os.Getenv("JWT_SECRET")
+	if secret != "" {
+		return secret
+	}
+
+	randomSecret := make([]byte, 32)
+	if _, err := rand.Read(randomSecret); err != nil {
+		log.Fatalf("[CONFIG] Cannot generate JWT secret: %v", err)
+	}
+	log.Printf("[WARN] JWT_SECRET not set, using random secret for this run")
+	return string(randomSecret)
 }
 
 func getEnv(key, defaultValue string) string {
