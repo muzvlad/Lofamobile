@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F5E6C8" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title data-i18n="appTitle"></title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="stylesheet" href="/static/styles/main.css">
+    <link rel="stylesheet" href="/static/styles/components.css">
+    <link rel="stylesheet" href="/static/styles/levels.css">
+    <link rel="stylesheet" href="/static/styles/modal.css">
+    <link rel="stylesheet" href="/static/styles/game.css">
+    <link rel="stylesheet" href="/static/styles/forms.css">
+    <link rel="stylesheet" href="/static/styles/achievements.css">
+    <style>
+        .screen { display: none; }
+    </style>
+    <script>
+        window.addEventListener('error', function(e) {
+            console.error('[GLOBAL] Uncaught error:', e.error || e.message);
+        });
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('[GLOBAL] Unhandled rejection:', e.reason);
+        });
+    </script>
+</head>
+<body>
+    <a href="#app" class="skip-link" data-i18n="skipToContent">Перейти к содержанию</a>
+    <div id="app">
+        <div id="start-screen" class="screen">
+            <div class="logo">
+                <h1>ЛОФА</h1>
+                <p class="subtitle" data-i18n="subtitle"></p>
+                <p class="welcome-msg" id="welcome-msg" data-i18n="welcome"></p>
+            </div>
+
+            <div class="login-form">
+                <h2 id="login-title" data-i18n="login"></h2>
+                <label for="login-phone" id="login-phone-label" data-i18n="phone"></label>
+                <input type="tel" id="login-phone" maxlength="20">
+                <label for="login-password" id="login-password-label" data-i18n="password"></label>
+                <input type="password" id="login-password">
+                <div class="form-group">
+                    <span class="form-label" id="login-language-label" data-i18n="language"></span>
+                    <div class="language-dropdown" id="login-language-select">
+                        <button type="button" class="lang-dropdown-btn">
+                            <img src="/flags/ru.png" class="flag-icon" id="login-current-lang-flag" alt="">
+                            <span id="login-current-lang-name"></span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="lang-dropdown-menu">
+                            <button type="button" class="lang-option" data-lang="ru">
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Русский
+                            </button>
+                            <button type="button" class="lang-option" data-lang="en">
+                                <img src="/flags/us.png" class="flag-icon" alt=""> English
+                            </button>
+                            <button type="button" class="lang-option" data-lang="es">
+                                <img src="/flags/es.png" class="flag-icon" alt=""> Español
+                            </button>
+                            <button type="button" class="lang-option" data-lang="tg">
+                                <img src="/flags/tg.png" class="flag-icon" alt=""> Тоҷикӣ
+                            </button>
+                            <button type="button" class="lang-option" data-lang="uz">
+                                <img src="/flags/uz.png" class="flag-icon" alt=""> O'zbekcha
+                            </button>
+                            <button type="button" class="lang-option" data-lang="bxr">
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Буряад
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button id="login-btn" class="primary-btn" data-i18n="loginBtn"></button>
+                <p id="login-message" class="form-message" aria-live="polite" role="alert"></p>
+                <div class="login-link">
+                    <p><span data-i18n="noAccount"></span> <a href="#" id="show-register" data-i18n="create"></a></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="register-screen" class="screen">
+            <div class="logo">
+                <h1>ЛОФА</h1>
+                <p data-i18n="createHero"></p>
+            </div>
+
+            <div class="gender-select-register">
+                <h2 data-i18n="whoAreYou"></h2>
+                <div class="gender-options">
+                    <button class="gender-btn selected" data-gender="boy">
+                        <img src="/frontend/src/components/gender_boy.webp" class="gender-icon" alt="">
+                        <span data-i18n="boy"></span>
+                    </button>
+                    <button class="gender-btn" data-gender="girl">
+                        <img src="/frontend/src/components/gender_girl.webp" class="gender-icon" alt="">
+                        <span data-i18n="girl"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="register-form">
+                <h2 id="register-title" data-i18n="register"></h2>
+                <label for="reg-phone" id="register-phone-label" data-i18n="phone"></label>
+                <input type="tel" id="reg-phone" maxlength="20">
+                <label for="reg-nickname" id="register-nickname-label" data-i18n="nickname"></label>
+                <input type="text" id="reg-nickname" maxlength="20">
+                <label for="reg-name" id="register-name-label" data-i18n="name"></label>
+                <input type="text" id="reg-name" maxlength="30">
+                <label for="reg-age" id="register-age-label" data-i18n="age"></label>
+                <input type="number" id="reg-age" min="4" max="16">
+                <label for="reg-password" id="register-password-label" data-i18n="password"></label>
+                <input type="password" id="reg-password">
+                <div class="form-group">
+                    <span class="form-label" id="language-label" data-i18n="language"></span>
+                    <div class="language-dropdown" id="language-select">
+                        <button type="button" class="lang-dropdown-btn">
+                            <img src="/flags/ru.png" class="flag-icon" id="current-lang-flag" alt="">
+                            <span id="current-lang-name"></span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="lang-dropdown-menu">
+                            <button type="button" class="lang-option" data-lang="ru">
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Русский
+                            </button>
+                            <button type="button" class="lang-option" data-lang="en">
+                                <img src="/flags/us.png" class="flag-icon" alt=""> English
+                            </button>
+                            <button type="button" class="lang-option" data-lang="es">
+                                <img src="/flags/es.png" class="flag-icon" alt=""> Español
+                            </button>
+                            <button type="button" class="lang-option" data-lang="tg">
+                                <img src="/flags/tg.png" class="flag-icon" alt=""> Тоҷикӣ
+                            </button>
+                            <button type="button" class="lang-option" data-lang="uz">
+                                <img src="/flags/uz.png" class="flag-icon" alt=""> O'zbekcha
+                            </button>
+                            <button type="button" class="lang-option" data-lang="bxr">
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Буряад
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button id="register-btn" class="primary-btn" data-i18n="registerBtn"></button>
+                <p id="register-message" class="form-message" aria-live="polite" role="alert"></p>
+            </div>
+            <div class="login-link">
+                <p><span data-i18n="hasAccount"></span> <a href="#" id="show-login" data-i18n="enter"></a></p>
+            </div>
+        </div>
+
+        <div id="menu-screen" class="screen">
+            <div class="header">
+                <div class="user-info">
+                    <span id="menu-username"></span>
+                    <span class="score">🏆 <span id="total-score">0</span></span>
+                </div>
+                <div class="header-buttons">
+                    <button class="settings-btn" data-i18n="settings"><span class="btn-text">⚙️</span></button>
+                    <button class="logout-btn" id="logout-btn" data-i18n="logout"><span class="btn-text">🚪</span></button>
+                </div>
+            </div>
+            <div class="language-bar" style="display:none;">
+                <button type="button" class="lang-btn" data-lang="ru" aria-label="Русский"><img src="/flags/ru.png" class="flag-icon" alt=""></button>
+                <button type="button" class="lang-btn" data-lang="en" aria-label="English"><img src="/flags/us.png" class="flag-icon" alt=""></button>
+                <button type="button" class="lang-btn" data-lang="es" aria-label="Español"><img src="/flags/es.png" class="flag-icon" alt=""></button>
+                <button type="button" class="lang-btn" data-lang="tg" aria-label="Тоҷикӣ"><img src="/flags/tg.png" class="flag-icon" alt=""></button>
+                <button type="button" class="lang-btn" data-lang="uz" aria-label="O'zbekcha"><img src="/flags/uz.png" class="flag-icon" alt=""></button>
+            </div>
+            <div class="menu-content">
+                <h2 id="menu-title" data-i18n="menuTitle"></h2>
+                <div class="levels-grid" id="levels-grid"></div>
+                
+            </div>
+            <div class="menu-tabs" role="tablist">
+                <button class="tab-btn active" data-tab="levels" id="tab-levels" data-i18n="levels" role="tab" aria-selected="true" aria-controls="levels-panel"></button>
+                <button class="tab-btn" data-tab="leaderboard" id="tab-leaderboard" data-i18n="leaderboard" role="tab" aria-selected="false" aria-controls="leaderboard-panel"></button>
+                <button class="tab-btn" data-tab="achievements" id="tab-achievements" data-i18n="achievements" role="tab" aria-selected="false" aria-controls="achievements-panel"></button>
+            </div>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <button class="back-btn" aria-label="Back">←</button>
+                <div class="level-info">
+                    <span id="level-name"></span>
+                    <span id="level-stars" data-i18n="emptyStars"></span>
+                </div>
+                <button class="hint-btn" aria-label="Hint">💡</button>
+            </div>
+            <div class="game-area">
+                <div class="game-grid" id="game-grid"></div>
+                <div class="code-panel">
+                    <div class="commands-palette" id="commands-palette"></div>
+                    <div class="code-editor" id="code-editor"></div>
+                    <div class="game-controls">
+                        <button class="run-btn" id="run-code" data-i18n="runCode"></button>
+                        <button class="reset-btn" id="reset-code" data-i18n="resetCode"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="result-title">
+            <div class="modal-content">
+                <h2 id="result-title" data-i18n="resultTitle"></h2>
+                <div class="stars" id="result-stars"></div>
+                <p id="result-message" data-i18n="resultMessage"></p>
+                <div class="result-score">
+                    <span data-i18n="points"></span>
+                    <span id="result-score"></span>
+                </div>
+                <button class="secondary-btn" id="retry-level-btn" data-i18n="retry"></button>
+                <button class="secondary-btn" id="to-map-btn" data-i18n="toLevels"></button>
+            </div>
+        </div>
+
+        <div id="level-info-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="level-info-title">
+            <div class="modal-content level-info-content">
+                <h2 id="level-info-title"></h2>
+                <div class="level-info-image" id="level-info-image"></div>
+                <p id="level-info-description" data-i18n="levelDescription"></p>
+                <div class="level-info-commands" id="level-info-commands"></div>
+                <div class="level-info-difficulty" id="level-info-difficulty"></div>
+                <button class="primary-btn" id="start-level-btn" data-i18n="startGame"></button>
+                <button class="secondary-btn" id="cancel-level-btn" data-i18n="cancel"></button>
+            </div>
+        </div>
+
+        <div id="leaderboard-screen" class="screen">
+            <div class="header">
+                <button class="back-btn" aria-label="Back">←</button>
+                <h2 data-i18n="heroesTable"></h2>
+            </div>
+            <div class="leaderboard-list" id="leaderboard-list"></div>
+            <p id="leaderboard-message" class="form-message" aria-live="polite"></p>
+        </div>
+
+        <div id="achievements-screen" class="screen">
+            <div class="header">
+                <button class="back-btn" aria-label="Back">←</button>
+                <h2 id="achievements-title" data-i18n="achievements"></h2>
+            </div>
+            <div class="achievements-grid" id="achievements-list"></div>
+            <p id="achievements-message" class="form-message" aria-live="polite"></p>
+        </div>
+
+        <div id="achievement-detail-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="achievement-detail-name">
+            <div class="modal-content achievement-detail-content">
+                <span class="achievement-detail-icon" id="achievement-detail-icon"></span>
+                <h2 class="achievement-detail-name" id="achievement-detail-name"></h2>
+                <p class="achievement-detail-desc" id="achievement-detail-desc"></p>
+                <div class="achievement-detail-progress">
+                    <div class="achievement-progress-bar">
+                        <div class="achievement-progress-fill" id="achievement-progress-fill" style="width: 0%"></div>
+                    </div>
+                    <span class="achievement-progress-text" id="achievement-progress-text"></span>
+                </div>
+                <span class="achievement-detail-status locked" id="achievement-detail-status" data-i18n="achievementLocked"></span>
+                <button class="primary-btn" id="close-achievement-detail" data-i18n="achievementClose"></button>
+            </div>
+        </div>
+
+        <div id="profile-screen" class="screen">
+            <div class="header">
+                <button class="back-btn" aria-label="Back">←</button>
+                <h2 id="profile-screen-title" data-i18n="settings"></h2>
+            </div>
+            <div class="profile-form">
+                <div class="form-group">
+                    <label for="profile-phone" id="profile-phone-label" data-i18n="phone"></label>
+                    <input type="tel" id="profile-phone" disabled>
+                    <label for="profile-nickname" id="profile-nickname-label" data-i18n="nickname"></label>
+                    <input type="text" id="profile-nickname" maxlength="20">
+                    <label for="profile-name" id="profile-name-label" data-i18n="name"></label>
+                    <input type="text" id="profile-name" maxlength="30">
+                    <label for="profile-age" id="profile-age-label" data-i18n="age"></label>
+                    <input type="number" id="profile-age" min="4" max="16">
+                    <span class="form-label" id="profile-language-label" data-i18n="language"></span>
+                    <div class="language-dropdown" id="profile-language-select">
+                        <button type="button" class="lang-dropdown-btn">
+                            <img src="/flags/ru.png" class="flag-icon" id="profile-current-lang-flag" alt="">
+                            <span id="profile-current-lang-name"></span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="lang-dropdown-menu">
+                            <button type="button" class="lang-option" data-lang="ru">
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Русский
+                            </button>
+                            <button type="button" class="lang-option" data-lang="en">
+                                <img src="/flags/us.png" class="flag-icon" alt=""> English
+                            </button>
+                            <button type="button" class="lang-option" data-lang="es">
+                                <img src="/flags/es.png" class="flag-icon" alt=""> Español
+                            </button>
+                            <button type="button" class="lang-option" data-lang="tg">
+                                <img src="/flags/tg.png" class="flag-icon" alt=""> Тоҷикӣ
+                            </button>
+                            <button type="button" class="lang-option" data-lang="uz">
+                                <img src="/flags/uz.png" class="flag-icon" alt=""> O'zbekcha
+                            </button>
+                            <button type="button" class="lang-option" data-lang="bxr">
+                                <img src="/flags/ru.png" class="flag-icon" alt=""> Буряад
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <span class="form-label" id="profile-gender-label" data-i18n="whoYouAre"></span>
+                    <div class="gender-select">
+                        <label class="gender-option">
+                            <input type="radio" name="profile-gender" id="profile-gender-boy" value="boy">
+                            <img src="/frontend/src/components/gender_boy.webp" class="gender-icon" alt="">
+                            <span id="gender-boy-label" data-i18n="boy"></span>
+                        </label>
+                        <label class="gender-option">
+                            <input type="radio" name="profile-gender" id="profile-gender-girl" value="girl">
+                            <img src="/frontend/src/components/gender_girl.webp" class="gender-icon" alt="">
+                            <span id="gender-girl-label" data-i18n="girl"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <span class="form-label" id="character-label" data-i18n="character"></span>
+                    <div class="character-select">
+                        <button type="button" class="char-btn" data-performer="builder" data-profile="true" id="char-builder-label"><img src="/static/assets/characters/builder.webp" alt="" class="char-icon"><span data-i18n="builder"></span></button>
+                        <button type="button" class="char-btn" data-performer="cook" data-profile="true" id="char-cook-label"><img src="/static/assets/characters/cook.webp" alt="" class="char-icon"><span data-i18n="cook"></span></button>
+                        <button type="button" class="char-btn" data-performer="pilot" data-profile="true" id="char-pilot-label"><img src="/static/assets/characters/pilot.webp" alt="" class="char-icon"><span data-i18n="pilot"></span></button>
+                        <button type="button" class="char-btn" data-performer="engineer_girl" data-profile="true" id="char-engineer-label"><img src="/static/assets/characters/engineer_girl.webp" alt="" class="char-icon"><span data-i18n="engineer"></span></button>
+                        <button type="button" class="char-btn" data-performer="robot_pink" data-profile="true" id="char-robot-pink-label"><img src="/static/assets/characters/robot_pink.webp" alt="" class="char-icon"><span data-i18n="robotPink"></span></button>
+                        <button type="button" class="char-btn" data-performer="robot_grey" data-profile="true" id="char-robot-grey-label"><img src="/static/assets/characters/robot_grey.webp" alt="" class="char-icon"><span data-i18n="robotGrey"></span></button>
+                    </div>
+                </div>
+                <button id="save-profile-btn" class="primary-btn btn-pink" data-i18n="save"></button>
+                <p id="profile-message" class="form-message"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/scripts/theme.js"></script>
+    <script src="/static/scripts/themeManager.js"></script>
+    <script src="/static/scripts/localization.js"></script>
+    <script src="/static/scripts/auth.js"></script>
+    <script src="/static/scripts/levelsManager.js"></script>
+    <script src="/static/scripts/leaderboardManager.js"></script>
+    <script src="/static/scripts/achievementsManager.js"></script>
+    <script src="/static/scripts/gameLogic.js"></script>
+    <script src="/static/scripts/gameEngine.js"></script>
+    <script src="/static/scripts/gameRenderer.js"></script>
+    <script src="/static/scripts/gameManager.js"></script>
+    <script src="/static/scripts/app.js"></script>
+</body>
+</html>

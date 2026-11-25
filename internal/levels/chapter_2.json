@@ -1,0 +1,31 @@
+{
+  "chapter": 2,
+  "boy": [
+    {
+      "id": 1,
+      "name": "level_1_name",
+      "description": "level_1_desc",
+      "grid": [[2, 0, 0, 0, 0, 3]],
+      "player": {"x": 0, "y": 0, "direction": 1},
+      "goal": "level_1_goal",
+      "items": [],
+      "par": 3,
+      "optimal": 3,
+      "difficulty": 1
+    }
+  ],
+  "girl": [
+    {
+      "id": 1,
+      "name": "level_1_name",
+      "description": "level_1_desc",
+      "grid": [[2, 0, 0, 0, 0, 3]],
+      "player": {"x": 0, "y": 0, "direction": 1},
+      "goal": "level_1_goal",
+      "items": [],
+      "par": 3,
+      "optimal": 3,
+      "difficulty": 1
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+    "name": "ЛОФА - Логика и Фантазия",
+    "short_name": "ЛОФА",
+    "description": "Учись программировать играя!",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#F5E6C8",
+    "theme_color": "#F5E6C8"
+}

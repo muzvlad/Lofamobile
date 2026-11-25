@@ -1,0 +1,255 @@
+/* ===========================================
+   Forms - Profile, Registration, Gender Select
+   =========================================== */
+
+/* --- Profile Form --- */
+.profile-form {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+.profile-form .form-group { display: flex; flex-direction: column; gap: 4px; }
+.profile-form label, .profile-form .form-label {
+    font-weight: 700;
+    color: #2d2d2d;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.profile-form input {
+    padding: 10px 12px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fafafa;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.profile-form input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(91, 140, 90, 0.15);
+    background: white;
+}
+.profile-form input:disabled { background: var(--light-brown); color: var(--dark); opacity: 0.7; }
+
+/* --- Character Select (Profile) --- */
+.profile-form .character-select {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 8px 0;
+    justify-items: stretch;
+    align-items: stretch;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+.profile-form .character-select .char-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 8px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    aspect-ratio: 1;
+    min-height: 110px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.profile-form .character-select .char-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #bbb;
+}
+.profile-form .character-select .char-btn.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.3);
+    background: #fffbf0;
+}
+.profile-form .character-select .char-btn img.char-icon {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    image-rendering: auto;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+.profile-form .character-select .char-btn span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--dark);
+    text-align: center;
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .profile-form .character-select { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .profile-form .character-select .char-btn { padding: 8px 4px; min-height: 75px; }
+    .profile-form .character-select .char-btn img.char-icon { width: 50px; height: 50px; }
+    .profile-form .character-select .char-btn span { font-size: 9px; }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+    .profile-form .character-select { gap: 8px; max-width: 400px; }
+    .profile-form .character-select .char-btn { padding: 10px 8px; min-height: 85px; }
+    .profile-form .character-select .char-btn img.char-icon { width: 60px; height: 60px; }
+}
+@media (min-width: 1025px) {
+    .profile-form .character-select { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px 0; max-width: 360px; }
+    .profile-form .character-select .char-btn { padding: 14px 10px; min-height: 130px; }
+    .profile-form .character-select .char-btn img.char-icon { width: 85px; height: 85px; }
+}
+
+/* --- Form Messages --- */
+.form-message {
+    text-align: center;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: var(--radius-small);
+    font-size: 14px;
+    display: none;
+}
+.form-message.error { display: block; background: var(--danger); color: white; }
+.form-message.success { display: block; background: var(--success); color: white; padding: 10px; border-radius: var(--radius); text-align: center; }
+
+/* --- Gender Select (Profile) --- */
+.gender-select {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 8px 0;
+    justify-items: stretch;
+    align-items: stretch;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+.gender-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 8px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    aspect-ratio: 1.8;
+    min-height: 70px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.gender-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #bbb;
+}
+.gender-option:focus-within {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-small);
+}
+.gender-option input { display: none; }
+.gender-option:has(input:checked) {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.3), 0 4px 15px rgba(0,0,0,0.12);
+    background: #fffbf0;
+}
+.gender-option .gender-icon { width: 35px; height: 35px; object-fit: contain; border-radius: 6px; }
+.gender-option span { font-size: 11px; font-weight: 600; color: var(--dark); white-space: nowrap; }
+
+/* --- Gender Select (Register) --- */
+.gender-select-register { margin-bottom: 20px; }
+.gender-select-register h2 {
+    text-align: center;
+    color: var(--dark-brown);
+    font-family: 'Georgia', serif;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+.gender-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 8px 0;
+    justify-items: stretch;
+    align-items: stretch;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+.gender-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 8px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    aspect-ratio: 1.8;
+    min-height: 70px;
+    width: 100%;
+    box-sizing: border-box;
+}
+.gender-icon { width: 50px; height: 50px; object-fit: contain; border-radius: 8px; }
+.gender-btn.selected .gender-icon { transform: scale(1.1); }
+.gender-btn:hover .gender-icon { transform: scale(1.05); }
+.gender-btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
+.gender-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-color: #b0b0b0;
+}
+.gender-btn.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.3), 0 4px 15px rgba(0,0,0,0.12);
+    background: #fffbf0;
+}
+.gender-btn span { font-size: 14px; font-weight: 600; color: var(--dark); }
+.gender-btn.selected span:first-child { font-size: 28px; }
+.gender-btn span:first-child { font-size: 24px; }
+.gender-btn span:last-child { font-size: 14px; color: var(--dark-brown); font-weight: 600; }
+.gender-btn.selected span:last-child { color: var(--accent); }
+
+/* Mobile */
+@media (max-width: 480px) {
+    .gender-select { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 12px; }
+    .gender-option { padding: 10px 8px; }
+    .gender-option .gender-icon { width: 40px; height: 40px; }
+    .gender-option span { font-size: 12px; }
+    .gender-options { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 12px; }
+    .gender-btn { padding: 10px 12px; max-width: 120px; }
+    .gender-btn .gender-icon { width: 40px; height: 40px; }
+    .gender-btn span { font-size: 13px; }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+    .profile-form { max-width: 360px; }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+    .profile-form { max-width: 400px; }
+}

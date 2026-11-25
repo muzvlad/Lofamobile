@@ -1,0 +1,44 @@
+{
+  "chapters": [
+    {
+      "chapter": 1,
+      "gender": "girl",
+      "theme": "cooking",
+      "hero": "Miks (kitchen robot assistant)",
+      "chapterTitle": "Culinary Adventure",
+      "chapterDescription": "Help Grandma bake a pie!",
+      "levels": [
+        {"id": 1, "name": "First Step", "intro": "Grandma went to visit friends, leaving the apple pie recipe on the table. She probably wants to bake the pie when she returns. We need to help her bake it! She will be pleasantly surprised. Let's start with the fridge — there are many ingredients. You are standing at the kitchen entrance, with the Fridge in front of you.", "task": "You need to move forward to reach the fridge and open it."},
+        {"id": 2, "name": "Avoiding the Obstacle", "intro": "Back at the table, we find there is no milk... we need to go back to the fridge to get milk, but the path is blocked by a sleeping cat. We cannot wake him — otherwise he will interfere or even eat the dough. We'll have to go around.", "task": "Use the buttons: UP and LEFT to carefully sneak past the cat to the fridge."},
+        {"id": 3, "name": "Gathering Ingredients", "intro": "Everything seems to be in place, but we need flour for the dough, and the bag of flour is in the far corner by the window. Grandma always said: 'First, prepare all the ingredients on the table.' We have to take the flour and bring it to the table.", "task": "Reach the bag of flour, press TAKE, and move to the cell where the table stands."},
+        {"id": 4, "name": "Jump Over the Puddle", "intro": "While we were getting the flour, the cat Vasya knocked over a glass of milk. A white puddle spread on the floor. You could slip and drop the precious flour.", "task": "Use JUMP to leap over the puddle and reach the bowl dry and clean."},
+        {"id": 5, "name": "Double Jump", "intro": "What bad luck! Vasya ran twice: a puddle of milk and a puddle of orange juice. Two wet puddles in a row. If you step in them, everything will become sticky, and Grandma will be upset.", "task": "Make two JUMPS to fly over both puddles and not wet the sensors."},
+        {"id": 6, "name": "Flour Hills", "intro": "Near the stove, someone spilled flour, and the wind blew it into small hills. Grandma used to say: 'You cannot step on flour — otherwise the whole floor will be covered in white footprints.' You'll have to jump over each hill.", "task": "Pick up the bag of flour and jump over each flour hill as you move toward the stove where the oven is already heating up."},
+        {"id": 7, "name": "Wash and Return", "intro": "You need to get to the tap, wash the apple, and return to the table, which is on the other side.", "task": "Reach the apple and take it to bring it to the table. Use TURN AROUND to turn back two cells and exit to the table."},
+        {"id": 8, "name": "Broken Lid", "intro": "The lid from the pot fell off and seems to be broken — we need to clean up the shards. But first, we need to take the broom with dustpan and a trash bag.", "task": "Get to the broom with dustpan, take it, use JUMP, get to the trash bag, and move to the broken lid to clean up the shards."},
+        {"id": 9, "name": "Apple House", "intro": "The bag of flour is at the far end of the kitchen, the bowl of dough is in another corner... We need to tidy up the kitchen.", "task": "Reach the bag of flour, jump over the rolling pin lying on the way, press TAKE, then reach the bowl of dough and carry everything to the table."},
+        {"id": 10, "name": "Final Dash", "intro": "There is an extra apple left under the table, which needs to be taken to the box with the other apples. It seems the pie is ready! We can take it out!", "task": "Use jumps to reach the apple faster, take it, carry it to the cell with the box, press PUT, then move to the cell with the oven to take out our pie! Use turnarounds to turn and move two cells at once."}
+      ]
+    },
+    {
+      "chapter": 1,
+      "gender": "boy",
+      "theme": "shelter_building",
+      "hero": "Borya (robot builder)",
+      "chapterTitle": "Building the Headquarters",
+      "chapterDescription": "Build a secret squad headquarters!",
+      "levels": [
+        {"id": 1, "name": "First Step", "intro": "The squad commander gave the task: build a secret headquarters at the forest edge by evening. Borya is activated near the truck, packed full of boards and tools. The first thing is to deliver the boards to the foundation marking area.", "task": "Move only RIGHT in a straight line to approach the material unloading zone and start working."},
+        {"id": 2, "name": "Avoiding the Obstacle", "intro": "Right in the way is a pile of crushed stone (small rocks) that was left unleveled yesterday. We cannot go through it — we will sink. But there is a detour to the left and above.", "task": "Use the buttons: UP, RIGHT and DOWN to get past the crushed stone pile to the marked foundation."},
+        {"id": 3, "name": "Collecting Materials", "intro": "The foundation is marked, but there are no nails! The box of nails was left near the truck, at the very beginning. We have to go back, take it, and bring it to the construction site, otherwise we cannot fasten the walls.", "task": "Reach the brick stacks, there are nails there, press TAKE, and return to the foundation position."},
+        {"id": 4, "name": "Jump Over the Trench", "intro": "While you were getting the nails, workers dug a narrow trench for water pipes. It is directly in the way. You cannot step over — you will fall. A jump should save you.", "task": "Activate JUMP to leap over the trench and avoid damaging the utilities. Note that the jump will be in the direction of your last move."},
+        {"id": 5, "name": "Double Jump", "intro": "It turns out there are two trenches: the second one for electrical cable. They block the passage. If you stop between them, you could get stuck in the mud. You need to jump twice to reach the goal.", "task": "Perform two JUMPS to overcome the obstacles and reach the goal."},
+        {"id": 6, "name": "Bypassing Bricks", "intro": "Ahead is the area where bricks were unloaded. Several fell out and are scattered on the ground. If you step on a brick, you might break it. You need to jump over them.", "task": "Move forward with jumps to reach the tool box, take it, and return to the headquarters foundation."},
+        {"id": 7, "name": "Turn and Path", "intro": "You need to go to the warehouse and pick up the boards. Then use the 'Turn Around' action — it allows you to turn the character and move two cells back in one move. This way you will return to the foundation faster.", "task": "Reach the warehouse and pick up the boards. Then use TURN AROUND (which will allow you to turn and move two cells back, reducing the number of moves) and return to the headquarters under construction."},
+        {"id": 8, "name": "Jump Over the Beam", "intro": "The tool warehouse contains a large number of boards and beams. And across the path lie fallen beams that cannot be bypassed, only jumped over.", "task": "Collect the boards with TAKE and bring them to the headquarters under construction! Use TURN AROUND to use fewer moves to carry the boards, and JUMP over the fallen beam."},
+        {"id": 9, "name": "Delivering the Cargo", "intro": "In the box lies a flag — the symbol of the new headquarters. But the box is at the other end. You need to approach, take the flag and the tool box, turn around, and deliver them to the warehouse to put everything in order.", "task": "Reach the flag and take it, then go to the tool box, take it as well, and bring both items to the warehouse."},
+        {"id": 10, "name": "Final Dash", "intro": "You have the flag, the foundation is ready, but the path to the center of the headquarters is blocked by trenches, bricks, and narrow passages. Everyone is waiting for the completion of our construction. One last effort remains!", "task": "Use jumps over trenches and bricks, as well as turnarounds in dead ends. Take the boards and bring them to the warehouse, which is located above, press PUT and return for the headquarters opening! Use JUMP and TURN AROUND to reach the goal faster."}
+      ]
+    }
+  ]
+}

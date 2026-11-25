@@ -1,0 +1,29 @@
+# Binaries
+server.exe
+*.exe
+*.exe~
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# Environment
+.env
+.env.local
+
+# OS
+nul
+.DS_Store
+Thumbs.db
+
+# Go
+*.test
+coverage.out
+auth_cov
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

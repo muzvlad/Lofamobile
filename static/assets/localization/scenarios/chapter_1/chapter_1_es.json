@@ -1,0 +1,44 @@
+{
+  "chapters": [
+    {
+      "chapter": 1,
+      "gender": "girl",
+      "theme": "cooking",
+      "hero": "Miks (robot ayudante de cocina)",
+      "chapterTitle": "Aventura Culinaria",
+      "chapterDescription": "¡Ayuda a la abuela a hornear un pastel!",
+      "levels": [
+        {"id": 1, "name": "Primer Paso", "intro": "La abuela se fue de visita, dejando en la mesa la receta de tarta de manzana. Probablemente quiere hornear la tarta cuando regrese. ¡Hay que ayudarla a hornearla! Ella se sorprenderá gratamente. Empecemos por el frigorífico — allí hay muchos ingredientes. Estás en la entrada de la cocina, frente al Nevera.", "task": "Debes avanzar para llegar al Nevera y abrirlo."},
+        {"id": 2, "name": "Evitando el Obstáculo", "intro": "De vuelta a la mesa, descubrimos que no hay leche... hay que volver al Nevera a por leche, pero el camino está bloqueado por un gato durmiendo. No podemos despertarlo — si no, nos molestará o incluso se comerá la masa. Tendremos que rodearlo.", "task": "Usa los botones: ARRIBA e IZQUIERDA para pasar con cuidado junto al gato hasta el Nevera."},
+        {"id": 3, "name": "Recogiendo Ingredientes", "intro": "Parece que todo está en su sitio, pero necesitamos harina para la masa, y la bolsa de harina está en el rincón lejano junto a la ventana. La abuela siempre decía: 'Primero prepara todos los ingredientes sobre la mesa'. Tenemos que coger la harina y llevarla a la mesa.", "task": "Llega hasta la bolsa de harina, pulsa TOMAR y muévete a la casilla donde está la mesa."},
+        {"id": 4, "name": "Salto sobre el Charco", "intro": "Mientras íbamos por la harina, el gato Vasya volcó un vaso de leche. Un charco blanco se extendió por el suelo. Podrías resbalar y tirar la preciada harina.", "task": "Usa SALTO para saltar el charco y llegar al bol seco y limpio."},
+        {"id": 5, "name": "Doble Salto", "intro": "¡Qué mala suerte! Vasya corrió dos veces: un charco de leche y un charco de zumo de naranja. Dos charcos mojados seguidos. Si pisas, todo se volverá pegajoso y la abuela se enfadará.", "task": "Haz dos SALTOS para volar sobre ambos charcos y no mojar los sensores."},
+        {"id": 6, "name": "Montículos de Harina", "intro": "Cerca de la cocina, alguien derramó harina y el viento la formó en pequeños montículos. La abuela decía: 'No se puede pisar la harina, si no, todo el suelo quedará lleno de huellas blancas'. Tendrás que saltar cada montículo.", "task": "Recoge la bolsa de harina y salta cada montículo de harina mientras avanzas hacia la cocina donde el horno ya se está calentando."},
+        {"id": 7, "name": "Lavar y Volver", "intro": "Debes llegar al grifo, lavar la manzana y volver a la mesa, que está al otro lado.", "task": "Llega hasta la manzana y tómala para llevarla a la mesa. Usa GIRAR para girar hacia atrás dos casillas y salir hacia la mesa."},
+        {"id": 8, "name": "Tapa Rota", "intro": "La tapa de la olla se cayó y parece rota — hay que recoger los fragmentos. Pero primero hay que coger la escoba con recogedor y la bolsa de basura.", "task": "Llega hasta la escoba con recogedor, tómala, usa SALTO, llega hasta la bolsa de basura y muévete hacia la tapa rota para limpiar los fragmentos."},
+        {"id": 9, "name": "Casa de Manzana", "intro": "La bolsa de harina está al fondo de la cocina, el bol con la masa en otra esquina... Hay que ordenar la cocina.", "task": "Llega hasta la bolsa de harina, salta sobre el rodillo que está en el camino, pulsa TOMAR, luego llega hasta el bol de masa y lleva todo a la mesa."},
+        {"id": 10, "name": "Ataque Final", "intro": "Debajo de la mesa quedó una manzana de más que hay que llevar a la caja con las otras manzanas. ¡Parece que el pastel ya está listo! ¡Podemos sacarlo!", "task": "Usa saltos para llegar más rápido a la manzana, tómala, llévala a la casilla de la caja, pulsa PONER, luego muévete a la casilla del horno para sacar nuestro pastel. Usa giros para girar y moverte dos casillas a la vez."}
+      ]
+    },
+    {
+      "chapter": 1,
+      "gender": "boy",
+      "theme": "shelter_building",
+      "hero": "Borya (robot constructor)",
+      "chapterTitle": "Construyendo el Cuartel",
+      "chapterDescription": "¡Construye un cuartel secreto para la escuadra!",
+      "levels": [
+        {"id": 1, "name": "Primer Paso", "intro": "El comandante de la escuadra dio la tarea: construir un cuartel secreto en el borde del bosque antes de la noche. Borya está activado cerca del camión, lleno hasta arriba de tablas y herramientas. Lo primero es llevar las tablas a la zona donde está marcada la base.", "task": "Muévete solo a la DERECHA en línea recta para acercarte a la zona de descarga de materiales y empezar a trabajar."},
+        {"id": 2, "name": "Evitando el Obstáculo", "intro": "Justo en el camino hay un montón de grava (piedras pequeñas) que olvidaron nivelar ayer. No podemos pasar por encima — nos hundiremos. Pero hay un desvío a la izquierda y arriba.", "task": "Usa los botones: ARRIBA, DERECHA y ABAJO para pasar junto al montón de grava hasta la base marcada."},
+        {"id": 3, "name": "Recogiendo Materiales", "intro": "La base está marcada, pero no hay clavos. La caja de clavos quedó junto al camión, al principio. Hay que volver, cogerla y traerla a la obra, si no no podremos sujetar las paredes.", "task": "Llega hasta las pilas de ladrillos, allí están los clavos, pulsa TOMAR y vuelve a la posición de la base."},
+        {"id": 4, "name": "Salto sobre la Zanja", "intro": "Mientras ibas por los clavos, los obreros cavaron una zanja estrecha para las tuberías de agua. Está justo en el camino. No se puede pisar — te caerás. Un salto debería salvarte.", "task": "Activa SALTO para saltar la zanja y no dañar las tuberías. Ten en cuenta que el salto será en la dirección de tu último movimiento."},
+        {"id": 5, "name": "Doble Salto", "intro": "Resulta que hay dos zanjas: la segunda para el cable eléctrico. Bloquean el paso. Si te detienes entre ellas, podrías quedarte atascado en el barro. Necesitas saltar dos veces para llegar a la meta.", "task": "Realiza dos SALTOS para superar los obstáculos y llegar a la meta."},
+        {"id": 6, "name": "Esquivando Ladrillos", "intro": "Delante está la zona donde descargaron ladrillos. Varios se cayeron y están esparcidos por el suelo. Si pisas un ladrillo, podrías romperlo. Hay que saltarlos.", "task": "Avanza con saltos hasta llegar a la caja de herramientas, tómala y vuelve a la base del cuartel."},
+        {"id": 7, "name": "Giro y Camino", "intro": "Debes ir al almacén y recoger las tablas. Luego usa la acción 'Girar' — que permite girar al personaje y moverse dos casillas hacia atrás en un solo movimiento. Así volverás más rápido a la base.", "task": "Llega al almacén y recoge las tablas. Después usa GIRAR (lo que te permitirá girar y moverte dos casillas hacia atrás, reduciendo el número de movimientos) y vuelve al cuartel en construcción."},
+        {"id": 8, "name": "Salto sobre la Viga", "intro": "El almacén de herramientas tiene muchas tablas y vigas. Y atravesando el camino hay vigas caídas que no se pueden rodear, solo saltar.", "task": "Recoge las tablas con TOMAR y llévalas al cuartel en construcción. Usa GIRAR para usar menos movimientos al transportar las tablas y SALTO sobre la viga caída."},
+        {"id": 9, "name": "Entrega de la Carga", "intro": "En la caja hay una bandera, símbolo del nuevo cuartel. Pero la caja está en el otro extremo. Hay que acercarse, tomar la bandera y la caja de herramientas, girar y llevarlas al almacén para ordenarlo todo.", "task": "Llega hasta la bandera y tómala, luego ve a la caja de herramientas, tómala también, y lleva ambos objetos al almacén."},
+        {"id": 10, "name": "Ataque Final", "intro": "Tienes la bandera, la base está lista, pero el camino hacia el centro del cuartel está bloqueado por zanjas, ladrillos y pasajes estrechos. Todos esperan que termine nuestra construcción. ¡Queda un último esfuerzo!", "task": "Usa saltos sobre zanjas y ladrillos, y giros en los callejones sin salida. Toma las tablas y llévalas al almacén, que está arriba, pulsa PONER y regresa para la inauguración del cuartel. Usa SALTO y GIRAR para llegar a la meta más rápido."}
+      ]
+    }
+  ]
+}

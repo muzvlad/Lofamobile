@@ -1,0 +1,44 @@
+{
+  "chapters": [
+    {
+      "chapter": 1,
+      "gender": "girl",
+      "theme": "cooking",
+      "hero": "Miks (oshxona robot-yordamchisi)",
+      "chapterTitle": "Pazandachilik sarguzashti",
+      "chapterDescription": "Buviga pirog pishirishga yordam ber!",
+      "levels": [
+        {"id": 1, "name": "Birinchi qadam", "intro": "Buvi mehmonga ketdi, stolda olma pirogi retseptini qoldirib. U qaytgach pirog pishirmoqchi bo‘lsa kerak. Biz unga pirog pishirishda yordam berishimiz kerak! U juda xursand bo‘ladi. Keling, muzlatgichdan boshlaymiz — u yerda ko‘plab masalliqlar bor. Siz oshxona eshigida turibsiz, oldingizda Muzlatgich.", "task": "Muzlatgichga yetib borish va uni ochish uchun oldinga yurishing kerak."},
+        {"id": 2, "name": "To‘siqni aylanib o‘tish", "intro": "Stolga qaytib kelib, sut yo‘qligini bildik... sut olish uchun muzlatgichga qaytish kerak, ammo yo‘lni uxlab yotgan mushuk to‘sib qo‘ygan. Uni uyg‘otmaslik kerak — aks holda u bezovta qiladi yoki xamirni yeb qo‘yadi. Aylanib o‘tishga to‘g‘ri keladi.", "task": "Tugmalardan foydalan: YUQORIGA va CHAPGA, mushuk yonidan ehtiyotlik bilan o‘tib, muzlatgichga bor."},
+        {"id": 3, "name": "Masalliqlarni yig‘ish", "intro": "Hamma narsa joyida, ammo xamir uchun un kerak, un qopogi esa deraza yonidagi uzoq burchakda qolgan. Buvi har doim: 'Avval barcha masalliqlarni stol ustida tayyorlab qo‘y', der edi. Unni olib, stolga olib kelish kerak.", "task": "Un qopiga yetib bor, TUGMASINI BOS va stol turgan katakka yur."},
+        {"id": 4, "name": "Ko‘lmakdan sakrash", "intro": "Biz un ortib yurganimizda, mushuk Vaska bir stakan sutni ag‘darib yubordi. Polda oq ko‘lmak paydo bo‘ldi. Sirpanib, qimmatli unni to‘kishingiz mumkin.", "task": "SAKRASHdan foydalanib, ko‘lmakdan oshib, xamir idishiga quruq va toza holda yetib bor."},
+        {"id": 5, "name": "Qo‘sh sakrash", "intro": "Omadsizlik! Vaska ikki marta yugurdi: sut ko‘lmagi va apelsin sharbati ko‘lmagi. Ketma-ket ikkita ho‘l ko‘lmak. Agar bossangiz, hamma narsa yopishqoq bo‘lib, buvi xafa bo‘ladi.", "task": "Ikkala SAKRASHni bajaring, har ikki ko‘lmakdan uchib o‘tish va datchiklarni ho‘llamaslik uchun."},
+        {"id": 6, "name": "Un tepachalari", "intro": "Plitaga yaqinlashganda, kimdir un to‘kibdi va shamol uni mayda tepachalarga aylantiribdi. Buvi: 'Unni bosish mumkin emas — aks holda pol oppoq izlarga to‘lib qoladi', der edi. Har bir tepachadan sakrab o‘tish kerak.", "task": "Un qopini ol va har bir un tepachasidan sakrab, pech qiziydigan plita tomon yur."},
+        {"id": 7, "name": "Yuvish va qaytish", "intro": "Kran turgan joyga yetib borish, olmani yuvish va stol turgan boshqa tomonga qaytish kerak.", "task": "Olma yetib borib, uni stolga olib borish uchun TUGMASINI BOS. ORQAGA BURILISHdan foydalanib, ikki katak orqaga buril va stolga chiq."},
+        {"id": 8, "name": "Singan qopqoq", "intro": "Qozonning qopqog‘i tushib, singanga o‘xshaydi — parchalarni yig‘ishtirish kerak. Avval supurgi va axlat qopini olish lozim.", "task": "Supurgi bilan supurgichga yetib bor, uni ol, SAKRASHni ishlat, axlat qopiga yetib bor va parchalarni yig‘ishtirish uchun singan qopqoq tomon yur."},
+        {"id": 9, "name": "Olma uyi", "intro": "Un qopi oshxonaning oxirida, xamir idishi boshqa burchakda... Oshxonani tartibga keltirish kerak.", "task": "Un qopiga yetib bor, yo‘lda yotgan o‘qlog‘idan sakrab o‘t, TUGMASINI BOS, so‘ng xamir idishiga borib, hammasini stolga olib kel."},
+        {"id": 10, "name": "Yakuniy yurish", "intro": "Stol ostida ortiqcha olma qolgan, uni boshqa olmalar yonidagi qutiga olib borish kerak. Pirog tayyor bo‘libdi! Chiqarish mumkin!", "task": "Tezroq olmaga yetib borish uchun sakrashlardan foydalan, uni ol, quti katagiga olib bor va QO‘YISH tugmasini bos, keyin pech katagiga yurib, pirogimizni chiqar. Orqaga burilishlarni bir vaqtning o‘zida ikki katak yurish uchun ishlat."}
+      ]
+    },
+    {
+      "chapter": 1,
+      "gender": "boy",
+      "theme": "shelter_building",
+      "hero": "Borya (robot-quruvchi)",
+      "chapterTitle": "Shtab qurilishi",
+      "chapterDescription": "Otryadning maxfiy shtabini qur!",
+      "levels": [
+        {"id": 1, "name": "Birinchi qadam", "intro": "Otryad komandiri vazifa qo‘ydi: kechgacha o‘rmon chetida maxfiy shtab qurish. Borya taxtalar va asboblar bilan to‘la yuk mashinasi yonida faollashtirilgan. Birinchi navbatda taxtalarni poydevor belgilangan joyga yetkazish kerak.", "task": "Faqat O‘NGGA to‘g‘ri chiziqda yurib, material tushirish zonasiga yaqinlash va ishni boshlang."},
+        {"id": 2, "name": "To‘siqni aylanib o‘tish", "intro": "To‘g‘ri yo‘lda shag‘al uyumi (mayda toshlar) — kecha tekislash unutilgan. Undan o‘tib bo‘lmaydi: cho‘kib ketamiz. Lekin chap va tepada aylanma yo‘l bor.", "task": "Tugmalardan foydalan: YUQORIGA, O‘NGGA va PASTGA, shag‘al uyumi yonidan aylanib o‘tib, belgilangan poydevorga yetib bor."},
+        {"id": 3, "name": "Materiallarni yig‘ish", "intro": "Poydevor belgilandi, ammo mix yo‘q! Mix solingan quti yuk mashinasi yonida, eng boshida qolgan. Qaytib, uni olib, qurilish joyiga keltirish kerak, aks holda devorlarni mahkamlab bo‘lmaydi.", "task": "G‘isht uyumlariga yetib bor, u yerda mix bor, TUGMASINI BOS va poydevor pozitsiyasiga qayt."},
+        {"id": 4, "name": "Xandaqdan sakrash", "intro": "Mix ortganingizda, ishchilar suv quvurlari uchun tor xandaq qazishdi. U to‘g‘ri yo‘lda. Qadam bosib bo‘lmaydi — yiqilib tushasiz. Sakrash sizni qutqaradi.", "task": "SAKRASHni faollashtiring, xandaqdan oshib o‘tish va kommunikatsiyalarga zarar yetkazmaslik uchun. Diqqat, sakrash sizning oxirgi harakat yo‘nalishingizda bo‘ladi."},
+        {"id": 5, "name": "Qo‘sh sakrash", "intro": "Ma’lum bo‘lishicha, ikkita xandaq bor: ikkinchisi elektr kabeli uchun. Ular o‘tishga to‘sqinlik qiladi. Agar ular orasida to‘xtasangiz, loyga tiqilib qolishingiz mumkin. Maqsadga yetish uchun ikki marta sakrash kerak.", "task": "Ikki marta SAKRASHni bajaring, to‘siqlarni yengib o‘tish va maqsadga yetib borish uchun."},
+        {"id": 6, "name": "G‘ishtlarni aylanib o‘tish", "intro": "Oldinda g‘isht tushirilgan maydon. Bir nechtasi tushib, yerga sochilib yotibdi. Agar g‘ishtni bossangiz, uni sindirib qo‘yishingiz mumkin. Ulardan sakrab o‘tish kerak.", "task": "Sakrashlar bilan oldinga yurib, asboblar qutisiga yetib bor, uni ol va shtab poydevoriga qayt."},
+        {"id": 7, "name": "Burilish va yo‘l", "intro": "Omborga borib, taxtalarni olish kerak. Keyin 'Orqaga burilish' harakatini qo‘llang — bu personajni burish va bir yurishda ikki katak orqaga siljish imkonini beradi. Shunda poydevorga tezroq qaytasiz.", "task": "Omborga yetib bor va taxtalarni ol. Keyin ORQAGA BURILISHdan foydalan (bu sizga burilib, ikki katak orqaga yurish imkonini beradi, harakatlar sonini kamaytiradi) va qurilayotgan shtabga qayt."},
+        {"id": 8, "name": "To‘sindan sakrash", "intro": "Asboblar omborida ko‘plab taxta va to‘sinlar bor. Yo‘l bo‘ylab yiqilgan to‘sinlar yotibdi, ularni aylanib o‘tish mumkin emas, faqat sakrash mumkin.", "task": "TUGMASINI BOS bilan taxtalarni yig‘ va ularni qurilayotgan shtabga olib bor! Taxta tashishda kamroq harakat qilish uchun ORQAGA BURILISH va yiqilgan to‘sin ustidan sakrash uchun SAKRASHdan foydalan."},
+        {"id": 9, "name": "Yuk yetkazish", "intro": "Qutida bayroq — yangi shtab timsoli — yotibdi. Ammo quti narigi chekkada. Yaqinlashib, bayroq va asboblar qutisini olib, burilib, ikkalasini omborga yetkazish kerak — hamma narsani tartibga solish uchun.", "task": "Bayroqqa yetib bor va uni ol, so‘ng asboblar qutisiga borib, uni ham ol, va ikkala narsani omborga olib kel."},
+        {"id": 10, "name": "Yakuniy yurish", "intro": "Bayroq sizda, poydevor tayyor, ammo shtab markaziga boradigan yo‘lni xandaqlar, g‘ishtlar va tor o‘tish joylari to‘sib qo‘ygan. Hamma bizning qurilishimiz tugashini kutmoqda. So‘nggi harakat qoldi!", "task": "Xandaqlar va g‘ishtlardan sakrash hamda boshi berk ko‘chalarda burilishlardan foydalan. Taxtalarni olib, yuqorida joylashgan omborga olib bor, QO‘YISH tugmasini bos va shtab ochilishiga qaytib kel! Maqsadga tezroq yetish uchun SAKRASH va ORQAGA BURILISH tugmalaridan foydalan."}
+      ]
+    }
+  ]
+}
